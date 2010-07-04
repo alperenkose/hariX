@@ -7,6 +7,7 @@
 #include <Wt/WTable>
 #include <Wt/WLineEdit>
 #include <Wt/WText>
+#include <string>
 
 
 #include "../harixApp.hpp"			// JUST FOR wApp!!

@@ -4,6 +4,7 @@
 #include <Wt/WStackedWidget>
 #include <Wt/WPushButton>
 #include <Wt/WTextArea>
+#include <string>
 
 #include "pcimapQuery.hpp"
 #include "../pci_device.hpp"

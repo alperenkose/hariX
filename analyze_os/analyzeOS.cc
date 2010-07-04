@@ -40,8 +40,6 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   layoutAnalyze_->elementAt(4,0)->addWidget( bUpload_ = new WPushButton("Upload") );
 
   // Upload when the button is clicked.
-  // bUpload_->clicked().connect(SLOT(uploadOs_, Wt::WFileUpload::upload));
-  // bUpload_->clicked().connect(SLOT(uploadPcimap_, Wt::WFileUpload::upload));
   bUpload_->clicked().connect(this, &AnalyzeOsWidget::bUpload_Click);
 
   // React to a succesfull upload.
@@ -53,15 +51,6 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   WTable* layoutResult;
   panelAnalyzeResult_->setCentralWidget( layoutResult = new WTable() );
 
-  // layoutResult->elementAt(0,0)->addWidget( new WText("Detected Operating System" ) );
-  // layoutResult->elementAt(1,0)->addWidget( new WText("OS Name:" ) );
-  // layoutResult->elementAt(1,1)->addWidget( editOs_ = new WLineEdit() );
-  // layoutResult->elementAt(2,0)->addWidget( new WText("Release:" ) );
-  // layoutResult->elementAt(2,1)->addWidget( editRel_ = new WLineEdit() );
-  // layoutResult->elementAt(3,0)->addWidget( new WText("Kernel :" ) );
-  // layoutResult->elementAt(3,1)->addWidget( editKer_ = new WLineEdit() );
-  // layoutResult->elementAt(4,0)->addWidget( new WText("Arch.  :" ) );
-  // layoutResult->elementAt(4,1)->addWidget( editArch_ = new WLineEdit() );
 
   layoutResult->elementAt(0,0)->addWidget( groupDetectedOs_ = new WGroupBox("Detected Operating System") );
   WTable* layoutDetectedOs;
@@ -76,6 +65,7 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   layoutDetectedOs->elementAt(3,1)->addWidget( editArch_ = new WLineEdit() );
   layoutDetectedOs->elementAt(4,0)->addWidget( bCheckOs_ = new WPushButton("Check Record") );
   bCheckOs_->clicked().connect(this, &AnalyzeOsWidget::bCheckOs_Click);
+  // @TODO: ADD EDIT BUTTON TO MANUALY CHANGE OS INFO
 
   layoutResult->columnAt(1)->setWidth( WLength(50) );
 
@@ -85,6 +75,9 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   layoutCheckResult_->elementAt(1,0)->addWidget( bOsAddUpdate_ = new WPushButton() );
   layoutCheckResult_->elementAt(1,1)->addWidget( bOsCancel_ = new WPushButton("Cancel / Edit") );
   layoutCheckResult_->hide();
+
+  bOsAddUpdate_->clicked().connect(this, &AnalyzeOsWidget::bOsAddUpdate_Click);
+  bOsCancel_->clicked().connect(this, &AnalyzeOsWidget::bOsCancel_Click);
 
   addWidget(new WBreak());
 
@@ -96,14 +89,11 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
 AnalyzeOsWidget* AnalyzeOsWidget::Instance( WContainerWidget* parent)
 {
   if( parent == 0 ){
-	// wApp->log("debug") << "parent is 0!"; 					// @test
 	if ( !instance_ ){
-	  // wApp->log("debug") << "no instance return NULL!!"; 	// @test
 	  return NULL;
 	}
   }
   else{
-	// wApp->log("debug") << "received parent!"; 				// @test
 	if( !instance_ ){
 	  instance_ = new AnalyzeOsWidget(parent);
 	  // wApp->log("debug") << "Object initiated!!"; 			// @test
@@ -184,18 +174,31 @@ void AnalyzeOsWidget::bCheckOs_Click()
   osKernelId=queryOsKernelId(osDist_->getDistro(),osDist_->getRelease(),osDist_->getKernel(),osDist_->getArch());
   if( osKernelId != ""){
 	// OS Found!
-	// show ukernelid!!!!
 	txtOsResult_->setText("Operating System Already in Database!");
 	bOsAddUpdate_->setText("Update Pcimap!");
 	layoutCheckResult_->show();
   }
   else{
 	// Os not found..
-	txtOsResult_->setText("Add Operating System to Database");
+	txtOsResult_->setText("Operating System NOT Found! <br /> Add Operating System to Database");
 	bOsAddUpdate_->setText("Add OS!");
 	layoutCheckResult_->show();
   }
-  // editArch_->setText(osKernelId); // @test
+}
+
+void os_pci_module( OsInfo osInfo, std::string pcimapFile ); // external os_pci_module.cc
+
+void AnalyzeOsWidget::bOsAddUpdate_Click()
+{
+  os_pci_module( *osDist_, pcimap_file_ );
+  bOsCancel_Click();			// @test
+  // @TODO: put a popup here, informing addition of OS or pcimap update..
+}
+
+void AnalyzeOsWidget::bOsCancel_Click()
+{
+  layoutCheckResult_->hide();
+  groupDetectedOs_->enable();
 }
 
 void AnalyzeOsWidget::bGoHome_Click()
@@ -224,4 +227,7 @@ void AnalyzeOsWidget::resetAll()
 
   panelAnalyze_->show();
   panelAnalyzeResult_->hide();
+
+  layoutCheckResult_->hide();
+  groupDetectedOs_->enable();
 }

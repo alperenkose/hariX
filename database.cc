@@ -4,6 +4,13 @@
 #include <cppconn/exception.h>
 #include <vector>
 #include <map>
+#include <string>
+
+
+#include "os_info.hpp"
+#include "pci_device.hpp"
+#include "harixApp.hpp"			// @test
+#include <Wt/WLogger>
 
 using std::string;
 
@@ -13,9 +20,9 @@ const string pass("alp");
 const string database("bugware0");
 
 
-sql::ResultSet* commonResultSet;
-sql::Connection* connector;
-sql::Statement* stmt;
+static sql::ResultSet* commonResultSet;
+static sql::Connection* connector;
+static sql::Statement* stmt;
 
 inline void connectDatabase()
 {
@@ -57,12 +64,12 @@ std::vector<string> queryClassName(string class_code, string subclass_code, stri
   	  - sql::InvalidArgumentException (derived from sql::SQLException)
   	  - sql::SQLException (derived from std::runtime_error)
   	*/
-  	std::cout << "# ERR: SQLException in " << __FILE__;
-  	std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
     /* Use what() (derived from std::runtime_error) to fetch the error message */
-  	std::cout << "# ERR: " << e.what();
-  	std::cout << " (MySQL error code: " << e.getErrorCode();
-  	std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
 
   }
   disconnectDatabase();
@@ -96,13 +103,12 @@ queryDeviceName(string vendor_code, string device_code, string subvendor_code, s
   	  - sql::InvalidArgumentException (derived from sql::SQLException)
   	  - sql::SQLException (derived from std::runtime_error)
   	*/
-  	std::cout << "# ERR: SQLException in " << __FILE__;
-  	std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
     /* Use what() (derived from std::runtime_error) to fetch the error message */
-  	std::cout << "# ERR: " << e.what();
-  	std::cout << " (MySQL error code: " << e.getErrorCode();
-  	std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
-
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
   }
   disconnectDatabase();
 
@@ -136,13 +142,12 @@ queryPcimapOsList(string vendor_code, string device_code, string subvendor_code,
   	  - sql::InvalidArgumentException (derived from sql::SQLException)
   	  - sql::SQLException (derived from std::runtime_error)
   	*/
-  	std::cout << "# ERR: SQLException in " << __FILE__;
-  	std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
     /* Use what() (derived from std::runtime_error) to fetch the error message */
-  	std::cout << "# ERR: " << e.what();
-  	std::cout << " (MySQL error code: " << e.getErrorCode();
-  	std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
-
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
   }
   disconnectDatabase();
 
@@ -173,13 +178,12 @@ std::vector<string> queryOs( string unique_kernel_id )
   	  - sql::InvalidArgumentException (derived from sql::SQLException)
   	  - sql::SQLException (derived from std::runtime_error)
   	*/
-  	std::cout << "# ERR: SQLException in " << __FILE__;
-  	std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
     /* Use what() (derived from std::runtime_error) to fetch the error message */
-  	std::cout << "# ERR: " << e.what();
-  	std::cout << " (MySQL error code: " << e.getErrorCode();
-  	std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
-
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
   }
   disconnectDatabase();
 
@@ -212,13 +216,12 @@ string queryOsKernelId( string os_name, string release, string kernel, string ar
   	  - sql::InvalidArgumentException (derived from sql::SQLException)
   	  - sql::SQLException (derived from std::runtime_error)
   	*/
-  	std::cout << "# ERR: SQLException in " << __FILE__;
-  	std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
     /* Use what() (derived from std::runtime_error) to fetch the error message */
-  	std::cout << "# ERR: " << e.what();
-  	std::cout << " (MySQL error code: " << e.getErrorCode();
-  	std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
-
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
   }
   disconnectDatabase();
   return ukernel_id;
@@ -246,18 +249,225 @@ string queryModuleName( string mod_name_id )
   	  - sql::InvalidArgumentException (derived from sql::SQLException)
   	  - sql::SQLException (derived from std::runtime_error)
   	*/
-  	std::cout << "# ERR: SQLException in " << __FILE__;
-  	std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
     /* Use what() (derived from std::runtime_error) to fetch the error message */
-  	std::cout << "# ERR: " << e.what();
-  	std::cout << " (MySQL error code: " << e.getErrorCode();
-  	std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
-
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
   }
   disconnectDatabase();
 
   return module_name;
+  
+}
+
+
+string recordOsInfo (OsInfo osInfo)
+{
+  string osId_="", releaseId_="", uKernelId_="";
+  try{
+	connectDatabase();
+	/**
+	 * Check OS Name entry in DB
+	 * @{
+	 */
+	commonResultSet = stmt->executeQuery("SELECT osID FROM OSes WHERE osName='"+ osInfo.getDistro() +"'");
+	if( commonResultSet->first() ){
+	  osId_ = commonResultSet->getString("osID");
+	}
+	else{
+	  // Insert Distribution into OSes and retrieve osID
+	  stmt->execute("INSERT INTO OSes(osName) VALUES ('"+ osInfo.getDistro() +"')");
+	  commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+	  if( commonResultSet->next() ){
+		osId_ = commonResultSet->getString(1);
+	  }
+	}
+	assert( osId_ != "" );
+	/**
+	 * @}
+	 */
+
+
+	/**
+	 * Check Release entry in DB
+	 * @{
+	 */
+	commonResultSet = stmt->executeQuery("SELECT releaseID FROM os_releases WHERE osID_FK="+ osId_ +
+										 " AND releaseName='"+ osInfo.getRelease() +"'");
+	if( commonResultSet->first() ){
+	  releaseId_ = commonResultSet->getString("releaseID");
+	}
+	else{
+	  // Insert Dist.Release into os_releases and retrieve releaseID
+	  stmt->execute("INSERT INTO os_releases(osID_FK,releaseName) VALUES("+ osId_ +",'"+ osInfo.getRelease() +"')");
+	  commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+	  if( commonResultSet->next() ){
+		releaseId_ = commonResultSet->getString(1);
+	  }
+	}
+	assert( releaseId_ != "" );
+	/**
+	 * @}
+	 */
 
   
+	/**
+	 * Insert uKernel entry in DB
+	 * @{
+	 */
+	// Insert Kernel Version into kernels and retrieve uKernelID
+	stmt->execute("INSERT INTO kernels( releaseID_FK, kernelVersion, machineHardware ) VALUES ("
+				  + releaseId_ +",'"+ osInfo.getKernel() +"','"+ osInfo.getArch() +"')");
+	commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+	if( commonResultSet->next() ){
+	  uKernelId_ = commonResultSet->getString(1);
+	}
+	/**
+	 * @}
+	 */
+	wApp->log("debug") << "UKERNEL INSERTED!!!"; 									// @test
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  assert( uKernelId_ != "" );
+  return uKernelId_;
+}
+
+
+string checkModuleNameId( string module_name )
+{
+  string mod_name_id;
+  try{
+	connectDatabase();
+	commonResultSet = stmt->executeQuery("SELECT modNameID FROM module_names WHERE modName='"
+										 + module_name +"'");
+	if( commonResultSet->first() ){
+	  mod_name_id = commonResultSet->getString("modNameID");
+	}
+	else {
+	  stmt->execute("INSERT INTO module_names(modName) VALUES ('"+ module_name +"')");
+	  commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+	  if( commonResultSet->next() ){
+		mod_name_id = commonResultSet->getString(1);
+	  }
+	}
+  }
+  catch (sql::SQLException &e) {
+	/*
+	  The MySQL Connector/C++ throws three different exceptions:
+	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+	  - sql::InvalidArgumentException (derived from sql::SQLException)
+	  - sql::SQLException (derived from std::runtime_error)
+	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
   
+  assert( mod_name_id != "" );
+  return mod_name_id;
+}
+
+
+string checkKernelModule (string uKernelId, string modNameId)
+{
+  string uniqueModuleId_="";
+  try{
+	connectDatabase();
+	
+	commonResultSet = stmt->executeQuery("SELECT uModID FROM modules WHERE uKernelID_FK="+ uKernelId +
+										 " AND modNameID_FK="+ modNameId);
+	if( commonResultSet->first() ){
+	  uniqueModuleId_ = commonResultSet->getString("uModID");
+	}
+	else {
+	  stmt->execute("INSERT INTO modules(uKernelID_FK, modNameID_FK) VALUES ("+ uKernelId +","+ modNameId +")");
+	  commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+	  if( commonResultSet->next() ){
+		uniqueModuleId_ = commonResultSet->getString(1);
+	  }
+	}
+  }
+  catch (sql::SQLException &e) {
+	/*
+	  The MySQL Connector/C++ throws three different exceptions:
+	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+	  - sql::InvalidArgumentException (derived from sql::SQLException)
+	  - sql::SQLException (derived from std::runtime_error)
+	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+  
+  assert( uniqueModuleId_ != "" );
+  return uniqueModuleId_;
+}
+
+
+void insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueModuleId )
+{
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT * FROM pcimap WHERE uModID_FK="+ uniqueModuleId +
+										 " AND vendor='"+ currentPciDevice->getVendor() +"'"+
+										 " AND device='"+ currentPciDevice->getDevice() +"'"+
+										 " AND subvendor='"+ currentPciDevice->getSubvendor() +"'"+
+										 " AND subdevice='"+ currentPciDevice->getSubdevice() +"'"+
+ " AND class='"+ currentPciDevice->getClass() + currentPciDevice->getSubclass() + currentPciDevice->getProgif() +"'"+
+										 " AND classMask='"+ currentPciDevice->getClassMask() +"'");
+
+	if( !commonResultSet->first() ){
+	  std::string insertPciEntry = 
+		"INSERT INTO pcimap VALUES ("+ uniqueModuleId  +",'"+ currentPciDevice->getVendor() +"',"
+		+"'"+ currentPciDevice->getDevice() +"','"+ currentPciDevice->getSubvendor() +"',"
+		+"'"+ currentPciDevice->getSubdevice() +"',"
+		+"'"+ currentPciDevice->getClass() + currentPciDevice->getSubclass() + currentPciDevice->getProgif() +"',"
+		+"'"+ currentPciDevice->getClassMask() + "')";
+	  stmt->execute(insertPciEntry);
+	  wApp->log("debug") << "INSERTED PCIMAP ENTRY!!!"; 					// @test
+	  // @TODO: check success of insertion
+	}
+  }
+  catch (sql::SQLException &e) {
+	/*
+	  The MySQL Connector/C++ throws three different exceptions:
+	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+	  - sql::InvalidArgumentException (derived from sql::SQLException)
+	  - sql::SQLException (derived from std::runtime_error)
+	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
 }

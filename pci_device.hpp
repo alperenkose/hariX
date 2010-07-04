@@ -3,6 +3,7 @@
 #if !defined( _PCI_DEVICE_ )
 #define _PCI_DEVICE_
 
+
 class PciDevice
 {
 private:
@@ -95,12 +96,11 @@ public:
 	return classMask_;
   }
 
-
-  void printPciDevice () const
-  {
-	std::cout << module_ << " " << vendor_ << " " << device_ << " " << subvendor_ << " " << subdevice_ << " " <<
-	  classc_ << " " << classMask_ << std::endl;
-  }
+  // void printPciDevice () const
+  // {
+  // 	wApp->log("debug") << module_ << " " << vendor_ << " " << device_ << " " << subvendor_ << " "
+  // 					   << subdevice_ << " " << classc_ << " " << classMask_;
+  // }
   
 };
 

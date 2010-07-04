@@ -1,5 +1,5 @@
----- UPDATE "PCIMAP MODULES" TO MAKE UPDATE ON DATABASE!!! NOT JUST CREATE..
----- PAY ATTENTION ON EXISTING OS OR RELEASE, SO JUST UPDATING THE APPROPRIATE PARTS..
+
+-- 'Loading Indicator'la os analyze sirasinda beklet!! hicbir yere basilmasin!! widget example..
 
 - Start from the startup screen, first draw a design what it might look like..
 Follow the notebook..
@@ -10,4 +10,3 @@ Follow the notebook..
 
 - DATABASE
 	** Classes and Devices sections in database needs update procedure!!!!!
-	* if OS is know but pcimap needs updating? Put update procedure for pcimape!

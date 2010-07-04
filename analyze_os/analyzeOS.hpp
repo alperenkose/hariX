@@ -34,6 +34,8 @@ private:
 
   Wt::WText* txtOsResult_;
   Wt::WPushButton *bOsAddUpdate_, *bOsCancel_;
+  void bOsAddUpdate_Click();
+  void bOsCancel_Click();
 
   Wt::WFileUpload* uploadOs_, *uploadPcimap_;
   Wt::WPushButton* bUpload_;

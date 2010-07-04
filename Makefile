@@ -9,8 +9,8 @@
 top="$(CURDIR)"/
 ede_FILES=Project.ede Makefile
 
-query_pcimap_wt_SOURCES=pcimapQuery.cc main.cc harixApp.cc pcimapResult.cc database.cc home.cc analyzeOS.cc
-query_pcimap.wt_OBJ= pcimapQuery.o main.o harixApp.o pcimapResult.o database.o home.o analyzeOS.o
+query_pcimap_wt_SOURCES=main.cc harixApp.cc database.cc home.cc lspci_query/pcimapQuery.cc lspci_query/pcimapResult.cc analyze_os/analyzeOS.cc pci_module/os_pci_module.cc pci_module/pci_moduleDB.cc
+query_pcimap.wt_OBJ= main.o harixApp.o database.o home.o lspci_query/pcimapQuery.o lspci_query/pcimapResult.o analyze_os/analyzeOS.o pci_module/os_pci_module.o pci_module/pci_moduleDB.o
 CXX= g++
 CFLAGS= -g -Wall -Weffc++
 LIBDIRS= -L/usr/local/lib
@@ -25,7 +25,7 @@ VERSION=1.0
 DISTDIR=$(top)Harix PreAlpha-$(VERSION)
 top_builddir = 
 
-DEP_FILES=.deps/pcimapQuery.P .deps/main.P .deps/harixApp.P .deps/pcimapResult.P .deps/database.P .deps/home.P .deps/analyzeOS.P .deps/pci_device.P .deps/pcimapQuery.P .deps/harixApp.P .deps/pcimapResult.P .deps/home.P .deps/analyzeOS.P .deps/os_info.P
+DEP_FILES=.deps/main.P .deps/harixApp.P .deps/database.P .deps/home.P .deps/pcimapQuery.P .deps/pcimapResult.P .deps/analyzeOS.P .deps/os_pci_module.P .deps/pci_moduleDB.P .deps/pci_device.P .deps/harixApp.P .deps/home.P .deps/os_info.P .deps/pcimapQuery.P .deps/pcimapResult.P .deps/analyzeOS.P
 
 all: query_pcimap.wt
 
