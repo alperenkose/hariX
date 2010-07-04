@@ -7,7 +7,7 @@
    (ede-proj-target-makefile-program "query_pcimap.wt"
     :name "query_pcimap.wt"
     :path ""
-    :source '("pcimapQuery.cc" "main.cc" "harixApp.cc" "pcimapResult.cc")
+    :source '("pcimapQuery.cc" "main.cc" "harixApp.cc" "pcimapResult.cc" "database.cc")
     :auxsource '("pci_device.hpp" "pcimapQuery.hpp" "harixApp.hpp" "pcimapResult.hpp")
     )
    )
