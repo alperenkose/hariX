@@ -17,7 +17,7 @@ class PciDevice;
 class PcimapResultWidget : public Wt::WContainerWidget
 {
 private:
-  PcimapResultWidget( std::vector<PciDevice>& lspci_list, WContainerWidget* parent );
+  PcimapResultWidget( std::vector<PciDevice>& lspci_list, std::string board_name, WContainerWidget* parent );
   ~PcimapResultWidget();
 
   static PcimapResultWidget* instance_;
@@ -50,7 +50,7 @@ private:
   
   void bGoHome_Click();
 public:
-  static PcimapResultWidget* Instance( std::vector<PciDevice> lspci_list, WContainerWidget* parent );
+  static PcimapResultWidget* Instance(std::vector<PciDevice> lspci_list, std::string board_name, WContainerWidget* parent);
   static PcimapResultWidget* Instance();
   
 };

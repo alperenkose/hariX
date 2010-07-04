@@ -38,7 +38,7 @@ MainboardsWidget::MainboardsWidget( WContainerWidget* parent ) : WContainerWidge
   // boardsProxyModel->setDynamicSortFilter(true);
   boardsProxyModel->sort(1);
 
-  // layoutMainboard->elementAt(0,0)->addWidget(  )
+  // layoutMainboard->elementAt(0,0)
   boardsSelection_ = new WSelectionBox(layoutMainboard->elementAt(0,0));
   boardsSelection_->setModel(boardsProxyModel);
   boardsSelection_->setModelColumn(1);
@@ -164,7 +164,7 @@ void MainboardsWidget::showBoardConfiguration( std::string board_id  )
 
   PcimapResultWidget* pcilist;
   if ( (pcilist = PcimapResultWidget::Instance()) == NULL )
-	selectWidget( PcimapResultWidget::Instance(device_list,parent_) ); // Add widget to StackedWidget and select..
+	selectWidget( PcimapResultWidget::Instance(device_list, boardsSelection_->currentText().narrow(),parent_) );
   else
 	wApp->log("debug") << "PcimapResultWidget already exists! this should NOT happen!";
 }

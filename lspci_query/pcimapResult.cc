@@ -24,8 +24,9 @@ void removeWidget( WContainerWidget* widget );
 
 PcimapResultWidget* PcimapResultWidget::instance_ = NULL;
 int PcimapResultWidget::instance_count = 0;
-PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list, WContainerWidget* parent )
-  : WContainerWidget(parent)
+PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
+										string board_name,
+										WContainerWidget* parent ) : WContainerWidget(parent)
 {
   ++instance_count;
 
@@ -136,23 +137,20 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list, WCon
   osSupportTable_->setColumnWidth(3, WLength(100));
   osSupportTable_->setColumnWidth(4, WLength(200));
 
+  if( board_name != "" ){
+	bSaveBoard->disable();
+	panelTable_->setTitle("Configuration of Mainboard: " + board_name );
+  }
+
+
 }
 
-PcimapResultWidget* PcimapResultWidget::Instance( std::vector<PciDevice> lspci_list, WContainerWidget* parent)
+PcimapResultWidget*
+PcimapResultWidget::Instance( std::vector<PciDevice> lspci_list, string board_name, WContainerWidget* parent)
 {
-  // if( parent == 0 ){
-  // 	wApp->log("debug") << "parent is 0!"; 					// @test
-  // 	if ( !instance_ ){
-  // 	  wApp->log("debug") << "no instance return NULL!!"; 	// @test
-  // 	  return NULL;
-  // 	}
-  // }
-  // else{
-  // 	if( !instance_ ){
-	  instance_ = new PcimapResultWidget(lspci_list, parent);
-	  wApp->log("debug") << "Object initiated!!"; 			// @test
-  // 	}
-  // }
+  instance_ = new PcimapResultWidget(lspci_list, board_name, parent);
+  wApp->log("debug") << "Object initiated!!"; 			// @test
+
   wApp->log("debug") << "return instance, No. " << instance_count; // @test
   return instance_;
   
@@ -160,19 +158,11 @@ PcimapResultWidget* PcimapResultWidget::Instance( std::vector<PciDevice> lspci_l
 
 PcimapResultWidget* PcimapResultWidget::Instance()
 {
-  // if( parent == 0 ){
-  // 	wApp->log("debug") << "parent is 0!"; 					// @test
-	if ( !instance_ ){
-	  wApp->log("debug") << "no instance return NULL!!"; 	// @test
-	  return NULL;
-	}
-  // }
-  // else{
-  // 	if( !instance_ ){
-  // 	  instance_ = new PcimapResultWidget(lspci_list, parent);
-  // 	  wApp->log("debug") << "Object initiated!!"; 			// @test
-  // 	}
-  // }
+  if ( !instance_ ){
+	wApp->log("debug") << "no instance return NULL!!"; 	// @test
+	return NULL;
+  }
+
   wApp->log("debug") << "return instance, No. " << instance_count; // @test
   return instance_;
 }
