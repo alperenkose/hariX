@@ -121,7 +121,7 @@ esac
 
 
 
-echo "Detected distro: $detectedDistro"
-echo "Detected release: $detectedRelease"
-echo "Kernel release: $kerRel"
-echo "Kernel for: $kerHard"
+echo $detectedDistro >> distro.txt
+echo $detectedRelease >> distro.txt
+echo $kerRel >> distro.txt
+echo $kerHard >> distro.txt

@@ -187,6 +187,43 @@ std::vector<string> queryOs( string unique_kernel_id )
   
 }
 
+string queryOsKernelId( string os_name, string release, string kernel, string architecture )
+{
+  string ukernel_id="";
+  // release="2010-02-15";			// @test
+  // kernel="2.6.32-ARCH";			// @test
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT uKernelID FROM vw_osList WHERE osName='"+ os_name + "' " +
+										 "AND releaseName='"+ release  +"' " +
+										 "AND kernelVersion='"+ kernel +"' " +
+										 "AND machineHardware='"+ architecture  +"'");
+
+	if( commonResultSet->next() ){
+	  ukernel_id = commonResultSet->getString("uKernelID");
+	}
+	
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+  	std::cout << "# ERR: SQLException in " << __FILE__;
+  	std::cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << std::endl;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+  	std::cout << "# ERR: " << e.what();
+  	std::cout << " (MySQL error code: " << e.getErrorCode();
+  	std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+
+  }
+  disconnectDatabase();
+  return ukernel_id;
+}
+
 string queryModuleName( string mod_name_id )
 {
   string module_name;

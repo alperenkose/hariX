@@ -8,7 +8,7 @@
     :name "query_pcimap.wt"
     :path ""
     :source '("pcimapQuery.cc" "main.cc" "harixApp.cc" "pcimapResult.cc" "database.cc" "home.cc" "analyzeOS.cc")
-    :auxsource '("pci_device.hpp" "pcimapQuery.hpp" "harixApp.hpp" "pcimapResult.hpp" "home.hpp" "analyzeOS.hpp")
+    :auxsource '("pci_device.hpp" "pcimapQuery.hpp" "harixApp.hpp" "pcimapResult.hpp" "home.hpp" "analyzeOS.hpp" "os_info.hpp")
     )
    )
   )

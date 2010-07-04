@@ -1,3 +1,4 @@
+#include <fstream>
 #include <Wt/WPanel>
 #include <Wt/WTable>
 #include <Wt/WPushButton>
@@ -5,15 +6,20 @@
 #include <Wt/WText>
 #include <Wt/WBreak>
 #include <Wt/WFileUpload>
+#include <Wt/WLineEdit>
+#include <Wt/WGroupBox>
 
 #include "analyzeOS.hpp"
 #include "home.hpp"
+#include "os_info.hpp"
 
 using namespace Wt;
 
 void selectWidget( WContainerWidget* widget );
 
 AnalyzeOsWidget* AnalyzeOsWidget::instance_ = NULL;
+bool AnalyzeOsWidget::isOsUploaded_ = false;
+bool AnalyzeOsWidget::isPcimapUploaded_ = false;
 
 AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(parent)
 {
@@ -33,21 +39,52 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   layoutAnalyze_->elementAt(3,0)->addWidget( uploadPcimap_ = new WFileUpload() );
   layoutAnalyze_->elementAt(4,0)->addWidget( bUpload_ = new WPushButton("Upload") );
 
-  // ------- @test {
-  layoutAnalyze_->elementAt(4,1)->addWidget( os_file = new WText() );
-  layoutAnalyze_->elementAt(4,2)->addWidget( pcimap_file = new WText() );
-  // ------- @test }
-
   // Upload when the button is clicked.
-  bUpload_->clicked().connect(SLOT(uploadOs_, Wt::WFileUpload::upload));
-  // bUpload_->clicked().connect(uploadOs_, Wt::WFileUpload::upload);
-  bUpload_->clicked().connect(SLOT(uploadPcimap_, Wt::WFileUpload::upload));
+  // bUpload_->clicked().connect(SLOT(uploadOs_, Wt::WFileUpload::upload));
+  // bUpload_->clicked().connect(SLOT(uploadPcimap_, Wt::WFileUpload::upload));
+  bUpload_->clicked().connect(this, &AnalyzeOsWidget::bUpload_Click);
 
   // React to a succesfull upload.
   uploadOs_->uploaded().connect(this, &AnalyzeOsWidget::osUploaded);
   uploadPcimap_->uploaded().connect(this, &AnalyzeOsWidget::pcimapUploaded);
 
-  
+  panelAnalyzeResult_ = new WPanel(this);
+  panelAnalyzeResult_->hide();
+  WTable* layoutResult;
+  panelAnalyzeResult_->setCentralWidget( layoutResult = new WTable() );
+
+  // layoutResult->elementAt(0,0)->addWidget( new WText("Detected Operating System" ) );
+  // layoutResult->elementAt(1,0)->addWidget( new WText("OS Name:" ) );
+  // layoutResult->elementAt(1,1)->addWidget( editOs_ = new WLineEdit() );
+  // layoutResult->elementAt(2,0)->addWidget( new WText("Release:" ) );
+  // layoutResult->elementAt(2,1)->addWidget( editRel_ = new WLineEdit() );
+  // layoutResult->elementAt(3,0)->addWidget( new WText("Kernel :" ) );
+  // layoutResult->elementAt(3,1)->addWidget( editKer_ = new WLineEdit() );
+  // layoutResult->elementAt(4,0)->addWidget( new WText("Arch.  :" ) );
+  // layoutResult->elementAt(4,1)->addWidget( editArch_ = new WLineEdit() );
+
+  layoutResult->elementAt(0,0)->addWidget( groupDetectedOs_ = new WGroupBox("Detected Operating System") );
+  WTable* layoutDetectedOs;
+  groupDetectedOs_->addWidget( layoutDetectedOs = new WTable() );
+  layoutDetectedOs->elementAt(0,0)->addWidget( new WText("OS Name:" ) );
+  layoutDetectedOs->elementAt(0,1)->addWidget( editOs_ = new WLineEdit() );
+  layoutDetectedOs->elementAt(1,0)->addWidget( new WText("Release:" ) );
+  layoutDetectedOs->elementAt(1,1)->addWidget( editRel_ = new WLineEdit() );
+  layoutDetectedOs->elementAt(2,0)->addWidget( new WText("Kernel :" ) );
+  layoutDetectedOs->elementAt(2,1)->addWidget( editKer_ = new WLineEdit() );
+  layoutDetectedOs->elementAt(3,0)->addWidget( new WText("Arch.  :" ) );
+  layoutDetectedOs->elementAt(3,1)->addWidget( editArch_ = new WLineEdit() );
+  layoutDetectedOs->elementAt(4,0)->addWidget( bCheckOs_ = new WPushButton("Check Record") );
+  bCheckOs_->clicked().connect(this, &AnalyzeOsWidget::bCheckOs_Click);
+
+  layoutResult->columnAt(1)->setWidth( WLength(50) );
+
+  layoutResult->elementAt(0,2)->addWidget( layoutCheckResult_ = new WTable() );
+  layoutCheckResult_->elementAt(0,0)->setColumnSpan(2);
+  layoutCheckResult_->elementAt(0,0)->addWidget( txtOsResult_ = new WText() );
+  layoutCheckResult_->elementAt(1,0)->addWidget( bOsAddUpdate_ = new WPushButton() );
+  layoutCheckResult_->elementAt(1,1)->addWidget( bOsCancel_ = new WPushButton("Cancel / Edit") );
+  layoutCheckResult_->hide();
 
   addWidget(new WBreak());
 
@@ -73,20 +110,92 @@ AnalyzeOsWidget* AnalyzeOsWidget::Instance( WContainerWidget* parent)
 	}
   }
   // wApp->log("debug") << "return instance, No. " << instance_count; // @test
+  isOsUploaded_=false;
+  isPcimapUploaded_=false;
+
   return instance_;
 
 }
 
+void AnalyzeOsWidget::bUpload_Click()
+{
+  uploadOs_->upload();
+  uploadPcimap_->upload();
+}
+
 void AnalyzeOsWidget::osUploaded()
 {
-  os_file->setText(uploadOs_->spoolFileName()); // @test
+  os_file_ = uploadOs_->spoolFileName();
+  if ( !uploadOs_->emptyFileName() ){
+	isOsUploaded_ = true;
+	uploadDone();
+  }
 }
 
 void AnalyzeOsWidget::pcimapUploaded()
 {
-  pcimap_file->setText(uploadPcimap_->spoolFileName()); // @test
+  pcimap_file_ = uploadPcimap_->spoolFileName();
+  if ( !uploadPcimap_->emptyFileName() ){
+	isPcimapUploaded_ = true;
+	uploadDone();
+  }
 }
 
+void AnalyzeOsWidget::uploadDone()
+{
+  if ( isOsUploaded_ && isPcimapUploaded_ ){
+	readOs();
+	panelAnalyze_->hide();
+	panelAnalyzeResult_->show();
+	isOsUploaded_=false;
+	isPcimapUploaded_=false;
+  }
+	
+}
+
+void AnalyzeOsWidget::readOs()
+{
+  std::string os_name, release, kernel, architecture;
+  std::ifstream distro(os_file_.c_str());
+  getline(distro,os_name);
+  getline(distro,release);
+  getline(distro,kernel);
+  getline(distro,architecture);
+
+  osDist_ = new OsInfo(os_name,release,kernel,architecture);
+
+  fillDetectedOs();
+}
+
+void AnalyzeOsWidget::fillDetectedOs()
+{
+  editOs_->setText( osDist_->getDistro() );
+  editRel_->setText( osDist_->getRelease() );
+  editKer_->setText( osDist_->getKernel() );
+  editArch_->setText( osDist_->getArch() );
+}
+
+std::string queryOsKernelId(std::string os_name,std::string release,std::string kernel,std::string architecture);
+
+void AnalyzeOsWidget::bCheckOs_Click()
+{
+  groupDetectedOs_->disable();
+  std::string osKernelId;
+  osKernelId=queryOsKernelId(osDist_->getDistro(),osDist_->getRelease(),osDist_->getKernel(),osDist_->getArch());
+  if( osKernelId != ""){
+	// OS Found!
+	txtOsResult_->setText("Operating System Already in Database!");
+	bOsAddUpdate_->setText("Update Pcimap!");
+	layoutCheckResult_->show();
+  }
+  else{
+	// Os not found..
+	txtOsResult_->setText("Add Operating System to Database");
+	bOsAddUpdate_->setText("Add OS!");
+	layoutCheckResult_->show();
+  }
+  // editArch_->setText(osKernelId); // @test
+}
 
 void AnalyzeOsWidget::bGoHome_Click()
 {
@@ -95,4 +204,23 @@ void AnalyzeOsWidget::bGoHome_Click()
 	selectWidget( HomeWidget::Instance(parent_) ); // Add widget to StackedWidget and select it..
   else
 	selectWidget( home_page );
+
+  resetAll();
+}
+
+void AnalyzeOsWidget::resetAll()
+{
+  // Also delete file names!!
+  delete uploadOs_;
+  delete uploadPcimap_;
+  layoutAnalyze_->elementAt(2,0)->addWidget( uploadOs_ = new WFileUpload() );
+  layoutAnalyze_->elementAt(3,0)->addWidget( uploadPcimap_ = new WFileUpload() );
+  // Upload when the button is clicked.
+  bUpload_->clicked().connect(this, &AnalyzeOsWidget::bUpload_Click);
+  // React to a succesfull upload.
+  uploadOs_->uploaded().connect(this, &AnalyzeOsWidget::osUploaded);
+  uploadPcimap_->uploaded().connect(this, &AnalyzeOsWidget::pcimapUploaded);
+
+  panelAnalyze_->show();
+  panelAnalyzeResult_->hide();
 }

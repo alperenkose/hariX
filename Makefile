@@ -25,7 +25,7 @@ VERSION=1.0
 DISTDIR=$(top)Harix PreAlpha-$(VERSION)
 top_builddir = 
 
-DEP_FILES=.deps/pcimapQuery.P .deps/main.P .deps/harixApp.P .deps/pcimapResult.P .deps/database.P .deps/home.P .deps/analyzeOS.P .deps/pci_device.P .deps/pcimapQuery.P .deps/harixApp.P .deps/pcimapResult.P .deps/home.P .deps/analyzeOS.P
+DEP_FILES=.deps/pcimapQuery.P .deps/main.P .deps/harixApp.P .deps/pcimapResult.P .deps/database.P .deps/home.P .deps/analyzeOS.P .deps/pci_device.P .deps/pcimapQuery.P .deps/harixApp.P .deps/pcimapResult.P .deps/home.P .deps/analyzeOS.P .deps/os_info.P
 
 all: query_pcimap.wt
 
