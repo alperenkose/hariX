@@ -1,7 +1,7 @@
 
 #include <Wt/WApplication>
 #include <Wt/WBreak>
-// #include <Wt/WContainerWidget>
+#include <Wt/WContainerWidget>
 // #include <Wt/WLineEdit>
 #include <Wt/WPushButton>
 #include <Wt/WTextArea>
@@ -15,12 +15,31 @@ void destroy_lspci_list(void);
 
 vector<PciDevice> lspci_list;
 
+// ------------ TEST ------------
+class QueryResult : public WContainerWidget
+{
+private:
+  WTextArea* test_query;		// @test
+public:
+  QueryResult( WContainerWidget* parent );
+  
+};
+
+QueryResult::QueryResult( WContainerWidget* parent = 0 ) : WContainerWidget(parent)
+{
+  test_query = new WTextArea("Results Page", parent); // @test
+  test_query->setColumns(60);		  // @test
+  test_query->setFocus();
+  
+}
+// ------------- TEST -----------
+
 class PcimapQueryApp : public WApplication
 {
 private:
   WTextArea* pcimapList_;
   WPushButton* bQuery_;
-  WTextArea* test_query;		// @test
+
   
 public:
   PcimapQueryApp(const WEnvironment& env);
@@ -38,8 +57,7 @@ PcimapQueryApp::PcimapQueryApp(const WEnvironment& env) : WApplication(env)
   // pcimapList_->setRows(10);
   pcimapList_->setFocus();
 
-  test_query = new WTextArea(root()); // @test
-  test_query->setColumns(60);		  // @test
+
 
   // root()->addWidget(new WBreak()); // requires WContainerWidget to be included
   new WBreak(root());
@@ -120,7 +138,10 @@ void PcimapQueryApp::getLspciList()
 
   // @TODO: BASKA BI FONKDA LSPCI_LISTDEN VERILERI ALARAK, TABLOYU DOLDUR..
   // SONRA DETAILS TUSU ILE HANGISI NE TARAFINDAN DESTEKLENIYO SORGULARSIN..
-  
+  root()->clear();
+  new QueryResult(root());
+
+
 }
 
 void destroy_lspci_list(void)
