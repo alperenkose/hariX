@@ -7,9 +7,10 @@
 #include <Wt/WTable>
 #include <Wt/WLineEdit>
 #include <Wt/WText>
+#include <Wt/WPushButton>
 #include <string>
 
-
+#include "../home.hpp"
 #include "../harixApp.hpp"			// JUST FOR wApp!!
 #include "pcimapResult.hpp"
 #include "pcimapQuery.hpp"
@@ -18,6 +19,8 @@
 using namespace Wt;
 using std::string;
 
+void selectWidget( WContainerWidget* widget );
+void removeWidget( WContainerWidget* widget );
 
 PcimapResultWidget* PcimapResultWidget::instance_ = NULL;
 int PcimapResultWidget::instance_count = 0;
@@ -66,7 +69,7 @@ PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerW
   osSupportModel_->setHeaderData(4, Horizontal, string("Driver"));
 
   panelSupport_ = new WPanel(this);
-  panelSupport_->resize(1000,300);
+  panelSupport_->resize(1000, WLength() );
   panelSupport_->setTitle("Device Details");
 
 
@@ -111,8 +114,14 @@ PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerW
   layoutSupport_->elementAt(2,0)->addWidget( osSupportTable_ = new WTableView() );
   layoutSupport_->rowAt(2)->setHeight( WLength(250) );
 
+  WPushButton* bGoHome;
+  layoutSupport_->elementAt(3,0)->setColumnSpan(14);
+  layoutSupport_->elementAt(3,0)->setContentAlignment(AlignRight);
+  layoutSupport_->elementAt(3,0)->addWidget( bGoHome = new WPushButton("Go Home") );
+  bGoHome->clicked().connect(this, &PcimapResultWidget::bGoHome_Click);
+
   osSupportTable_->setModel(osSupportModel_);
-  osSupportTable_->resize(950,350);
+  osSupportTable_->resize(950,250);
   osSupportTable_->setColumnWidth(0, WLength(200));
   osSupportTable_->setColumnWidth(1, WLength(200));
   osSupportTable_->setColumnWidth(2, WLength(200));
@@ -140,6 +149,14 @@ PcimapResultWidget* PcimapResultWidget::Instance( WContainerWidget* parent)
   return instance_;
 
 }
+
+PcimapResultWidget::~PcimapResultWidget()
+{
+  instance_ = NULL;
+  instance_count = 0;
+  lspci_list.clear();
+}
+
 
 std::vector<string>
 queryClassName(string class_code,string subclass_code,string progif_code);
@@ -199,8 +216,8 @@ void PcimapResultWidget::lspciTableRowSelected(WModelIndex index, WMouseEvent ev
   string module_name;
 
   uKernel_mod_list = queryPcimapOsList( selected_item->getVendor(), selected_item->getDevice(),
-  							selected_item->getSubvendor(),selected_item->getSubdevice(),
-  							selected_item->getClass(), selected_item->getSubclass(), selected_item->getProgif() );
+										selected_item->getSubvendor(),selected_item->getSubdevice(),
+										selected_item->getClass(), selected_item->getSubclass(), selected_item->getProgif() );
 
   std::multimap<string,string>::iterator ukernel_iter;
   for ( ukernel_iter=uKernel_mod_list.begin(); ukernel_iter!=uKernel_mod_list.end(); ++ukernel_iter ){
@@ -263,4 +280,14 @@ void PcimapResultWidget::fillDeviceDetails( const PciDevice& selected_device )
   editClass_->setText( selected_device.getClass() );
   editSubclass_->setText( selected_device.getSubclass() );
   editProgif_->setText( selected_device.getProgif() );
+}
+
+void PcimapResultWidget::bGoHome_Click()
+{
+  HomeWidget* home_page;
+  home_page = HomeWidget::Instance();
+  selectWidget( home_page );
+  // remove widget
+  removeWidget( PcimapResultWidget::Instance() );
+  delete PcimapResultWidget::Instance();
 }

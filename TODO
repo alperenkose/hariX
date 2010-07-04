@@ -1,10 +1,9 @@
 
-
-- Start from the startup screen, first draw a design what it might look like..
-Follow the notebook..
+--  Store mainboard or computer, might be added to main screen and pcimapresultwidget..!!!
 
 - In PcimapResultWidget;
-	* add go back button to PcimapQueryWidget
+	** Mark the devices as (no driver in any os, some OSes missing driver, all has driver), preferably using an additional column with colors to indicate it ;)
+	* Filtering on Device Details; probably with OS or Kernel..
 
 - if we want to delete an OS; the corresponding entries from `pcimap` and `modules` should be deleted first..
 

@@ -6,7 +6,7 @@
 #include <Wt/WText>
 #include <Wt/WBreak>
 #include <Wt/WFileUpload>
-#include <Wt/WLineEdit>
+#include <Wt/WInPlaceEdit>
 #include <Wt/WGroupBox>
 #include <Wt/WDialog>
 #include <Wt/WSignalMapper>
@@ -58,8 +58,10 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   layoutAnalyze_->elementAt(3,1)->addWidget( uploadPcimap_ = new WFileUpload() );
   layoutAnalyze_->rowAt(4)->setHeight(25);
   layoutAnalyze_->elementAt(4,0)->addWidget( bUpload_ = new WPushButton("Upload") );
-  layoutAnalyze_->elementAt(4,1)->addWidget( bGoHome_ = new WPushButton("Go Home") );
+  WPushButton* bGoHome1;
+  layoutAnalyze_->elementAt(4,1)->addWidget( bGoHome1 = new WPushButton("Go Home") );
   layoutAnalyze_->elementAt(4,1)->setContentAlignment(AlignRight);
+  bGoHome1->clicked().connect(this, &AnalyzeOsWidget::bGoHome_Click);
 
   // Upload when the button is clicked.
   bUpload_->clicked().connect(this, &AnalyzeOsWidget::bUpload_Click);
@@ -70,28 +72,39 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
 
   panelAnalyzeResult_ = new WPanel(this);
   panelAnalyzeResult_->hide();
-  panelAnalyzeResult_->resize(600,180);
+  panelAnalyzeResult_->resize(600, WLength() );
   WTable* layoutResult;
   panelAnalyzeResult_->setCentralWidget( layoutResult = new WTable() );
 
-
+  // layoutResult->rowAt(0)->setHeight( WLength(170) );
+  layoutResult->rowAt(1)->setHeight( WLength(20) );
+  layoutResult->columnAt(0)->setWidth( WLength(300) );
   layoutResult->elementAt(0,0)->addWidget( groupDetectedOs_ = new WGroupBox("Detected Operating System") );
   WTable* layoutDetectedOs;
   groupDetectedOs_->addWidget( layoutDetectedOs = new WTable() );
   layoutDetectedOs->elementAt(0,0)->addWidget( new WText("OS Name:" ) );
-  layoutDetectedOs->elementAt(0,1)->addWidget( editOs_ = new WLineEdit() );
+  layoutDetectedOs->elementAt(0,1)->addWidget( editOs_ = new WInPlaceEdit("") ); // @test
   layoutDetectedOs->elementAt(1,0)->addWidget( new WText("Release:" ) );
-  layoutDetectedOs->elementAt(1,1)->addWidget( editRel_ = new WLineEdit() );
+  layoutDetectedOs->elementAt(1,1)->addWidget( editRel_ = new WInPlaceEdit("") );
   layoutDetectedOs->elementAt(2,0)->addWidget( new WText("Kernel :" ) );
-  layoutDetectedOs->elementAt(2,1)->addWidget( editKer_ = new WLineEdit() );
+  layoutDetectedOs->elementAt(2,1)->addWidget( editKer_ = new WInPlaceEdit("") );
   layoutDetectedOs->elementAt(3,0)->addWidget( new WText("Arch.  :" ) );
-  layoutDetectedOs->elementAt(3,1)->addWidget( editArch_ = new WLineEdit() );
+  layoutDetectedOs->elementAt(3,1)->addWidget( editArch_ = new WInPlaceEdit("") );
   layoutDetectedOs->elementAt(4,0)->addWidget( bCheckOs_ = new WPushButton("Check Record") );
   bCheckOs_->clicked().connect(this, &AnalyzeOsWidget::bCheckOs_Click);
-  // @TODO: ADD EDIT BUTTON TO MANUALY CHANGE OS INFO
-
+  // MANUALY CHANGE OS INFO
+  editOs_->setStyleClass("inplace");
+  editRel_->setStyleClass("inplace");
+  editKer_->setStyleClass("inplace");
+  editArch_->setStyleClass("inplace");
+  editOs_->valueChanged().connect( this, &AnalyzeOsWidget::changeOsName );
+  editRel_->valueChanged().connect( this, &AnalyzeOsWidget::changeRelease );
+  editKer_->valueChanged().connect( this, &AnalyzeOsWidget::changeKernel );
+  editArch_->valueChanged().connect( this, &AnalyzeOsWidget::changeArch );
+    
   layoutResult->columnAt(1)->setWidth( WLength(50) );
 
+  layoutResult->columnAt(2)->setWidth( WLength(250) );
   layoutResult->elementAt(0,2)->addWidget( layoutCheckResult_ = new WTable() );
   layoutCheckResult_->elementAt(0,0)->setColumnSpan(2);
   layoutCheckResult_->elementAt(0,0)->addWidget( txtOsResult_ = new WText() );
@@ -102,12 +115,12 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   bOsAddUpdate_->clicked().connect(this, &AnalyzeOsWidget::bOsAddUpdate_Click);
   bOsCancel_->clicked().connect(this, &AnalyzeOsWidget::bOsCancel_Click);
 
-  layoutResult->elementAt(1,2)->addWidget(bGoHome_ = new WPushButton("Go Home"));
+  WPushButton* bGoHome2;
+  layoutResult->elementAt(1,2)->addWidget( bGoHome2 = new WPushButton("Go Home") );
   layoutResult->elementAt(1,2)->setContentAlignment(AlignRight);
   addWidget(new WBreak());
 
-  // addWidget( bGoHome_ = new WPushButton("Go Home"));  
-  bGoHome_->clicked().connect(this, &AnalyzeOsWidget::bGoHome_Click);
+  bGoHome2->clicked().connect(this, &AnalyzeOsWidget::bGoHome_Click);
 
 }
 
@@ -214,12 +227,28 @@ void AnalyzeOsWidget::bCheckOs_Click()
   loading->setMessage("Analyzing..");
 }
 
+void AnalyzeOsWidget::changeOsName( WString os_name )
+{
+  osDist_->setDistro(os_name.narrow());
+}
+void AnalyzeOsWidget::changeRelease( WString release )
+{
+  osDist_->setRelease(release.narrow());
+}
+void AnalyzeOsWidget::changeKernel( WString kernel )
+{
+  osDist_->setKernel(kernel.narrow());
+}
+void AnalyzeOsWidget::changeArch( WString arch )
+{
+  osDist_->setArch(arch.narrow());
+}
 
 void AnalyzeOsWidget::bOsCancel_Click()
 {
+  WApplication::instance()->setLoadingIndicator( new WDefaultLoadingIndicator() );
   layoutCheckResult_->hide();
   groupDetectedOs_->enable();
-  WApplication::instance()->setLoadingIndicator( new WDefaultLoadingIndicator() );
 }
 
 

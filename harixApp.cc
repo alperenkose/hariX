@@ -27,8 +27,20 @@ void HarixApp::setWidget( WContainerWidget* widget )
   content_->setCurrentWidget( widget );
 }
 
+void HarixApp::removeWidget( WContainerWidget* widget )
+{
+  // if( content_->indexOf(widget) == -1  )
+  // 	content_->addWidget( widget );
+  content_->removeWidget( widget );
+}
+
+
 void selectWidget( WContainerWidget* widget )
 {
   (dynamic_cast<HarixApp*>(WApplication::instance()))->setWidget(widget);
 }
 
+void removeWidget( WContainerWidget* widget )
+{
+  (dynamic_cast<HarixApp*>(WApplication::instance()))->removeWidget(widget);
+}

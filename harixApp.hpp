@@ -14,6 +14,7 @@ public:
   HarixApp( const Wt::WEnvironment& env );
 
   void setWidget( Wt::WContainerWidget* widget);
+  void removeWidget( Wt::WContainerWidget* widget );
 
 };
 

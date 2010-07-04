@@ -100,6 +100,10 @@ void PcimapQueryWidget::readLspciList()
 		break;
 	  case 4:
 		// test_query->setText( test_query->text() + "rev: " + get_s + "\n"  ); // @test
+		if( get_s.at(1) == 'p' ){
+		  pci_dev->setProgif( get_s.substr(2,2) );
+		  ++coloum_count;
+		}
 		break;
 	  case 5:
 		if( get_s.at(1) == 'p' ){
@@ -135,6 +139,8 @@ void PcimapQueryWidget::readLspciList()
   else
 	selectWidget( qresult );
 
+  pcimapList_->setText("");
+
 }
 
 std::vector<PciDevice>& PcimapQueryWidget::getLspciList()
@@ -144,18 +150,18 @@ std::vector<PciDevice>& PcimapQueryWidget::getLspciList()
 
 void PcimapQueryWidget::destroyLspciList()
 {
+  // lspci_list.clear();
   int lspci_list_size = lspci_list.size();
   for ( int k=0; k<lspci_list_size; ++k )
-	lspci_list.pop_back();
+  	lspci_list.pop_back();
 }
 
 
 void PcimapQueryWidget::bGoHome_Click()
 {
   HomeWidget* home_page;
-  if ( (home_page = HomeWidget::Instance()) == NULL )
-	selectWidget( HomeWidget::Instance(parent_) ); // Add widget to StackedWidget and select it..
-  else
-	selectWidget( home_page );
-  
+  home_page = HomeWidget::Instance();
+  selectWidget( home_page );
+  pcimapList_->setText("");
+  destroyLspciList();
 }

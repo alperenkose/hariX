@@ -17,7 +17,8 @@ class PcimapResultWidget : public Wt::WContainerWidget
 {
 private:
   PcimapResultWidget( WContainerWidget* parent );
-  // @TODO: Destructor'inda lspci_list'i silebilirsin; burda isin bittiginde muhtemelen Querydede ihtiyacin olmaz.
+  ~PcimapResultWidget();
+
   static PcimapResultWidget* instance_;
   static int instance_count;
   
@@ -33,11 +34,13 @@ private:
   Wt::WStandardItemModel* osSupportModel_;
   Wt::WTableView* osSupportTable_;
 
+  // static void fillDeviceList();
   void lspciTableRowSelected(Wt::WModelIndex, Wt::WMouseEvent);
   std::vector<Wt::WStandardItem*> pciDeviceToRowItem( const PciDevice* current_item );
   std::vector<Wt::WStandardItem*> osToSupportRow( const std::vector<std::string>& os );
   void fillDeviceDetails( const PciDevice& selected_device );
-  
+
+  void bGoHome_Click();
 public:
   static PcimapResultWidget* Instance( WContainerWidget* parent = 0 );
   

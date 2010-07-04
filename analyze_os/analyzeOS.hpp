@@ -26,9 +26,14 @@ private:
   Wt::WTable* layoutAnalyze_;
   Wt::WPanel* panelAnalyzeResult_;
   Wt::WGroupBox* groupDetectedOs_;
-  Wt::WLineEdit *editOs_, *editRel_, *editKer_, *editArch_;
+  Wt::WInPlaceEdit *editOs_, *editRel_, *editKer_, *editArch_;
   Wt::WPushButton *bCheckOs_;
   void bCheckOs_Click();
+  void changeOsName( Wt::WString os_name );
+  void changeRelease( Wt::WString release );
+  void changeKernel( Wt::WString kernel );
+  void changeArch( Wt::WString arch );
+  
 
   Wt::WTable* layoutCheckResult_;
 
