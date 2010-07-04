@@ -8,6 +8,7 @@
 namespace Wt {
   class WPanel;
   class WTable;
+  class WDialog;
 }
 
 class OsInfo;
@@ -42,7 +43,7 @@ private:
   void bOsAddUpdate_Click();
   void bOsCancel_Click();
   Wt::WDialog*  dialogResult_;
-  void redirectAndDestroyDialog( Wt::WDialog::DialogCode );
+  void redirectAndDestroyDialog( Wt::WDialog::DialogCode code );
 
   Wt::WFileUpload* uploadOs_, *uploadPcimap_;
   Wt::WPushButton* bUpload_;

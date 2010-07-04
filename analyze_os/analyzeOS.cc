@@ -8,8 +8,8 @@
 #include <Wt/WFileUpload>
 #include <Wt/WInPlaceEdit>
 #include <Wt/WGroupBox>
-#include <Wt/WDialog>
 #include <Wt/WSignalMapper>
+#include <Wt/WDialog>
 
 
 #include <Wt/WDefaultLoadingIndicator>
@@ -257,7 +257,7 @@ int os_pci_module( OsInfo osInfo, std::string pcimapFile ); // external os_pci_m
 
 void AnalyzeOsWidget::bOsAddUpdate_Click()
 {
-  dialogResult_ = new WDialog("OS Analysis Result"); // @TODO: SINIFA KOYABILIRSIN BOLECE SILERSIN..
+  dialogResult_ = new WDialog("OS Analysis Result");
   
   if( os_pci_module( *osDist_, pcimap_file_ ) == 0 ){
 	new WText("OS succesfully added/updated! <br /> Now Directing to homepage", dialogResult_->contents() );

@@ -8,6 +8,7 @@
 #include <Wt/WLineEdit>
 #include <Wt/WText>
 #include <Wt/WPushButton>
+#include <Wt/WDialog>
 #include <string>
 
 #include "../home.hpp"
@@ -24,11 +25,13 @@ void removeWidget( WContainerWidget* widget );
 
 PcimapResultWidget* PcimapResultWidget::instance_ = NULL;
 int PcimapResultWidget::instance_count = 0;
-PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerWidget(parent)
+PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list, WContainerWidget* parent )
+  : WContainerWidget(parent)
 {
   ++instance_count;
 
-  lspci_list = PcimapQueryWidget::getLspciList();
+  // lspci_list_ = PcimapQueryWidget::getLspciList();
+  lspci_list_ = lspci_list;
 
   lspciModel_ = new WStandardItemModel( 0, 3, this );
   lspciModel_->setHeaderData(0, Horizontal, string("Class"));
@@ -36,7 +39,7 @@ PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerW
   lspciModel_->setHeaderData(2, Horizontal, string("Device"));
 
   std::vector<PciDevice>::iterator lspci_iter;
-  for( lspci_iter = lspci_list.begin(); lspci_iter != lspci_list.end(); ++lspci_iter ){
+  for( lspci_iter = lspci_list_.begin(); lspci_iter != lspci_list_.end(); ++lspci_iter ){
 	lspciModel_->appendRow( pciDeviceToRowItem( &(*lspci_iter) ) );
   }
 
@@ -114,10 +117,16 @@ PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerW
   layoutSupport_->elementAt(2,0)->addWidget( osSupportTable_ = new WTableView() );
   layoutSupport_->rowAt(2)->setHeight( WLength(250) );
 
+  WPushButton* bSaveBoard;
+  // layoutSupport_->elementAt(3,0)->setColumnSpan(5);
+  // layoutSupport_->elementAt(3,0)->setContentAlignment(AlignLeft);
+  layoutSupport_->elementAt(3,0)->addWidget( bSaveBoard = new WPushButton("Save Mainboard!") );
+  bSaveBoard->clicked().connect(this, &PcimapResultWidget::bSaveBoard_Click);
+  
   WPushButton* bGoHome;
-  layoutSupport_->elementAt(3,0)->setColumnSpan(14);
-  layoutSupport_->elementAt(3,0)->setContentAlignment(AlignRight);
-  layoutSupport_->elementAt(3,0)->addWidget( bGoHome = new WPushButton("Go Home") );
+  layoutSupport_->elementAt(3,1)->setColumnSpan(13);
+  layoutSupport_->elementAt(3,1)->setContentAlignment(AlignRight);
+  layoutSupport_->elementAt(3,1)->addWidget( bGoHome = new WPushButton("Go Home") );
   bGoHome->clicked().connect(this, &PcimapResultWidget::bGoHome_Click);
 
   osSupportTable_->setModel(osSupportModel_);
@@ -130,31 +139,50 @@ PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerW
 
 }
 
-PcimapResultWidget* PcimapResultWidget::Instance( WContainerWidget* parent)
+PcimapResultWidget* PcimapResultWidget::Instance( std::vector<PciDevice> lspci_list, WContainerWidget* parent)
 {
-  if( parent == 0 ){
-	wApp->log("debug") << "parent is 0!"; 					// @test
+  // if( parent == 0 ){
+  // 	wApp->log("debug") << "parent is 0!"; 					// @test
+  // 	if ( !instance_ ){
+  // 	  wApp->log("debug") << "no instance return NULL!!"; 	// @test
+  // 	  return NULL;
+  // 	}
+  // }
+  // else{
+  // 	if( !instance_ ){
+	  instance_ = new PcimapResultWidget(lspci_list, parent);
+	  wApp->log("debug") << "Object initiated!!"; 			// @test
+  // 	}
+  // }
+  wApp->log("debug") << "return instance, No. " << instance_count; // @test
+  return instance_;
+  
+}
+
+PcimapResultWidget* PcimapResultWidget::Instance()
+{
+  // if( parent == 0 ){
+  // 	wApp->log("debug") << "parent is 0!"; 					// @test
 	if ( !instance_ ){
 	  wApp->log("debug") << "no instance return NULL!!"; 	// @test
 	  return NULL;
 	}
-  }
-  else{
-	if( !instance_ ){
-	  instance_ = new PcimapResultWidget(parent);
-	  wApp->log("debug") << "Object initiated!!"; 			// @test
-	}
-  }
+  // }
+  // else{
+  // 	if( !instance_ ){
+  // 	  instance_ = new PcimapResultWidget(lspci_list, parent);
+  // 	  wApp->log("debug") << "Object initiated!!"; 			// @test
+  // 	}
+  // }
   wApp->log("debug") << "return instance, No. " << instance_count; // @test
   return instance_;
-
 }
 
 PcimapResultWidget::~PcimapResultWidget()
 {
   instance_ = NULL;
   instance_count = 0;
-  lspci_list.clear();
+  lspci_list_.clear();
 }
 
 
@@ -207,7 +235,7 @@ string queryModuleName( string mod_name_id );
 void PcimapResultWidget::lspciTableRowSelected(WModelIndex index, WMouseEvent event)
 {
   PciDevice* selected_item;
-  selected_item = ( &lspci_list.at(index.row()) );
+  selected_item = ( &lspci_list_.at(index.row()) );
   fillDeviceDetails( *selected_item );
 
   std::multimap<string,string> uKernel_mod_list; // (unique Kernel id, module name id)
@@ -280,6 +308,97 @@ void PcimapResultWidget::fillDeviceDetails( const PciDevice& selected_device )
   editClass_->setText( selected_device.getClass() );
   editSubclass_->setText( selected_device.getSubclass() );
   editProgif_->setText( selected_device.getProgif() );
+}
+
+void PcimapResultWidget::bSaveBoard_Click()
+{
+  dialogBoard_ = new WDialog("Save Mainboard");
+
+  new WText("Store Mainboard configuration on Database! <br />Model Name: ", dialogBoard_->contents() );
+  editBoard_ = new WLineEdit( dialogBoard_->contents() );
+  new WBreak( dialogBoard_->contents() );
+  WPushButton* dialogBoardOk = new WPushButton("Ok", dialogBoard_->contents());
+  WPushButton* dialogBoardCancel = new WPushButton("Cancel", dialogBoard_->contents());
+
+  (*dialogBoardOk).clicked().connect( SLOT(dialogBoard_, WDialog::accept) );
+  (*dialogBoardCancel).clicked().connect( SLOT(dialogBoard_, WDialog::reject) );
+
+  dialogBoard_->show();
+
+  dialogBoard_->finished().connect(this, &PcimapResultWidget::dialogBoard_Close);
+}
+
+
+void PcimapResultWidget::dialogBoard_Close( WDialog::DialogCode dialog_code )
+{
+
+  if ( dialog_code == WDialog::Accepted ){
+	// editVendor_->setText( editBoard_->text().narrow() ); // @test
+	string board_name = editBoard_->text().narrow();
+	storeMainBoard( board_name );
+  }
+  delete dialogBoard_;
+
+}
+
+string queryBoardModelId( string board_name );
+string insertBoardModel( string board_name );
+void insertBoardDevices( string board_id, std::vector<string>& device_id_list );
+
+void PcimapResultWidget::storeMainBoard( string board_name )
+{
+
+  std::vector<string> uDevIdList;
+  string board_id = queryBoardModelId( board_name );
+  if ( board_id  == "" ){
+	board_id = insertBoardModel( board_name );
+
+	uDevIdList = getUniqueDevIdList(); // uDevID list of lspci_list_..
+	
+	insertBoardDevices( board_id, uDevIdList );
+
+	// @TODO: !!! ALSO INSERT INTO DEV_MOD.. something like: checkDeviceModules( uDevIdList );
+  }
+  else{
+	// @TODO: WARN THAT THE BOARD ALREADY EXISTS!! nothing done..
+  }
+  
+}
+
+string queryUniquePcisubId(string vendor_code, string device_code, string subvendor_code, string subdevice_code);
+string queryUniqueProgifId(string class_code, string subclass_code, string progif_code);
+string checkPciSpcId( string uPcisub_id, string uProgif_id );
+string checkUniqueDeviceId( string dev_special_id, int bus_type = 1 );
+
+std::vector<string> PcimapResultWidget::getUniqueDevIdList()
+{
+  std::vector<string> uDevIdList;
+  string uPcisubId, uProgifId, pciSpcId, uDevId;
+
+  std::vector<PciDevice>::iterator lspci_iter;
+  for( lspci_iter = lspci_list_.begin(); lspci_iter != lspci_list_.end(); ++lspci_iter ){
+	uPcisubId = queryUniquePcisubId(lspci_iter->getVendor(), 	// Returns uPcisubID from pci_subsystems..
+									lspci_iter->getDevice(),
+									lspci_iter->getSubvendor(),
+									lspci_iter->getSubdevice());
+	if( uPcisubId != "" ){
+	  uProgifId = queryUniqueProgifId(lspci_iter->getClass(), 	// Returns uProgifID from pci_prog_ifs.. 
+									  lspci_iter->getSubclass(),
+									  lspci_iter->getProgif());
+
+	  pciSpcId = checkPciSpcId( uPcisubId, uProgifId ); // Returns pciSpcID from pci_all, adds if not exists..
+	  uDevId = checkUniqueDeviceId( pciSpcId ); // Returns uDevID from all_devices, adds if not exists..
+	  uDevIdList.push_back( uDevId );
+	  wApp->log("debug") <<" !pciSpcId:"<< pciSpcId << " !uDevId:" << uDevId ; // @test
+	}
+	else{
+	  // @TODO: WHAT IF THE DEVICE DOESN'T EXIST IN DB!!?
+	  wApp->log("debug") << "DO SOMETHING IF DEVICE DOESN'T EXIST ON DB!!" ; // @test
+	}
+	
+  }
+
+  return uDevIdList;
 }
 
 void PcimapResultWidget::bGoHome_Click()
