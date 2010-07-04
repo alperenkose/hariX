@@ -8,6 +8,7 @@
     :name "query_pcimap.wt"
     :path ""
     :source '("pcimapQuery.cc")
+    :auxsource '("pci_device.hpp")
     )
    )
   )

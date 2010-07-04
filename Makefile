@@ -12,10 +12,11 @@ ede_FILES=Project.ede Makefile
 query_pcimap_wt_SOURCES=pcimapQuery.cc
 query_pcimap.wt_OBJ= pcimapQuery.o
 CXX= g++
-CFLAGS= -g
+CFLAGS= -g -Wall -Weffc++
 LIBDIRS= -L/usr/local/lib
 LIBS= -lwt \
--lwthttp
+-lwthttp \
+-lwtext
 LDFLAGS= $(LIBDIRS) $(LIBS) -Wl,-rpath,/usr/local/lib
 CXX_COMPILE=$(CXX) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 CXX_DEPENDENCIES=-Wp,-MD,.deps/$(*F).P
@@ -24,7 +25,7 @@ VERSION=1.0
 DISTDIR=$(top)Harix PreAlpha-$(VERSION)
 top_builddir = 
 
-DEP_FILES=.deps/pcimapQuery.P
+DEP_FILES=.deps/pcimapQuery.P .deps/pci_device.P
 
 all: query_pcimap.wt
 
