@@ -1,7 +1,7 @@
 #include <Wt/WStackedWidget>
 
 #include "harixApp.hpp"
-#include "pcimapQuery.hpp"
+#include "lspci_query/pcimapQuery.hpp"
 #include "home.hpp"
 
 using namespace Wt;

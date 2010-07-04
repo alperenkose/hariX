@@ -9,10 +9,10 @@
 #include <Wt/WText>
 
 
-#include "harixApp.hpp"			// JUST FOR wApp!!
+#include "../harixApp.hpp"			// JUST FOR wApp!!
 #include "pcimapResult.hpp"
 #include "pcimapQuery.hpp"
-#include "pci_device.hpp"
+#include "../pci_device.hpp"
 
 using namespace Wt;
 using std::string;

@@ -3,8 +3,8 @@
 #include <Wt/WBreak>
 
 #include "home.hpp"
-#include "analyzeOS.hpp"
-#include "pcimapQuery.hpp"
+#include "analyze_os/analyzeOS.hpp"
+#include "lspci_query/pcimapQuery.hpp"
 
 using namespace Wt;
 

@@ -10,8 +10,8 @@
 #include <Wt/WGroupBox>
 
 #include "analyzeOS.hpp"
-#include "home.hpp"
-#include "os_info.hpp"
+#include "../home.hpp"
+#include "../os_info.hpp"
 
 using namespace Wt;
 
@@ -184,6 +184,7 @@ void AnalyzeOsWidget::bCheckOs_Click()
   osKernelId=queryOsKernelId(osDist_->getDistro(),osDist_->getRelease(),osDist_->getKernel(),osDist_->getArch());
   if( osKernelId != ""){
 	// OS Found!
+	// show ukernelid!!!!
 	txtOsResult_->setText("Operating System Already in Database!");
 	bOsAddUpdate_->setText("Update Pcimap!");
 	layoutCheckResult_->show();

@@ -6,9 +6,9 @@
 #include <Wt/WTextArea>
 
 #include "pcimapQuery.hpp"
-#include "pci_device.hpp"
+#include "../pci_device.hpp"
 #include "pcimapResult.hpp"
-#include "home.hpp"
+#include "../home.hpp"
 
 using namespace Wt;
 
