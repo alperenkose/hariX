@@ -1,46 +1,21 @@
-// #include <Wt/WApplication>
+
 #include <Wt/WBreak>
 #include <Wt/WContainerWidget>
 #include <Wt/WStackedWidget>
-// #include <Wt/WLineEdit>
 #include <Wt/WPushButton>
 #include <Wt/WTextArea>
 
 #include "pcimapQuery.hpp"
 #include "pci_device.hpp"
-#include "harixApp.hpp"
+#include "pcimapResult.hpp"
 
 
 using namespace Wt;
-// using std::vector;
 
 void selectWidget( WContainerWidget* widget );
 
-// ------------------ test
-QueryResult* QueryResult::instance_ = NULL;
-QueryResult::QueryResult( WContainerWidget* parent ) : WContainerWidget(parent)
-{
-  // test_query = new Wt::WTextArea("Results Page", parent); // @test
-  addWidget( test_query = new WTextArea("Results Page...") );
-  test_query->setColumns(60);		  // @test
-  test_query->setFocus();
-  
-}
-
-QueryResult* QueryResult::Instance( WContainerWidget* parent)
-{
-  if( parent == 0 ){
-	if ( !instance_ )
-	  return NULL;
-  }
-  else
-	if( !instance_ )
-	  instance_ = new QueryResult(parent);
-  return instance_;
-
-}
-
-// ------------------ test
+PcimapQueryWidget* PcimapQueryWidget::instance_ = NULL;
+std::vector<PciDevice> PcimapQueryWidget::lspci_list;
 
 PcimapQueryWidget::PcimapQueryWidget( WContainerWidget* parent ) : WContainerWidget(parent)
 {
@@ -50,23 +25,40 @@ PcimapQueryWidget::PcimapQueryWidget( WContainerWidget* parent ) : WContainerWid
 
   addWidget(pcimapList_ = new WTextArea());
   pcimapList_->setColumns(60);
-  // pcimapList_->setRows(10);
   pcimapList_->setFocus();
 
-
-
-  // root()->addWidget(new WBreak()); // requires WContainerWidget to be included
   addWidget(new WBreak());
 
-  addWidget(bQuery_ = new WPushButton("Query Devices")); // create query button
+  addWidget(bQuery_ = new WPushButton("Query Devices")); 	// create query button
 
-  bQuery_->clicked().connect(this, &PcimapQueryWidget::getLspciList);
+  bQuery_->clicked().connect(this, &PcimapQueryWidget::readLspciList);
 
 }
 
-void PcimapQueryWidget::getLspciList()
+PcimapQueryWidget* PcimapQueryWidget::Instance( WContainerWidget* parent)
 {
-  destroy_lspci_list();			// DESTROY PREVIOUS LIST!!
+  if( parent == 0 ){
+	// wApp->log("debug") << "parent is 0!"; 					// @test
+	if ( !instance_ ){
+	  // wApp->log("debug") << "no instance return NULL!!"; 	// @test
+	  return NULL;
+	}
+  }
+  else{
+	// wApp->log("debug") << "received parent!"; 				// @test
+	if( !instance_ ){
+	  instance_ = new PcimapQueryWidget(parent);
+	  // wApp->log("debug") << "Object initiated!!"; 			// @test
+	}
+  }
+  // wApp->log("debug") << "return instance, No. " << instance_count; // @test
+  return instance_;
+
+}
+
+void PcimapQueryWidget::readLspciList()
+{
+  destroyLspciList();			// DESTROY PREVIOUS LIST!!
   char coloum_count;
   char lspciLine[53];
   std::string pcimapListContent = (pcimapList_->text()).narrow();
@@ -132,20 +124,20 @@ void PcimapQueryWidget::getLspciList()
 	delete pci_dev;
   }
 
-  // @TODO: BASKA BI FONKDA LSPCI_LISTDEN VERILERI ALARAK, TABLOYU DOLDUR..
-  // SONRA DETAILS TUSU ILE HANGISI NE TARAFINDAN DESTEKLENIYO SORGULARSIN..
-  // root()->clear();
-  // new QueryResult(root());
-
-  QueryResult* qresult;
-  if ( (qresult = QueryResult::Instance()) == NULL )
-	selectWidget( QueryResult::Instance(parent_) ); // Add widget to StackedWidget and select it..
+  PcimapResultWidget* qresult;
+  if ( (qresult = PcimapResultWidget::Instance()) == NULL )
+	selectWidget( PcimapResultWidget::Instance(parent_) ); // Add widget to StackedWidget and select it..
   else
 	selectWidget( qresult );
 
 }
 
-void PcimapQueryWidget::destroy_lspci_list()
+std::vector<PciDevice>& PcimapQueryWidget::getLspciList()
+{
+  return lspci_list;
+}
+
+void PcimapQueryWidget::destroyLspciList()
 {
   int lspci_list_size = lspci_list.size();
   for ( int k=0; k<lspci_list_size; ++k )
@@ -154,7 +146,7 @@ void PcimapQueryWidget::destroy_lspci_list()
 
 PcimapQueryWidget::~PcimapQueryWidget()
 {
-  destroy_lspci_list();
+  destroyLspciList();
 }
 
 

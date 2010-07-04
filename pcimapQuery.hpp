@@ -4,40 +4,30 @@
 #define _PCIMAPQUERY_
 
 #include <Wt/WContainerWidget>
-// #include "pci_device.hpp"
+
 class PciDevice;
 
 class PcimapQueryWidget : public Wt::WContainerWidget
 {
 private:
+  PcimapQueryWidget( Wt::WContainerWidget* parent);
+  static PcimapQueryWidget* instance_;
+  
   Wt::WTextArea* pcimapList_;
   Wt::WPushButton* bQuery_;
   Wt::WContainerWidget* parent_;
 
-  std::vector<PciDevice> lspci_list;	// @TODO: change all occurences to lspci_list_
+  static std::vector<PciDevice> lspci_list;	// @TODO: change all occurences to lspci_list_
 
+  void readLspciList();
+  void destroyLspciList();
   
 public:
-  PcimapQueryWidget( Wt::WContainerWidget* parent);
   ~PcimapQueryWidget();
 
-  void getLspciList();
-  void destroy_lspci_list();
-};
-
-// ------------ TEST ------------
-class QueryResult : public Wt::WContainerWidget
-{
-private:
-  QueryResult( WContainerWidget* parent );
-  static QueryResult* instance_;
-  Wt::WTextArea* test_query;		// @test
-public:
-  static QueryResult* Instance( WContainerWidget* parent = 0 );
+  static PcimapQueryWidget* Instance( WContainerWidget* parent = 0 );
+  static std::vector<PciDevice>& getLspciList();
 
 };
-
-// ------------- TEST -----------
-
 
 #endif	// _PCIMAPQUERY_
