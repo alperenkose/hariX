@@ -6,8 +6,8 @@
 #include <Wt/WLogger>
 #include <Wt/WTable>
 #include <Wt/WLineEdit>
-#include <Wt/WText>				// @test
-#include <Wt/WString>			// @test
+#include <Wt/WText>
+
 
 #include "harixApp.hpp"			// JUST FOR wApp!!
 #include "pcimapResult.hpp"
@@ -41,7 +41,6 @@ PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerW
   panelTable_->setCentralWidget( lspciTable_ = new WTableView() );
   // lspciTable_->setAlternatingRowColors(true); // @TODO: Requires CSS - Modify CSS
 
-  // lspciTable_->setRowHeight(100);
   lspciTable_->setColumnWidth(0, WLength(240));
   lspciTable_->setColumnWidth(1, WLength(200));
   lspciTable_->setColumnWidth(2, WLength(500));
@@ -50,7 +49,8 @@ PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerW
   lspciTable_->setModel(lspciModel_);
 
   lspciTable_->doubleClicked().connect(this, &PcimapResultWidget::lspciTableRowSelected);
-  test_text_ = new WText(this);					// @test
+
+  addWidget( new WBreak() );
 
   
   /**
@@ -63,7 +63,6 @@ PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerW
   osSupportModel_->setHeaderData(2, Horizontal, string("Kernel"));
   osSupportModel_->setHeaderData(3, Horizontal, string("Arch."));
   osSupportModel_->setHeaderData(4, Horizontal, string("Driver"));
-
 
   panelSupport_ = new WPanel(this);
   panelSupport_->resize(1000,300);
@@ -87,6 +86,21 @@ PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerW
   layoutSupport_->elementAt(0,11)->addWidget( editSubclass_ = new WLineEdit() );
   layoutSupport_->elementAt(0,12)->addWidget( new WText("Progif:") );
   layoutSupport_->elementAt(0,13)->addWidget( editProgif_ = new WLineEdit() );
+
+  editVendor_->setReadOnly(true);
+  editVendor_->resize( WLength(40), WLength::Auto );
+  editDevice_->setReadOnly(true);
+  editDevice_->resize( WLength(40), WLength::Auto );
+  editSubvendor_->setReadOnly(true);
+  editSubvendor_->resize( WLength(40), WLength::Auto );
+  editSubdevice_->setReadOnly(true);
+  editSubdevice_->resize( WLength(40), WLength::Auto );
+  editClass_->setReadOnly(true);
+  editClass_->resize( WLength(20), WLength::Auto );
+  editSubclass_->setReadOnly(true);
+  editSubclass_->resize( WLength(20), WLength::Auto );
+  editProgif_->setReadOnly(true);
+  editProgif_->resize( WLength(20), WLength::Auto );
   
   layoutSupport_->elementAt(1,0)->setColumnSpan(14);
   layoutSupport_->elementAt(1,0)->addWidget( new WText("Operating System Support Details:") );
@@ -94,12 +108,15 @@ PcimapResultWidget::PcimapResultWidget( WContainerWidget* parent ) : WContainerW
   
   layoutSupport_->elementAt(2,0)->setColumnSpan(14);
   layoutSupport_->elementAt(2,0)->addWidget( osSupportTable_ = new WTableView() );
+  layoutSupport_->rowAt(2)->setHeight( WLength(250) );
 
   osSupportTable_->setModel(osSupportModel_);
-
-  	// @TODO: SECIM ILE HANGISI NE TARAFINDAN DESTEKLENIYO SORGULA
-
-
+  osSupportTable_->resize(950,350);
+  osSupportTable_->setColumnWidth(0, WLength(200));
+  osSupportTable_->setColumnWidth(1, WLength(200));
+  osSupportTable_->setColumnWidth(2, WLength(200));
+  osSupportTable_->setColumnWidth(3, WLength(100));
+  osSupportTable_->setColumnWidth(4, WLength(200));
 
 }
 
@@ -113,7 +130,6 @@ PcimapResultWidget* PcimapResultWidget::Instance( WContainerWidget* parent)
 	}
   }
   else{
-	wApp->log("debug") << "received parent!"; 				// @test
 	if( !instance_ ){
 	  instance_ = new PcimapResultWidget(parent);
 	  wApp->log("debug") << "Object initiated!!"; 			// @test
@@ -131,7 +147,7 @@ std::vector<string>
 queryDeviceName(string vendor_code,string device_code,string subvendor_code,string subdevice_code);
 
 std::vector<WStandardItem*>
-PcimapResultWidget::pciDeviceToRowItem( PciDevice* current_item )
+PcimapResultWidget::pciDeviceToRowItem( const PciDevice* current_item )
 {
   std::vector<string> full_class, full_device;
   
@@ -172,18 +188,14 @@ string queryModuleName( string mod_name_id );
 
 void PcimapResultWidget::lspciTableRowSelected(WModelIndex index, WMouseEvent event)
 {
-  std::stringstream ss;
-  ss << index.row();
-  test_text_->setText(ss.str()); // @test
+  PciDevice* selected_item;
+  selected_item = ( &lspci_list.at(index.row()) );
+  fillDeviceDetails( *selected_item );
 
   std::multimap<string,string> uKernel_mod_list; // (unique Kernel id, module name id)
-
   std::vector<string> os;
   std::vector< std::vector<string> > os_list;
   string module_name;
-
-  PciDevice* selected_item;
-  selected_item = ( &lspci_list.at(index.row()) ); // !! YANLIS OLABILIR !!
 
   uKernel_mod_list = queryPcimapOsList( selected_item->getVendor(), selected_item->getDevice(),
   							selected_item->getSubvendor(),selected_item->getSubdevice(),
@@ -198,9 +210,56 @@ void PcimapResultWidget::lspciTableRowSelected(WModelIndex index, WMouseEvent ev
   	os_list.push_back(os);
   }
 
-  // std::vector<os>::iterator os_iter;
-  // for( os_iter=os_list.begin(); os_iter!=os_list.end(); ++os_iter ){
-  // 	// osToOsSupportRow /os_iter/
-  // }
+  osSupportModel_->removeRows(0, osSupportModel_->rowCount());
+  if( !os_list.empty() ){
+	std::vector< std::vector<string> >::iterator os_iter;
+	for( os_iter=os_list.begin(); os_iter!=os_list.end(); ++os_iter )
+	  osSupportModel_->appendRow( osToSupportRow( *os_iter ) );
+  }
+  else{
+	wApp->log("debug") << "NOOOOOO OS'ES!"; 					// @test
+  }
+
+}
+
+std::vector<WStandardItem*>
+PcimapResultWidget::osToSupportRow( const std::vector<string>& os )
+{
+  std::vector<WStandardItem *> result;
+  WStandardItem *item;
+  if( !os.empty() ){
+	// column 0:
+	item = new WStandardItem( os.at(0) ); 		// 
+	result.push_back(item);
+
+	// column 1: 
+	item = new WStandardItem( os.at(1) ); 		// 
+	result.push_back(item);
   
+	// column 2: 
+	item = new WStandardItem( os.at(2) ); 		// 
+	result.push_back(item);
+
+	// column 3:
+	item = new WStandardItem( os.at(3) ); 		// 
+	result.push_back(item);
+
+	// column 4:
+	item = new WStandardItem( os.at(4) ); 		// 
+	result.push_back(item);
+
+  }
+
+  return result;
+}
+
+void PcimapResultWidget::fillDeviceDetails( const PciDevice& selected_device )
+{
+  editVendor_->setText( selected_device.getVendor() );
+  editDevice_->setText( selected_device.getDevice() );
+  editSubvendor_->setText( selected_device.getSubvendor() );
+  editSubdevice_->setText( selected_device.getSubdevice() );
+  editClass_->setText( selected_device.getClass() );
+  editSubclass_->setText( selected_device.getSubclass() );
+  editProgif_->setText( selected_device.getProgif() );
 }

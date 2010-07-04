@@ -79,15 +79,12 @@ void PcimapQueryWidget::readLspciList()
 	  case 1:
 		pci_dev->setClass( get_s.substr(1,2) );
 		pci_dev->setSubclass( get_s.substr(3,2) );
-		// test_query->setText(test_query->text() +"Class: "+ pci_dev->getClass() + pci_dev->getSubclass() +"\n"); // @test
 		break;
 	  case 2:
 		pci_dev->setVendor( get_s.substr(1,4) );
-		// test_query->setText( test_query->text() + "vendor: " + pci_dev->getVendor() + "\n"  ); // @test
 		break;
 	  case 3:
 		pci_dev->setDevice( get_s.substr(1,4) );
-		// test_query->setText( test_query->text() + "device: " + pci_dev->getDevice() + "\n"  ); // @test
 		break;
 	  case 4:
 		// test_query->setText( test_query->text() + "rev: " + get_s + "\n"  ); // @test
@@ -95,12 +92,10 @@ void PcimapQueryWidget::readLspciList()
 	  case 5:
 		if( get_s.at(1) == 'p' ){
 		  pci_dev->setProgif( get_s.substr(2,2) );
-		  // test_query->setText( test_query->text() + "progif: " + pci_dev->getProgif() + "\n"  ); // @test
 		}
 		else {					// Prog-if is empty...
 		  if ( get_s != "\"\"" ){
 			pci_dev->setSubvendor( get_s.substr(1,4) );
-			// test_query->setText( test_query->text() + "subvendor: " + pci_dev->getSubvendor() + "\n"); // @test
 			++coloum_count;
 		  } // else subvendor is empty..
 		}
@@ -108,13 +103,11 @@ void PcimapQueryWidget::readLspciList()
 	  case 6:
 		if ( get_s != "\"\"" ){
 		  pci_dev->setSubvendor( get_s.substr(1,4) );
-		  // test_query->setText( test_query->text() + "subvendor: " + pci_dev->getSubvendor() + "\n"  ); // @test
 		} // else subvendor is empty..
 		break;
 	  case 7:
 		if ( get_s != "\"\"" ){
 		  pci_dev->setSubdevice( get_s.substr(1,4) );
-		  // test_query->setText( test_query->text() + "subdevice: " + pci_dev->getSubdevice() + "\n"  ); // @test
 		} // else subdevice is empty..
 		break;
 	  }
