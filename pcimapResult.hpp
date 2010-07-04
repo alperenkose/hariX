@@ -11,8 +11,12 @@ private:
   PcimapResultWidget( WContainerWidget* parent );
   static PcimapResultWidget* instance_;
   static int instance_count;
-  Wt::WTextArea* test_query;		// @test
+  
   std::vector<PciDevice> lspci_list;
+  
+  Wt::WStandardItemModel* lspciModel_;
+  Wt::WTableView* lspciTable_;
+  Wt::WPanel* panel;
 public:
   static PcimapResultWidget* Instance( WContainerWidget* parent = 0 );
   
