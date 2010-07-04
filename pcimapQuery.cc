@@ -1,58 +1,45 @@
-
-#include <Wt/WApplication>
+// #include <Wt/WApplication>
 #include <Wt/WBreak>
 #include <Wt/WContainerWidget>
 // #include <Wt/WLineEdit>
 #include <Wt/WPushButton>
 #include <Wt/WTextArea>
 
+#include "pcimapQuery.hpp"
 #include "pci_device.hpp"
+
 
 using namespace Wt;
 using std::vector;
 
-void destroy_lspci_list(void);
-
-vector<PciDevice> lspci_list;
 
 // ------------ TEST ------------
-class QueryResult : public WContainerWidget
-{
-private:
-  WTextArea* test_query;		// @test
-public:
-  QueryResult( WContainerWidget* parent );
+// class QueryResult : public WContainerWidget
+// {
+// private:
+//   WTextArea* test_query;		// @test
+// public:
+//   QueryResult( WContainerWidget* parent );
   
-};
+// };
 
-QueryResult::QueryResult( WContainerWidget* parent = 0 ) : WContainerWidget(parent)
-{
-  test_query = new WTextArea("Results Page", parent); // @test
-  test_query->setColumns(60);		  // @test
-  test_query->setFocus();
+// QueryResult::QueryResult( WContainerWidget* parent = 0 ) : WContainerWidget(parent)
+// {
+//   test_query = new WTextArea("Results Page", parent); // @test
+//   test_query->setColumns(60);		  // @test
+//   test_query->setFocus();
   
-}
+// }
 // ------------- TEST -----------
 
-class PcimapQueryApp : public WApplication
+
+
+PcimapQueryWidget::PcimapQueryWidget( WContainerWidget* parent ) : WContainerWidget(parent)
 {
-private:
-  WTextArea* pcimapList_;
-  WPushButton* bQuery_;
+  // setTitle("Query Pcimaps");                               // application title
 
-  
-public:
-  PcimapQueryApp(const WEnvironment& env);
-  ~PcimapQueryApp();
 
-  void getLspciList();
-};
-
-PcimapQueryApp::PcimapQueryApp(const WEnvironment& env) : WApplication(env)
-{
-  setTitle("Query Pcimaps");                               // application title
-
-  pcimapList_ = new WTextArea(root());
+  addWidget(pcimapList_ = new WTextArea());
   pcimapList_->setColumns(60);
   // pcimapList_->setRows(10);
   pcimapList_->setFocus();
@@ -60,15 +47,15 @@ PcimapQueryApp::PcimapQueryApp(const WEnvironment& env) : WApplication(env)
 
 
   // root()->addWidget(new WBreak()); // requires WContainerWidget to be included
-  new WBreak(root());
+  addWidget(new WBreak());
 
-  bQuery_ = new WPushButton("Query Devices", root()); // create query button
+  addWidget(bQuery_ = new WPushButton("Query Devices")); // create query button
 
-  bQuery_->clicked().connect(this, &PcimapQueryApp::getLspciList);
+  bQuery_->clicked().connect(this, &PcimapQueryWidget::getLspciList);
 
 }
 
-void PcimapQueryApp::getLspciList()
+void PcimapQueryWidget::getLspciList()
 {
   destroy_lspci_list();			// DESTROY PREVIOUS LIST!!
   char coloum_count;
@@ -138,53 +125,23 @@ void PcimapQueryApp::getLspciList()
 
   // @TODO: BASKA BI FONKDA LSPCI_LISTDEN VERILERI ALARAK, TABLOYU DOLDUR..
   // SONRA DETAILS TUSU ILE HANGISI NE TARAFINDAN DESTEKLENIYO SORGULARSIN..
-  root()->clear();
-  new QueryResult(root());
+  // root()->clear();
+  // new QueryResult(root());
+  
 
 
 }
 
-void destroy_lspci_list(void)
+void PcimapQueryWidget::destroy_lspci_list()
 {
   int lspci_list_size = lspci_list.size();
   for ( int k=0; k<lspci_list_size; ++k )
 	lspci_list.pop_back();
 }
 
-PcimapQueryApp::~PcimapQueryApp()
+PcimapQueryWidget::~PcimapQueryWidget()
 {
   destroy_lspci_list();
 }
-
-
-WApplication *createApplication(const WEnvironment& env)
-{
-  /*
-   * You could read information from the environment to decide whether
-   * the user has permission to start a new application
-   */
-  return new PcimapQueryApp(env);
-}
-
-int main(int argc, char **argv)
-{
-  /*
-   * Your main method may set up some shared resources, but should then
-   * start the server application (FastCGI or httpd) that starts listening
-   * for requests, and handles all of the application life cycles.
-   *
-   * The last argument to WRun specifies the function that will instantiate
-   * new application objects. That function is executed when a new user surfs
-   * to the Wt application, and after the library has negotiated browser
-   * support. The function should return a newly instantiated application
-   * object.
-   */
-  return WRun(argc, argv, &createApplication);
-}
-
-
-
-
-
 
 
