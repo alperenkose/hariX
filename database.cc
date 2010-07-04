@@ -734,7 +734,7 @@ string checkUniqueDeviceId( string dev_special_id, int bus_type = 1 )
 
 
 std::multimap<string, string>
-queryBoardList()
+getBoardList()
 {
   std::multimap<string, string> mainboard_list; // ( boardID, boardName )
   
@@ -856,4 +856,112 @@ std::vector<string> queryDeviceCodes( string udev_id, int bus_type = 1 )
   disconnectDatabase();
 
   return device_codes;
+}
+
+
+std::multimap<string,string>
+getOsList()
+{
+  std::multimap<string, string> os_list; // ( osID, osName )
+  
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT * FROM OSes");
+
+	while( commonResultSet->next() ){
+	  os_list.insert( std::pair<string,string>( commonResultSet->getString("osID"),
+												commonResultSet->getString("osName") ) );
+	}
+
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return os_list;
+}
+
+std::multimap<string,string>
+queryOsReleases( string os_id )
+{
+  std::multimap<string,string> release_list; // ( releaseID, releaseName )
+
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT * FROM os_releases WHERE osID_FK="+ os_id );
+
+	while( commonResultSet->next() ){
+	  release_list.insert( std::pair<string,string>( commonResultSet->getString("releaseID"),
+												commonResultSet->getString("releaseName") ) );
+	}
+
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+  
+  return release_list;
+}
+
+std::multimap<std::string,std::string> 		// multimap( uKerneID, kernelVersion-machineHardware )
+queryReleaseKernels( std::string release_id )
+{
+  std::multimap<string,string> kernel_list; // ( uKernelID, kernelVersion-Arch )
+
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT * FROM kernels WHERE releaseID_FK="+ release_id );
+
+	while( commonResultSet->next() ){
+	  kernel_list.insert( std::pair<string,string>( commonResultSet->getString("uKernelID"),
+													commonResultSet->getString("kernelVersion") +
+													"-" + commonResultSet->getString("machineHardware") ) );
+	}
+
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+  
+  return kernel_list;
+  
 }

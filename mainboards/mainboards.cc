@@ -45,12 +45,46 @@ MainboardsWidget::MainboardsWidget( WContainerWidget* parent ) : WContainerWidge
   boardsSelection_->resize( 150, WLength() );
   boardsSelection_->setVerticalSize(10);
 
-  layoutMainboard->elementAt(0,1)->addWidget( new WText("Selected boardID: ") );
-  layoutMainboard->elementAt(0,1)->addWidget( testText_ = new WText("test") );
-
   WPushButton* bBoardDevices;
   layoutMainboard->elementAt(1,0)->addWidget( bBoardDevices = new WPushButton("Show Configuration") );
   bBoardDevices->clicked().connect(this, &MainboardsWidget::bBoardDevices_Click);
+
+  layoutMainboard->elementAt(2,0)->addWidget( new WText("Selected uKernelID: ") );
+  layoutMainboard->elementAt(2,0)->addWidget( testText_ = new WText("none") );
+
+  layoutMainboard->columnAt(1)->setWidth( WLength(20) ); // @TODO..
+
+  layoutMainboard->elementAt(0,1)->addWidget( comboOS_ = new WComboBox() );
+  comboOS_->resize(150,20);
+  layoutMainboard->elementAt(0,1)->addWidget( new WBreak() );
+  layoutMainboard->elementAt(0,1)->addWidget( comboDist_ = new WComboBox() );
+  comboDist_->resize(150,20);
+  layoutMainboard->elementAt(0,1)->addWidget( new WBreak() );
+  layoutMainboard->elementAt(0,1)->addWidget( comboKer_ = new WComboBox() );
+  comboKer_->resize(150,20);
+  layoutMainboard->elementAt(0,1)->addWidget( new WBreak() );
+
+  layoutMainboard->elementAt(0,1)->addWidget( bCheckOs_ = new WPushButton("Check!") );
+  bCheckOs_->clicked().connect(this, &MainboardsWidget::bCheckOs_Click);
+  bCheckOs_->disable();
+
+  osModel_ = new WStandardItemModel(this);
+  fillOsModel();
+  comboOS_->setModel(osModel_);
+  comboOS_->setModelColumn(1);
+
+  releaseModel_ = new WStandardItemModel(this);
+  comboDist_->setModel( releaseModel_ );
+  comboDist_->setModelColumn(1);
+
+  kernelModel_ = new WStandardItemModel(this);
+  comboKer_->setModel( kernelModel_ );
+  comboKer_->setModelColumn(1);	// show kernelVersion and architecture together; 2.6.32 - i386
+
+  comboOS_->activated().connect( this, &MainboardsWidget::osSelectionChanged );
+  comboDist_->disable();
+  comboKer_->disable();
+  comboDist_->activated().connect( this, &MainboardsWidget::releaseSelectionChanged );
 
   layoutMainboard->elementAt(1,1)->addWidget( bGoHome_ = new WPushButton("Go Home"));
   layoutMainboard->elementAt(1,1)->setContentAlignment(AlignRight);
@@ -83,13 +117,13 @@ MainboardsWidget::~MainboardsWidget()
   
 }
 
-std::multimap<std::string, std::string> queryBoardList();
+std::multimap<std::string, std::string> getBoardList();
 
 void MainboardsWidget::fillMainboards( WStandardItemModel& boardsModel )
 {
   // std::multimap<std::string, std::string> mainboard_list; // ( boardID, boardName )
 
-  mainboard_list = queryBoardList();
+  mainboard_list = getBoardList();
 
   std::vector<WStandardItem *> result;
   WStandardItem *item;
@@ -109,24 +143,15 @@ void MainboardsWidget::fillMainboards( WStandardItemModel& boardsModel )
   }
 }
 
+
 void MainboardsWidget::bBoardDevices_Click()
 {
-  // @TODO: check if nothing is selected..
-  // std::stringstream ss;
-  // ss << boardsSelection_->currentIndex();
-  // std::string index = ss.str();
-
-
-  WModelIndex i1 = boardsProxyModel->index(boardsSelection_->currentIndex(),0 );
-  WModelIndex i2 = boardsProxyModel->mapToSource( i1 );
-  // WStadardItem *line = mainboards->itemFromIndex( i2 ); line->text();
-  
-  // WStandardItem::text()-> WString.narrow()
-  std::string board_id = (mainboards->itemFromIndex(i2))->text().narrow(); 
-  testText_->setText( board_id );
+  std::string board_id = getBoardIdentifier();
   
   showBoardConfiguration( board_id );
 }
+
+
 
 // return uDevID list of devices on given board
 std::vector<std::string> queryBoardDeviceList( std::string board_id );
@@ -134,6 +159,22 @@ std::vector<std::string> queryBoardDeviceList( std::string board_id );
 std::vector<std::string> queryDeviceCodes( std::string udev_id, int bus_type = 1 );
 
 void MainboardsWidget::showBoardConfiguration( std::string board_id  )
+{
+  std::vector<PciDevice> device_list = getBoardDeviceList( board_id );
+
+  PcimapResultWidget* pcilist;
+  if ( (pcilist = PcimapResultWidget::Instance()) == NULL ){
+	selectWidget( PcimapResultWidget::Instance(device_list,parent_, boardsSelection_->currentText().narrow()) );
+	removeWidget( MainboardsWidget::Instance() );
+	delete MainboardsWidget::Instance();	
+  }
+  else
+	wApp->log("debug") << "PcimapResultWidget already exists! this should NOT happen!";
+}
+
+
+
+std::vector<PciDevice> MainboardsWidget::getBoardDeviceList( std::string board_id  )
 {
   std::vector<PciDevice> device_list;
   
@@ -162,9 +203,184 @@ void MainboardsWidget::showBoardConfiguration( std::string board_id  )
 	delete pci_device;
   }
 
+  return device_list;
+}
+
+
+
+std::multimap<std::string,std::string> getOsList();
+
+void MainboardsWidget::fillOsModel()
+{
+  osList_ = getOsList();
+
+  std::vector<WStandardItem *> result;
+  WStandardItem *item;
+
+  item = new WStandardItem("0");
+  result.push_back(item);
+  item = new WStandardItem("Select OS");
+  result.push_back(item);
+  osModel_->appendRow(result);
+  result.clear();
+
+  std::multimap<std::string,std::string>::iterator os_iter;
+  for ( os_iter=osList_.begin(); os_iter!=osList_.end(); ++os_iter ){
+	item = new WStandardItem( os_iter->first ); // osID column
+	result.push_back(item);
+	item = new WStandardItem( os_iter->second ); // osName column
+	result.push_back(item);
+	// wApp->log("debug") << "OS ID:" << os_iter->first; // @test
+	// wApp->log("debug") << "OS Name:" << os_iter->second; // @test
+
+	osModel_->appendRow(result);
+	result.clear();
+  }
+  
+}
+
+std::multimap<std::string,std::string> queryOsReleases( std::string os_id );
+
+void MainboardsWidget::fillReleaseModel( std::string os_id )
+{
+  releaseModel_->removeRows(0, releaseModel_->rowCount()); // reset model..
+  
+  releaseList_ = queryOsReleases( os_id ); // multimap( osID, osName )
+  
+  std::vector<WStandardItem *> result;
+  WStandardItem *item;
+
+  item = new WStandardItem("0");
+  result.push_back(item);
+  item = new WStandardItem("Select Release");
+  result.push_back(item);
+  releaseModel_->appendRow(result);
+  result.clear();
+
+  std::multimap<std::string,std::string>::iterator release_iter;
+  for ( release_iter=releaseList_.begin(); release_iter!=releaseList_.end(); ++release_iter ){
+	item = new WStandardItem( release_iter->first ); // releaseID column
+	result.push_back(item);
+	item = new WStandardItem( release_iter->second ); // releaseName column
+	result.push_back(item);
+	// wApp->log("debug") << "releaseID:" << release_iter->first; // @test
+	// wApp->log("debug") << "releaseName:" << release_iter->second; // @test
+
+
+	releaseModel_->appendRow(result);
+	result.clear();
+  }
+}
+
+std::multimap<std::string,std::string> queryReleaseKernels( std::string release_id );
+
+void MainboardsWidget::fillKernelModel( std::string release_id )
+{
+  kernelModel_->removeRows(0, kernelModel_->rowCount()); // reset model..
+  
+  kernelList_ = queryReleaseKernels( release_id ); // multimap( uKerneID, kernelVersion-machineHardware )
+  
+  std::vector<WStandardItem *> result;
+  WStandardItem *item;
+
+  // item = new WStandardItem("0");
+  // result.push_back(item);
+  // item = new WStandardItem("Select Kernel");
+  // result.push_back(item);
+  // kernelModel_->appendRow(result);
+  // result.clear();
+
+  std::multimap<std::string,std::string>::iterator kernel_iter;
+  for ( kernel_iter=kernelList_.begin(); kernel_iter!=kernelList_.end(); ++kernel_iter ){
+	item = new WStandardItem( kernel_iter->first ); // uKernelID column
+	result.push_back(item);
+	item = new WStandardItem( kernel_iter->second ); // kernelVersion-machineHardware column
+	result.push_back(item);
+	// wApp->log("debug") << "uKernel ID:" << kernel_iter->first; // @test
+	// wApp->log("debug") << "kernelVersion:" << kernel_iter->second; // @test
+
+
+	kernelModel_->appendRow(result);
+	result.clear();
+  }
+}
+
+void MainboardsWidget::osSelectionChanged( int selected_index )
+{
+  std::stringstream ss;
+  ss << selected_index;
+  std::string index = ss.str();
+
+  WModelIndex i1 = osModel_->index(comboOS_->currentIndex(),0 );
+  std::string os_id = (osModel_->itemFromIndex(i1))->text().narrow();
+
+  if( os_id != "0" ){
+	comboDist_->enable();
+	fillReleaseModel( os_id );
+	comboDist_->setCurrentIndex(0);
+  }
+  else{
+	comboDist_->disable();
+  }
+  comboKer_->disable();
+  comboKer_->setCurrentIndex(0);
+  bCheckOs_->disable();
+}
+
+void MainboardsWidget::releaseSelectionChanged( int selected_index )
+{
+  std::stringstream ss;
+  ss << selected_index;
+  std::string index = ss.str();
+
+  WModelIndex i1 = releaseModel_->index(comboDist_->currentIndex(),0 );
+  std::string release_id = (releaseModel_->itemFromIndex(i1))->text().narrow();
+
+  if( release_id != "0" ){
+	comboKer_->enable();
+	fillKernelModel( release_id );
+	comboKer_->setCurrentIndex(0);
+	bCheckOs_->enable();
+  }
+  else{
+	comboKer_->disable();
+	bCheckOs_->disable();
+  }
+}
+
+
+std::string MainboardsWidget::getOsIdentifier()
+{
+  WModelIndex i1 = kernelModel_->index(comboKer_->currentIndex(),0 );
+  std::string uKernel_id = (kernelModel_->itemFromIndex(i1))->text().narrow();
+
+  if( uKernel_id == "0" )
+	return "";
+  return uKernel_id;
+}
+
+std::string MainboardsWidget::getBoardIdentifier()
+{
+  WModelIndex i1 = boardsProxyModel->index(boardsSelection_->currentIndex(),0 );
+  WModelIndex i2 = boardsProxyModel->mapToSource( i1 );
+
+  return ( (mainboards->itemFromIndex(i2))->text().narrow() ); 
+}
+
+void MainboardsWidget::bCheckOs_Click()
+{
+  // testText_->setText( getOsIdentifier() ); // @test
+  std::string board_id = getBoardIdentifier();
+  std::vector<PciDevice> device_list = getBoardDeviceList( board_id );
+
   PcimapResultWidget* pcilist;
-  if ( (pcilist = PcimapResultWidget::Instance()) == NULL )
-	selectWidget( PcimapResultWidget::Instance(device_list, boardsSelection_->currentText().narrow(),parent_) );
+  if ( (pcilist = PcimapResultWidget::Instance()) == NULL ){
+	selectWidget( PcimapResultWidget::Instance( device_list, parent_,
+											   boardsSelection_->currentText().narrow(),
+											   getOsIdentifier()) );
+	removeWidget( MainboardsWidget::Instance() );
+	delete MainboardsWidget::Instance();	
+  }
   else
 	wApp->log("debug") << "PcimapResultWidget already exists! this should NOT happen!";
 }

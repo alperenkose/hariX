@@ -1,10 +1,10 @@
 
 
 - In PcimapResultWidget;
-	** Mark the devices as (no driver in any os, some OSes missing driver, all has driver), preferably using an additional column with colors to indicate it ;)
 	* Filtering on Device Details; probably with OS or Kernel..
 
-- shall we allow mainboards with same names..
+- shall we allow mainboards with same names..???
+
 - Store device-module information in dev_mode when storing the mainboard!! ( lspciTableRowSelected'daki mantikla uModIDlerin listesini alip `dev_mod` tablosuna koyabilin.. )
 
 - if we want to delete an OS; the corresponding entries from `pcimap` and `modules` should be deleted first..

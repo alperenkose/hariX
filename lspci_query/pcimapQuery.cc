@@ -135,7 +135,7 @@ void PcimapQueryWidget::readLspciList()
 
   PcimapResultWidget* qresult;
   if ( (qresult = PcimapResultWidget::Instance()) == NULL )
-	selectWidget( PcimapResultWidget::Instance(lspci_list,"",parent_) ); // Add widget to StackedWidget and select..
+	selectWidget( PcimapResultWidget::Instance(lspci_list,parent_) ); // Add widget to StackedWidget and select..
   else
 	selectWidget( qresult );
 

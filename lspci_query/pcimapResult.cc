@@ -22,37 +22,69 @@ using std::string;
 void selectWidget( WContainerWidget* widget );
 void removeWidget( WContainerWidget* widget );
 
+std::vector<string> queryOs( string unique_kernel_id );
+
+static const char *supportIcons[] = {
+  "resources/button_cancel_16x16.png",
+  "resources/button_ok_16x16.png"
+};
+
 PcimapResultWidget* PcimapResultWidget::instance_ = NULL;
 int PcimapResultWidget::instance_count = 0;
 PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
+										WContainerWidget* parent,
 										string board_name,
-										WContainerWidget* parent ) : WContainerWidget(parent)
+										string ukernel_id) : WContainerWidget(parent)
 {
   ++instance_count;
 
+  uKernelId_ = ukernel_id;
   // lspci_list_ = PcimapQueryWidget::getLspciList();
   lspci_list_ = lspci_list;
 
-  lspciModel_ = new WStandardItemModel( 0, 3, this );
-  lspciModel_->setHeaderData(0, Horizontal, string("Class"));
-  lspciModel_->setHeaderData(1, Horizontal, string("Vendor"));
-  lspciModel_->setHeaderData(2, Horizontal, string("Device"));
+  panelTable_ = new WPanel(this);
+  panelTable_->resize(1000,300);
+  panelTable_->setCentralWidget( lspciTable_ = new WTableView() );
+
+
+  lspciTable_->setSortingEnabled(false);
+  lspciTable_->setSelectionMode(SingleSelection);
+
+  if( ukernel_id == "" ){
+	lspciModel_ = new WStandardItemModel( 0, 3, this );
+	lspciModel_->setHeaderData(0, Horizontal, string("Class"));
+	lspciModel_->setHeaderData(1, Horizontal, string("Vendor"));
+	lspciModel_->setHeaderData(2, Horizontal, string("Device"));
+	lspciTable_->setColumnWidth(0, WLength(240));
+	lspciTable_->setColumnWidth(1, WLength(200));
+	lspciTable_->setColumnWidth(2, WLength(500));
+	if( board_name != "" ){
+	  panelTable_->setTitle("Configuration of Mainboard: " + board_name );
+	}
+  }
+  else {
+	lspciModel_ = new WStandardItemModel( 0, 4, this );
+	lspciModel_->setHeaderData(0, Horizontal, string("Class"));
+	lspciModel_->setHeaderData(1, Horizontal, string("Vendor"));
+	lspciModel_->setHeaderData(2, Horizontal, string("Device"));
+	lspciModel_->setHeaderData(3, Horizontal, string("Support"));
+	lspciTable_->setColumnWidth(0, WLength(200));
+	lspciTable_->setColumnWidth(1, WLength(180));
+	lspciTable_->setColumnWidth(2, WLength(500));
+	lspciTable_->setColumnWidth(3, WLength(60));
+	lspciTable_->setAlternatingRowColors(true); // @TODO: Requires CSS - Modify CSS
+
+	std::vector<string> current_os = queryOs( uKernelId_ );
+	panelTable_->setTitle("OS: "+ current_os.at(0) + " " + current_os.at(1) + " " +
+						  current_os.at(2) + "-" + current_os.at(3) +
+						  " support for Mainboard: " + board_name + "" );
+  }
 
   std::vector<PciDevice>::iterator lspci_iter;
   for( lspci_iter = lspci_list_.begin(); lspci_iter != lspci_list_.end(); ++lspci_iter ){
 	lspciModel_->appendRow( pciDeviceToRowItem( &(*lspci_iter) ) );
   }
 
-  panelTable_ = new WPanel(this);
-  panelTable_->resize(1000,300);
-  panelTable_->setCentralWidget( lspciTable_ = new WTableView() );
-  // lspciTable_->setAlternatingRowColors(true); // @TODO: Requires CSS - Modify CSS
-
-  lspciTable_->setColumnWidth(0, WLength(240));
-  lspciTable_->setColumnWidth(1, WLength(200));
-  lspciTable_->setColumnWidth(2, WLength(500));
-  lspciTable_->setSortingEnabled(false);
-  lspciTable_->setSelectionMode(SingleSelection);
   lspciTable_->setModel(lspciModel_);
 
   lspciTable_->doubleClicked().connect(this, &PcimapResultWidget::lspciTableRowSelected);
@@ -117,7 +149,7 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
   layoutSupport_->elementAt(2,0)->addWidget( osSupportTable_ = new WTableView() );
   layoutSupport_->rowAt(2)->setHeight( WLength(250) );
 
-  WPushButton* bSaveBoard;
+  WPushButton *bSaveBoard;
   // layoutSupport_->elementAt(3,0)->setColumnSpan(5);
   // layoutSupport_->elementAt(3,0)->setContentAlignment(AlignLeft);
   layoutSupport_->elementAt(3,0)->addWidget( bSaveBoard = new WPushButton("Save Mainboard!") );
@@ -139,16 +171,18 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
 
   if( board_name != "" ){
 	bSaveBoard->disable();
-	panelTable_->setTitle("Configuration of Mainboard: " + board_name );
   }
-
 
 }
 
+
 PcimapResultWidget*
-PcimapResultWidget::Instance( std::vector<PciDevice> lspci_list, string board_name, WContainerWidget* parent)
+PcimapResultWidget::Instance( std::vector<PciDevice> lspci_list,
+							  WContainerWidget* parent,
+							  string board_name, // passed if showing a mainboard configuration
+							  string ukernel_id) // passed if a specific OS support queried..
 {
-  instance_ = new PcimapResultWidget(lspci_list, board_name, parent);
+  instance_ = new PcimapResultWidget(lspci_list, parent, board_name, ukernel_id);
   wApp->log("debug") << "Object initiated!!"; 			// @test
 
   wApp->log("debug") << "return instance, No. " << instance_count; // @test
@@ -181,6 +215,10 @@ queryClassName(string class_code,string subclass_code,string progif_code);
 std::vector<string>
 queryDeviceName(string vendor_code,string device_code,string subvendor_code,string subdevice_code);
 
+std::multimap<string, string>
+queryPcimapOsList(string vendor_code, string device_code, string subvendor_code, string subdevice_code,
+				  string class_code, string subclass_code, string progif_code);
+
 std::vector<WStandardItem*>
 PcimapResultWidget::pciDeviceToRowItem( const PciDevice* current_item )
 {
@@ -197,6 +235,7 @@ PcimapResultWidget::pciDeviceToRowItem( const PciDevice* current_item )
 								current_item->getDevice(),
 								current_item->getSubvendor(),
 								current_item->getSubdevice());
+
   // column 0:
   item = new WStandardItem( full_class.at(1) ); 		// Print just the Subclass name..
   result.push_back(item);
@@ -208,16 +247,31 @@ PcimapResultWidget::pciDeviceToRowItem( const PciDevice* current_item )
   // column 2: 
   item = new WStandardItem( full_device.at(1) ); 		// Print the Device name..
   result.push_back(item);
+
+  if( uKernelId_ != "" ){
+	item = new WStandardItem();
+
+	std::multimap<string,string> uKernel_mod_list; // (unique Kernel id, module name id)
+	uKernel_mod_list = queryPcimapOsList(current_item->getVendor(), current_item->getDevice(),
+										 current_item->getSubvendor(),current_item->getSubdevice(),
+										 current_item->getClass(),current_item->getSubclass(),current_item->getProgif());
+
+	std::multimap<string,string>::iterator ukernel_mod_iter;
+	ukernel_mod_iter = uKernel_mod_list.find( uKernelId_ );
+	if( ukernel_mod_iter == uKernel_mod_list.end() ){ // NO module found for the Device with given Kernel!!
+	  item->setIcon( supportIcons[0] );
+	}
+	else{						// Modules found for the device..
+	  item->setIcon( supportIcons[1] );
+	}
+	result.push_back(item);	  
+  }
   
   return result;
 }
 
 
-std::multimap<string, string>
-queryPcimapOsList(string vendor_code, string device_code, string subvendor_code, string subdevice_code,
-				  string class_code, string subclass_code, string progif_code);
 
-std::vector<string> queryOs( string unique_kernel_id );
 
 string queryModuleName( string mod_name_id );
 

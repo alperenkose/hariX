@@ -27,6 +27,26 @@ private:
   void bBoardDevices_Click();
 
   void showBoardConfiguration( std::string board_id  );
+  std::vector<PciDevice> getBoardDeviceList( std::string board_id  );
+
+  Wt::WComboBox *comboOS_, *comboDist_, *comboKer_;
+  Wt::WStandardItemModel *osModel_, *releaseModel_, *kernelModel_;
+  
+  std::multimap<std::string,std::string> osList_; // @TODO: Check if we need this public???
+  std::multimap<std::string,std::string> releaseList_; // @TODO: Check if we need this public???
+  std::multimap<std::string,std::string> kernelList_; // @TODO: Check if we need this public???
+  
+  void fillOsModel();
+  void fillReleaseModel( std::string os_id );
+  void fillKernelModel( std::string release_id );
+  
+  void osSelectionChanged( int selected_index ); 		// Signal..
+  void releaseSelectionChanged( int selected_index );	// Signal..
+  Wt::WPushButton *bCheckOs_;
+  void bCheckOs_Click();
+
+  std::string getBoardIdentifier(); // Get the boardID of the selected board in SelectionBox!
+  std::string getOsIdentifier(); // Get the selected uKernelID from the ComboBox selections!
   
   Wt::WPushButton *bGoHome_;
   void bGoHome_Click();

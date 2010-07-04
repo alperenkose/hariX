@@ -17,11 +17,15 @@ class PciDevice;
 class PcimapResultWidget : public Wt::WContainerWidget
 {
 private:
-  PcimapResultWidget( std::vector<PciDevice>& lspci_list, std::string board_name, WContainerWidget* parent );
+  PcimapResultWidget( std::vector<PciDevice>& lspci_list,
+					  WContainerWidget* parent,
+					  std::string board_name="", 	// passed if showing a mainboard configuration
+					  std::string ukernel_id=""); 	// passed if a specific OS support queried..
   ~PcimapResultWidget();
 
   static PcimapResultWidget* instance_;
   static int instance_count;
+  std::string uKernelId_;
   
   std::vector<PciDevice> lspci_list_;
 
@@ -50,7 +54,10 @@ private:
   
   void bGoHome_Click();
 public:
-  static PcimapResultWidget* Instance(std::vector<PciDevice> lspci_list, std::string board_name, WContainerWidget* parent);
+  static PcimapResultWidget* Instance(std::vector<PciDevice> lspci_list,
+									  WContainerWidget* parent,
+									  std::string board_name="",
+									  std::string ukernel_id="");
   static PcimapResultWidget* Instance();
   
 };
