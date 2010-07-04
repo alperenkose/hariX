@@ -8,7 +8,7 @@
 #include "pcimapQuery.hpp"
 #include "pci_device.hpp"
 #include "pcimapResult.hpp"
-
+#include "home.hpp"
 
 using namespace Wt;
 
@@ -33,6 +33,11 @@ PcimapQueryWidget::PcimapQueryWidget( WContainerWidget* parent ) : WContainerWid
 
   bQuery_->clicked().connect(this, &PcimapQueryWidget::readLspciList);
 
+  addWidget(new WBreak());
+
+  addWidget( bGoHome_ = new WPushButton("Go Home"));  
+  bGoHome_->clicked().connect(this, &PcimapQueryWidget::bGoHome_Click);
+
 }
 
 PcimapQueryWidget* PcimapQueryWidget::Instance( WContainerWidget* parent)
@@ -55,6 +60,12 @@ PcimapQueryWidget* PcimapQueryWidget::Instance( WContainerWidget* parent)
   return instance_;
 
 }
+
+PcimapQueryWidget::~PcimapQueryWidget()
+{
+  destroyLspciList();
+}
+
 
 void PcimapQueryWidget::readLspciList()
 {
@@ -137,9 +148,13 @@ void PcimapQueryWidget::destroyLspciList()
 	lspci_list.pop_back();
 }
 
-PcimapQueryWidget::~PcimapQueryWidget()
+
+void PcimapQueryWidget::bGoHome_Click()
 {
-  destroyLspciList();
+  HomeWidget* home_page;
+  if ( (home_page = HomeWidget::Instance()) == NULL )
+	selectWidget( HomeWidget::Instance(parent_) ); // Add widget to StackedWidget and select it..
+  else
+	selectWidget( home_page );
+  
 }
-
-

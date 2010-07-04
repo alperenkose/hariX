@@ -1,0 +1,10 @@
+- Start from the startup screen, first draw a design what it might look like..
+Follow the notebook..
+
+
+- In PcimapResultWidget;
+	* add go back button to PcimapQueryWidget
+
+- DATABASE
+	** Classes and Devices sections in database needs update procedure!!!!!
+	* if OS is know but pcimap needs updating? Put update procedure for pcimape!

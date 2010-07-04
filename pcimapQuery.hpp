@@ -14,13 +14,15 @@ private:
   static PcimapQueryWidget* instance_;
   
   Wt::WTextArea* pcimapList_;
-  Wt::WPushButton* bQuery_;
+  Wt::WPushButton* bQuery_, *bGoHome_;
   Wt::WContainerWidget* parent_;
 
   static std::vector<PciDevice> lspci_list;	// @TODO: change all occurences to lspci_list_
 
   void readLspciList();
   void destroyLspciList();
+
+  void bGoHome_Click();
   
 public:
   ~PcimapQueryWidget();

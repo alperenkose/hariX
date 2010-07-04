@@ -2,6 +2,7 @@
 
 #include "harixApp.hpp"
 #include "pcimapQuery.hpp"
+#include "home.hpp"
 
 using namespace Wt;
 
@@ -13,8 +14,10 @@ HarixApp::HarixApp( const WEnvironment& env ) : WApplication(env)
   content_ = new WStackedWidget(root());
   
   PcimapQueryWidget* lspci_query = PcimapQueryWidget::Instance(content_);
-  content_->setCurrentWidget( lspci_query );
+  // content_->setCurrentWidget( lspci_query );
 
+  HomeWidget* home_page = HomeWidget::Instance(content_);
+  content_->setCurrentWidget( home_page );
 }
 
 void HarixApp::setWidget( WContainerWidget* widget )
