@@ -1,41 +1,50 @@
 // #include <Wt/WApplication>
 #include <Wt/WBreak>
 #include <Wt/WContainerWidget>
+#include <Wt/WStackedWidget>
 // #include <Wt/WLineEdit>
 #include <Wt/WPushButton>
 #include <Wt/WTextArea>
 
 #include "pcimapQuery.hpp"
 #include "pci_device.hpp"
+#include "harixApp.hpp"
 
 
 using namespace Wt;
-using std::vector;
+// using std::vector;
 
+void selectWidget( WContainerWidget* widget );
 
-// ------------ TEST ------------
-// class QueryResult : public WContainerWidget
-// {
-// private:
-//   WTextArea* test_query;		// @test
-// public:
-//   QueryResult( WContainerWidget* parent );
+// ------------------ test
+QueryResult* QueryResult::instance_ = NULL;
+QueryResult::QueryResult( WContainerWidget* parent ) : WContainerWidget(parent)
+{
+  // test_query = new Wt::WTextArea("Results Page", parent); // @test
+  addWidget( test_query = new WTextArea("Results Page...") );
+  test_query->setColumns(60);		  // @test
+  test_query->setFocus();
   
-// };
+}
 
-// QueryResult::QueryResult( WContainerWidget* parent = 0 ) : WContainerWidget(parent)
-// {
-//   test_query = new WTextArea("Results Page", parent); // @test
-//   test_query->setColumns(60);		  // @test
-//   test_query->setFocus();
-  
-// }
-// ------------- TEST -----------
+QueryResult* QueryResult::Instance( WContainerWidget* parent)
+{
+  if( parent == 0 ){
+	if ( !instance_ )
+	  return NULL;
+  }
+  else
+	if( !instance_ )
+	  instance_ = new QueryResult(parent);
+  return instance_;
 
+}
 
+// ------------------ test
 
 PcimapQueryWidget::PcimapQueryWidget( WContainerWidget* parent ) : WContainerWidget(parent)
 {
+  parent_ = parent;
   // setTitle("Query Pcimaps");                               // application title
 
 
@@ -127,8 +136,12 @@ void PcimapQueryWidget::getLspciList()
   // SONRA DETAILS TUSU ILE HANGISI NE TARAFINDAN DESTEKLENIYO SORGULARSIN..
   // root()->clear();
   // new QueryResult(root());
-  
 
+  QueryResult* qresult;
+  if ( (qresult = QueryResult::Instance()) == NULL )
+	selectWidget( QueryResult::Instance(parent_) ); // Add widget to StackedWidget and select it..
+  else
+	selectWidget( qresult );
 
 }
 

@@ -3,6 +3,8 @@
 
 #include <Wt/WApplication>
 
+class QueryResult;
+
 class HarixApp : public Wt::WApplication
 {
 private:
@@ -10,6 +12,9 @@ private:
 
 public:
   HarixApp( const Wt::WEnvironment& env );
+
+  void setWidget( Wt::WContainerWidget* widget);
+
 };
 
 #endif // _HARIXAPP_
