@@ -36,6 +36,8 @@ private:
   Wt::WPushButton *bOsAddUpdate_, *bOsCancel_;
   void bOsAddUpdate_Click();
   void bOsCancel_Click();
+  Wt::WDialog*  dialogResult_;
+  void redirectAndDestroyDialog( Wt::WDialog::DialogCode );
 
   Wt::WFileUpload* uploadOs_, *uploadPcimap_;
   Wt::WPushButton* bUpload_;

@@ -8,6 +8,13 @@
 #include <Wt/WFileUpload>
 #include <Wt/WLineEdit>
 #include <Wt/WGroupBox>
+#include <Wt/WDialog>
+#include <Wt/WSignalMapper>
+
+
+#include <Wt/WDefaultLoadingIndicator>
+#include <Wt/WOverlayLoadingIndicator>
+#include "../harixApp.hpp"		// needed for WApplication::instance()
 
 #include "analyzeOS.hpp"
 #include "../home.hpp"
@@ -27,17 +34,32 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   WAnchor *os_script_;
 
   panelAnalyze_ = new WPanel(this);
-  panelAnalyze_->resize(1000,300);
+  panelAnalyze_->resize(420,200);
   panelAnalyze_->setCentralWidget( layoutAnalyze_ = new WTable() );
+  // panelAnalyze_->setStyleClass(".Wt-panel.body .Wt-outset .center");
 
+  layoutAnalyze_->resize(400,160);
+  layoutAnalyze_->rowAt(0)->setHeight(20);
   layoutAnalyze_->elementAt(0,0)->addWidget( os_script_ = new WAnchor("queryDistro.sh", "Get Script!") );
   os_script_->setTarget(TargetNewWindow);
 
-  layoutAnalyze_->elementAt(1,0)->addWidget( new WText("Download and Run the script" ) );
+  layoutAnalyze_->elementAt(1,0)->addWidget( new WText("Download and Run the script, <br />"
+										    "there will be a distro.txt file generated on the folder,  <br />"
+											"upload it together with modules.pcimap file of your kernel.. " ) );
+  layoutAnalyze_->elementAt(1,0)->setColumnSpan(2);
+  layoutAnalyze_->elementAt(1,0)->setLineHeight(15);
+  layoutAnalyze_->rowAt(1)->setHeight(60);
 
-  layoutAnalyze_->elementAt(2,0)->addWidget( uploadOs_ = new WFileUpload() );
-  layoutAnalyze_->elementAt(3,0)->addWidget( uploadPcimap_ = new WFileUpload() );
+  layoutAnalyze_->rowAt(2)->setHeight(25);
+  layoutAnalyze_->elementAt(2,0)->addWidget( new WText("File distro.txt:") );
+  layoutAnalyze_->elementAt(2,1)->addWidget( uploadOs_ = new WFileUpload() );
+  layoutAnalyze_->rowAt(3)->setHeight(25);
+  layoutAnalyze_->elementAt(3,0)->addWidget( new WText("File modules.pcimap:") );
+  layoutAnalyze_->elementAt(3,1)->addWidget( uploadPcimap_ = new WFileUpload() );
+  layoutAnalyze_->rowAt(4)->setHeight(25);
   layoutAnalyze_->elementAt(4,0)->addWidget( bUpload_ = new WPushButton("Upload") );
+  layoutAnalyze_->elementAt(4,1)->addWidget( bGoHome_ = new WPushButton("Go Home") );
+  layoutAnalyze_->elementAt(4,1)->setContentAlignment(AlignRight);
 
   // Upload when the button is clicked.
   bUpload_->clicked().connect(this, &AnalyzeOsWidget::bUpload_Click);
@@ -48,6 +70,7 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
 
   panelAnalyzeResult_ = new WPanel(this);
   panelAnalyzeResult_->hide();
+  panelAnalyzeResult_->resize(600,180);
   WTable* layoutResult;
   panelAnalyzeResult_->setCentralWidget( layoutResult = new WTable() );
 
@@ -79,9 +102,11 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   bOsAddUpdate_->clicked().connect(this, &AnalyzeOsWidget::bOsAddUpdate_Click);
   bOsCancel_->clicked().connect(this, &AnalyzeOsWidget::bOsCancel_Click);
 
+  layoutResult->elementAt(1,2)->addWidget(bGoHome_ = new WPushButton("Go Home"));
+  layoutResult->elementAt(1,2)->setContentAlignment(AlignRight);
   addWidget(new WBreak());
 
-  addWidget( bGoHome_ = new WPushButton("Go Home"));  
+  // addWidget( bGoHome_ = new WPushButton("Go Home"));  
   bGoHome_->clicked().connect(this, &AnalyzeOsWidget::bGoHome_Click);
 
 }
@@ -184,22 +209,58 @@ void AnalyzeOsWidget::bCheckOs_Click()
 	bOsAddUpdate_->setText("Add OS!");
 	layoutCheckResult_->show();
   }
+  WOverlayLoadingIndicator *loading;
+  WApplication::instance()->setLoadingIndicator( loading = new WOverlayLoadingIndicator() );
+  loading->setMessage("Analyzing..");
 }
 
-void os_pci_module( OsInfo osInfo, std::string pcimapFile ); // external os_pci_module.cc
-
-void AnalyzeOsWidget::bOsAddUpdate_Click()
-{
-  os_pci_module( *osDist_, pcimap_file_ );
-  bOsCancel_Click();			// @test
-  // @TODO: put a popup here, informing addition of OS or pcimap update..
-}
 
 void AnalyzeOsWidget::bOsCancel_Click()
 {
   layoutCheckResult_->hide();
   groupDetectedOs_->enable();
+  WApplication::instance()->setLoadingIndicator( new WDefaultLoadingIndicator() );
 }
+
+
+int os_pci_module( OsInfo osInfo, std::string pcimapFile ); // external os_pci_module.cc
+
+
+void AnalyzeOsWidget::bOsAddUpdate_Click()
+{
+  dialogResult_ = new WDialog("OS Analysis Result"); // @TODO: SINIFA KOYABILIRSIN BOLECE SILERSIN..
+  
+  if( os_pci_module( *osDist_, pcimap_file_ ) == 0 ){
+	new WText("OS succesfully added/updated! <br /> Now Directing to homepage", dialogResult_->contents() );
+	new WBreak( dialogResult_->contents() );
+	WPushButton* dialogResultOk = new WPushButton("Ok", dialogResult_->contents());
+
+	(*dialogResultOk).clicked().connect( SLOT(dialogResult_, WDialog::accept) );
+
+	dialogResult_->show();
+  }
+  else{
+  	new WText("FAILED to add/update OS! <br /> "
+  			  "Probably because of an insert failure into pcimap database", dialogResult_->contents() );
+  	new WBreak( dialogResult_->contents() );
+  	WPushButton* dialogResultFail = new WPushButton("Close", dialogResult_->contents());
+
+	(*dialogResultFail).clicked().connect( SLOT(dialogResult_, WDialog::reject) );
+	
+  	dialogResult_->show();
+  }
+  dialogResult_->finished().connect(this, &AnalyzeOsWidget::redirectAndDestroyDialog);
+}
+
+void AnalyzeOsWidget::redirectAndDestroyDialog( WDialog::DialogCode code )
+{
+  if ( code == WDialog::Accepted )
+	bGoHome_Click();
+  else
+	bOsCancel_Click();
+  delete dialogResult_;
+}
+
 
 void AnalyzeOsWidget::bGoHome_Click()
 {
@@ -214,11 +275,13 @@ void AnalyzeOsWidget::bGoHome_Click()
 
 void AnalyzeOsWidget::resetAll()
 {
+
+  WApplication::instance()->setLoadingIndicator( new WDefaultLoadingIndicator() );
   // Also delete file names!!
   delete uploadOs_;
   delete uploadPcimap_;
-  layoutAnalyze_->elementAt(2,0)->addWidget( uploadOs_ = new WFileUpload() );
-  layoutAnalyze_->elementAt(3,0)->addWidget( uploadPcimap_ = new WFileUpload() );
+  layoutAnalyze_->elementAt(2,1)->addWidget( uploadOs_ = new WFileUpload() );
+  layoutAnalyze_->elementAt(3,1)->addWidget( uploadPcimap_ = new WFileUpload() );
   // Upload when the button is clicked.
   bUpload_->clicked().connect(this, &AnalyzeOsWidget::bUpload_Click);
   // React to a succesfull upload.
@@ -230,4 +293,5 @@ void AnalyzeOsWidget::resetAll()
 
   layoutCheckResult_->hide();
   groupDetectedOs_->enable();
+
 }

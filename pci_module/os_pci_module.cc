@@ -16,8 +16,9 @@ void destroy_device_list (void);
 
 vector<PciDevice> device_list;
 
-void os_pci_module( OsInfo osInfo, string pcimapFile )
+int os_pci_module( OsInfo osInfo, string pcimapFile )
 {
+  int success;
   std::ifstream pcimap( pcimapFile.c_str() );
   assert(pcimap);
 
@@ -73,9 +74,11 @@ void os_pci_module( OsInfo osInfo, string pcimapFile )
   }
 
 
-  store_pci_map(device_list, osInfo);
+  success = store_pci_map(device_list, osInfo);
   
   destroy_device_list();
+
+  return success;
 }
 
 void destroy_device_list(void)

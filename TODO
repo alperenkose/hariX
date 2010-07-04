@@ -1,12 +1,13 @@
 
--- 'Loading Indicator'la os analyze sirasinda beklet!! hicbir yere basilmasin!! widget example..
 
 - Start from the startup screen, first draw a design what it might look like..
 Follow the notebook..
 
-
 - In PcimapResultWidget;
 	* add go back button to PcimapQueryWidget
 
+- if we want to delete an OS; the corresponding entries from `pcimap` and `modules` should be deleted first..
+
 - DATABASE
 	** Classes and Devices sections in database needs update procedure!!!!!
+

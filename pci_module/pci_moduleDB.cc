@@ -1,3 +1,4 @@
+#define NDEBUG					// set when NON debug edition
 #include <vector>
 #include <string>
 
@@ -20,10 +21,10 @@ std::string checkModuleNameId(std::string module_name); // extern database.cc
 
 std::string checkKernelModule (std::string uKernelId, std::string modNameId); // extern database.cc
 
-void insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueModuleId ); // extern database.cc
+int insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueModuleId ); // extern database.cc
 
 
-char store_pci_map( vector<PciDevice>& pci_map_list, OsInfo& osInfo )
+int store_pci_map( vector<PciDevice>& pci_map_list, OsInfo& osInfo )
 {
   std::string uniqueKernelId_;
   std::string mod_name_id;
@@ -43,10 +44,14 @@ char store_pci_map( vector<PciDevice>& pci_map_list, OsInfo& osInfo )
 	  uniqueModuleId_ = checkKernelModule( uniqueKernelId_, mod_name_id );
 
 	  // insert modules.pcimap entry into pcimap
-	  insertPcimap( &*vec_iter , uniqueModuleId_ ); // C++ Coding Standarts, Rule #78, by Herb Sutter
+	  if( insertPcimap( &*vec_iter , uniqueModuleId_ ) != 0 ) // C++ Coding Standarts, Rule #78, by Herb Sutter
+		return 1;
+
+	  #ifndef NDEBUG
 	  wApp->log("debug") << "PCIMAP ENTRY PROCESSED!!!"; 					// @test
+	  #endif  // NDEBUG
 	
 	}
-
+	return 0;
 }
 

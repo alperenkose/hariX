@@ -429,7 +429,7 @@ string checkKernelModule (string uKernelId, string modNameId)
 }
 
 
-void insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueModuleId )
+int insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueModuleId )
 {
   try{
 	connectDatabase();
@@ -451,7 +451,7 @@ void insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueM
 		+"'"+ currentPciDevice->getClassMask() + "')";
 	  stmt->execute(insertPciEntry);
 	  wApp->log("debug") << "INSERTED PCIMAP ENTRY!!!"; 					// @test
-	  // @TODO: check success of insertion
+	  // @TODO: check success of insertion with Statement -stmt- ; and put return
 	}
   }
   catch (sql::SQLException &e) {
@@ -467,7 +467,10 @@ void insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueM
 	wApp->log("debug") << "# ERR: " << e.what();
   	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
 	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+	disconnectDatabase();
+	return 1;
   }
   disconnectDatabase();
 
+  return 0;
 }
