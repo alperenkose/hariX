@@ -2,7 +2,7 @@
 #define _PCIMAPRESULT_
 
 #include <Wt/WContainerWidget>
-// #include <Wt/WDialog>
+#include <Wt/WDialog>
 
 namespace Wt{
   class WPanel;
@@ -10,7 +10,6 @@ namespace Wt{
   class WStandardItem;
   class WTableView;
   class WModelIndex;
-  class WDialog;
 }
 
 class PciDevice;

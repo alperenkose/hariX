@@ -4,11 +4,11 @@
 #define _ANALYZEOS_
 
 #include <Wt/WContainerWidget>
+#include <Wt/WDialog>
 
 namespace Wt {
   class WPanel;
   class WTable;
-  class WDialog;
 }
 
 class OsInfo;

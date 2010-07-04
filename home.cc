@@ -5,6 +5,7 @@
 #include "home.hpp"
 #include "analyze_os/analyzeOS.hpp"
 #include "lspci_query/pcimapQuery.hpp"
+#include "mainboards/mainboards.hpp"
 
 using namespace Wt;
 
@@ -22,8 +23,12 @@ HomeWidget::HomeWidget( WContainerWidget* parent ) : WContainerWidget(parent)
   addWidget( new WBreak() );
 
   addWidget( bQueryLspci_ = new WPushButton("Query lspci list") );
-  bQueryLspci_->clicked().connect(this,  &HomeWidget::bQueryLspci_Click);
+  bQueryLspci_->clicked().connect(this, &HomeWidget::bQueryLspci_Click);
 
+  addWidget( new WBreak() );
+
+  addWidget( bListBoards_ = new WPushButton("List MainBoards") );
+  bListBoards_->clicked().connect(this, &HomeWidget::bListBoards_Click);
 
 
 }
@@ -67,4 +72,14 @@ void HomeWidget::bQueryLspci_Click()
 	selectWidget( PcimapQueryWidget::Instance(parent_) ); // Add widget to StackedWidget and select it..
   else
 	selectWidget( pcimapquery_page );
+}
+
+void HomeWidget::bListBoards_Click()
+{
+  MainboardsWidget* mainboards_page;
+  if ( (mainboards_page = MainboardsWidget::Instance()) == NULL )
+	selectWidget( MainboardsWidget::Instance(parent_) ); // Add widget to StackedWidget and select it..
+  else
+	selectWidget( mainboards_page );
+  
 }

@@ -731,3 +731,129 @@ string checkUniqueDeviceId( string dev_special_id, int bus_type = 1 )
   
   return uDevId;
 }
+
+
+std::multimap<string, string>
+queryBoardList()
+{
+  std::multimap<string, string> mainboard_list; // ( boardID, boardName )
+  
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT * FROM board_models");
+
+	while( commonResultSet->next() ){
+	  mainboard_list.insert( std::pair<string,string>( commonResultSet->getString("boardID"),
+													   commonResultSet->getString("boardName") ) );
+	}
+
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return mainboard_list;
+}
+
+
+// return uDevID list of devices on given board
+std::vector<string> queryBoardDeviceList( string board_id )
+{
+  std::vector<string> udev_id_list;
+
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT uDevID_FK FROM dev_board WHERE boardID_FK="+ board_id );
+
+	while( commonResultSet->next() ){
+	  udev_id_list.push_back( commonResultSet->getString("uDevID_FK") );
+	}
+
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return udev_id_list;
+}
+
+
+// return vendor,subvendor,progif,class ... codes IF PCI device..
+std::vector<string> queryDeviceCodes( string udev_id, int bus_type = 1 )
+{
+  std::vector<string> device_codes;
+
+  std::stringstream ss;
+  ss << bus_type;
+  string type = ss.str();
+
+  try{
+	connectDatabase();
+
+	switch (bus_type){
+	case 1:						// if it is a PCI Device
+	  commonResultSet = stmt->executeQuery("SELECT pciSpcID_FK FROM all_devices WHERE uDevID="+ udev_id);
+
+	  if( commonResultSet->first() ){
+		string pci_spc_id = commonResultSet->getString("pciSpcID_FK");
+
+		commonResultSet = stmt->executeQuery("SELECT * FROM vw_pci_devices WHERE pciSpcID="+ pci_spc_id );
+		if( commonResultSet->next() ){
+		  device_codes.push_back( commonResultSet->getString("vendorCode") );
+		  device_codes.push_back( commonResultSet->getString("deviceCode") );
+		  device_codes.push_back( commonResultSet->getString("subvendor") );
+		  device_codes.push_back( commonResultSet->getString("subdevice") );
+		  device_codes.push_back( commonResultSet->getString("classCode") );
+		  device_codes.push_back( commonResultSet->getString("subClassCode") );
+		  device_codes.push_back( commonResultSet->getString("progifCode") );
+		}
+	  }
+	  break;
+	  // case 2:						// Might be for USB..
+	  // case 3:						// Might be for PNP, whatever..
+	}
+  }
+  catch (sql::SQLException &e) {
+	/*
+	  The MySQL Connector/C++ throws three different exceptions:
+	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+	  - sql::InvalidArgumentException (derived from sql::SQLException)
+	  - sql::SQLException (derived from std::runtime_error)
+	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return device_codes;
+}

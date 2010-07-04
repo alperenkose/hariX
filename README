@@ -5,3 +5,13 @@ max-request-size in wt configuration file, /etc/wt/wt_config.xml, is increased t
 
 Known Issue :
 - Successive queries of lspci in `Query lspci list` screen repeatedly causes to session restart.. :s
+
+
+
+
+-----EMACS CEDET-----
+To add files to ede in new directories, first create the files, then modify Project.ede to include them,
+go to Menu->Project->Project Options->Rescan Project Files
+then go to the new files and select Project->Target Options->Add file
+or
+ede-add-file

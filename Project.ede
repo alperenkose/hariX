@@ -7,8 +7,8 @@
    (ede-proj-target-makefile-program "query_pcimap.wt"
     :name "query_pcimap.wt"
     :path ""
-    :source '("main.cc" "harixApp.cc" "database.cc" "home.cc" "lspci_query/pcimapQuery.cc" "lspci_query/pcimapResult.cc" "analyze_os/analyzeOS.cc" "pci_module/os_pci_module.cc" "pci_module/pci_moduleDB.cc")
-    :auxsource '("pci_device.hpp" "harixApp.hpp" "home.hpp" "os_info.hpp" "lspci_query/pcimapQuery.hpp" "lspci_query/pcimapResult.hpp" "analyze_os/analyzeOS.hpp")
+    :source '("main.cc" "harixApp.cc" "database.cc" "home.cc" "lspci_query/pcimapQuery.cc" "lspci_query/pcimapResult.cc" "analyze_os/analyzeOS.cc" "pci_module/os_pci_module.cc" "pci_module/pci_moduleDB.cc" "mainboards/mainboards.cc")
+    :auxsource '("pci_device.hpp" "harixApp.hpp" "home.hpp" "os_info.hpp" "lspci_query/pcimapQuery.hpp" "lspci_query/pcimapResult.hpp" "analyze_os/analyzeOS.hpp" "mainboards/mainboards.hpp")
     )
    )
   )

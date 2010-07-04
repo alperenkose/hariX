@@ -1,5 +1,6 @@
 
---  Store mainboard or computer, might be added to main screen and pcimapresultwidget..!!!
+-- PcimapResultWidget'e ek parametre olarak Mainboard ismini gonderebilirsin, boylece ayrica save mainboard butonunu 
+da disable edebilirsi!!!
 
 - In PcimapResultWidget;
 	** Mark the devices as (no driver in any os, some OSes missing driver, all has driver), preferably using an additional column with colors to indicate it ;)

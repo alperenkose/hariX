@@ -8,7 +8,6 @@
 #include <Wt/WLineEdit>
 #include <Wt/WText>
 #include <Wt/WPushButton>
-#include <Wt/WDialog>
 #include <string>
 
 #include "../home.hpp"

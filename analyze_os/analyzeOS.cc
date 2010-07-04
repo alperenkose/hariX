@@ -9,8 +9,6 @@
 #include <Wt/WInPlaceEdit>
 #include <Wt/WGroupBox>
 #include <Wt/WSignalMapper>
-#include <Wt/WDialog>
-
 
 #include <Wt/WDefaultLoadingIndicator>
 #include <Wt/WOverlayLoadingIndicator>
