@@ -4,6 +4,9 @@
 #include <Wt/WStackedWidget>
 #include <Wt/WPushButton>
 #include <Wt/WTextArea>
+#include <Wt/WPanel>
+#include <Wt/WTable>
+#include <Wt/WText>
 #include <string>
 
 #include "pcimapQuery.hpp"
@@ -22,21 +25,29 @@ PcimapQueryWidget::PcimapQueryWidget( WContainerWidget* parent ) : WContainerWid
 {
   parent_ = parent;
   // setTitle("Query Pcimaps");                               // application title
+  WPanel *panelQuery;
+  panelQuery = new WPanel(this);
+  panelQuery->resize(470, WLength());
+  WTable* layoutQuery;
+  panelQuery->setCentralWidget( layoutQuery = new WTable() );
 
-
-  addWidget(pcimapList_ = new WTextArea());
-  pcimapList_->setColumns(60);
+  layoutQuery->elementAt(0,0)->setColumnSpan(2);
+  layoutQuery->elementAt(0,0)->addWidget( new WText("Paste below the output of `lspci -mn`:") );
+  
+  layoutQuery->elementAt(1,0)->setColumnSpan(2);
+  layoutQuery->elementAt(1,0)->setContentAlignment(AlignCenter);
+  layoutQuery->elementAt(1,0)->addWidget(pcimapList_ = new WTextArea());
+  // pcimapList_->setColumns(60);
+  pcimapList_->resize(450, WLength());
   pcimapList_->setFocus();
 
-  addWidget(new WBreak());
-
-  addWidget(bQuery_ = new WPushButton("Query Devices")); 	// create query button
+  layoutQuery->elementAt(2,0)->addWidget( new WBreak() );
+  layoutQuery->elementAt(3,0)->addWidget(bQuery_ = new WPushButton("Query Devices")); 	// create query button
 
   bQuery_->clicked().connect(this, &PcimapQueryWidget::readLspciList);
 
-  addWidget(new WBreak());
-
-  addWidget( bGoHome_ = new WPushButton("Go Home"));  
+  layoutQuery->elementAt(3,1)->setContentAlignment(AlignRight);
+  layoutQuery->elementAt(3,1)->addWidget( bGoHome_ = new WPushButton("Go Home"));  
   bGoHome_->clicked().connect(this, &PcimapQueryWidget::bGoHome_Click);
 
 }
@@ -44,14 +55,12 @@ PcimapQueryWidget::PcimapQueryWidget( WContainerWidget* parent ) : WContainerWid
 PcimapQueryWidget* PcimapQueryWidget::Instance( WContainerWidget* parent)
 {
   if( parent == 0 ){
-	// wApp->log("debug") << "parent is 0!"; 					// @test
 	if ( !instance_ ){
 	  // wApp->log("debug") << "no instance return NULL!!"; 	// @test
 	  return NULL;
 	}
   }
   else{
-	// wApp->log("debug") << "received parent!"; 				// @test
 	if( !instance_ ){
 	  instance_ = new PcimapQueryWidget(parent);
 	  // wApp->log("debug") << "Object initiated!!"; 			// @test

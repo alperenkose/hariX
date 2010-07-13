@@ -43,16 +43,17 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
 
   layoutAnalyze_->elementAt(1,0)->addWidget( new WText("Download and Run the script, <br />"
 										    "there will be a distro.txt file generated on the folder,  <br />"
-											"upload it together with modules.pcimap file of your kernel.. " ) );
+											"upload it together with modules.pcimap file of your kernel.. <br />"
+											"*Given file names must match!"));
   layoutAnalyze_->elementAt(1,0)->setColumnSpan(2);
   layoutAnalyze_->elementAt(1,0)->setLineHeight(15);
   layoutAnalyze_->rowAt(1)->setHeight(60);
 
   layoutAnalyze_->rowAt(2)->setHeight(25);
-  layoutAnalyze_->elementAt(2,0)->addWidget( new WText("File distro.txt:") );
+  layoutAnalyze_->elementAt(2,0)->addWidget( new WText("File *distro.txt:") );
   layoutAnalyze_->elementAt(2,1)->addWidget( uploadOs_ = new WFileUpload() );
   layoutAnalyze_->rowAt(3)->setHeight(25);
-  layoutAnalyze_->elementAt(3,0)->addWidget( new WText("File modules.pcimap:") );
+  layoutAnalyze_->elementAt(3,0)->addWidget( new WText("File *modules.pcimap:") );
   layoutAnalyze_->elementAt(3,1)->addWidget( uploadPcimap_ = new WFileUpload() );
   layoutAnalyze_->rowAt(4)->setHeight(25);
   layoutAnalyze_->elementAt(4,0)->addWidget( bUpload_ = new WPushButton("Upload") );
@@ -88,7 +89,8 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   layoutDetectedOs->elementAt(2,1)->addWidget( editKer_ = new WInPlaceEdit("") );
   layoutDetectedOs->elementAt(3,0)->addWidget( new WText("Arch.  :" ) );
   layoutDetectedOs->elementAt(3,1)->addWidget( editArch_ = new WInPlaceEdit("") );
-  layoutDetectedOs->elementAt(4,0)->addWidget( bCheckOs_ = new WPushButton("Check Record") );
+  layoutDetectedOs->elementAt(4,0)->addWidget( new WBreak() );
+  layoutDetectedOs->elementAt(5,0)->addWidget( bCheckOs_ = new WPushButton("Check Record") );
   bCheckOs_->clicked().connect(this, &AnalyzeOsWidget::bCheckOs_Click);
   // MANUALY CHANGE OS INFO
   editOs_->setStyleClass("inplace");
@@ -104,15 +106,21 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
 
   layoutResult->columnAt(2)->setWidth( WLength(250) );
   layoutResult->elementAt(0,2)->addWidget( layoutCheckResult_ = new WTable() );
-  layoutCheckResult_->elementAt(0,0)->setColumnSpan(2);
-  layoutCheckResult_->elementAt(0,0)->addWidget( txtOsResult_ = new WText() );
-  layoutCheckResult_->elementAt(1,0)->addWidget( bOsAddUpdate_ = new WPushButton() );
-  layoutCheckResult_->elementAt(1,1)->addWidget( bOsCancel_ = new WPushButton("Cancel / Edit") );
+  layoutCheckResult_->elementAt(0,0)->addWidget( new WBreak() );
+  layoutCheckResult_->elementAt(1,0)->setColumnSpan(2);
+  layoutCheckResult_->elementAt(1,0)->setContentAlignment(AlignCenter);
+  layoutCheckResult_->elementAt(1,0)->addWidget( txtOsResult_ = new WText() );
+  layoutCheckResult_->elementAt(2,0)->addWidget( new WBreak() );
+  layoutCheckResult_->elementAt(3,0)->setContentAlignment(AlignCenter);
+  layoutCheckResult_->elementAt(3,0)->addWidget( bOsAddUpdate_ = new WPushButton() );
+  layoutCheckResult_->elementAt(3,1)->setContentAlignment(AlignCenter);
+  layoutCheckResult_->elementAt(3,1)->addWidget( bOsCancel_ = new WPushButton("Cancel / Edit") );
   layoutCheckResult_->hide();
 
   bOsAddUpdate_->clicked().connect(this, &AnalyzeOsWidget::bOsAddUpdate_Click);
   bOsCancel_->clicked().connect(this, &AnalyzeOsWidget::bOsCancel_Click);
 
+  layoutResult->elementAt(1,0)->addWidget( new WText("*Fields above are editable!") );
   WPushButton* bGoHome2;
   layoutResult->elementAt(1,2)->addWidget( bGoHome2 = new WPushButton("Go Home") );
   layoutResult->elementAt(1,2)->setContentAlignment(AlignRight);
@@ -153,8 +161,10 @@ void AnalyzeOsWidget::osUploaded()
 {
   os_file_ = uploadOs_->spoolFileName();
   if ( !uploadOs_->emptyFileName() ){
-	isOsUploaded_ = true;
-	uploadDone();
+	if( uploadOs_->clientFileName().narrow() == "distro.txt" ){
+	  isOsUploaded_ = true;
+	  uploadDone();	  
+	}
   }
 }
 
@@ -162,8 +172,10 @@ void AnalyzeOsWidget::pcimapUploaded()
 {
   pcimap_file_ = uploadPcimap_->spoolFileName();
   if ( !uploadPcimap_->emptyFileName() ){
-	isPcimapUploaded_ = true;
-	uploadDone();
+	if( uploadPcimap_->clientFileName().narrow() == "modules.pcimap" ){
+	  isPcimapUploaded_ = true;
+	  uploadDone();
+	}
   }
 }
 

@@ -38,33 +38,52 @@ MainboardsWidget::MainboardsWidget( WContainerWidget* parent ) : WContainerWidge
   // boardsProxyModel->setDynamicSortFilter(true);
   boardsProxyModel->sort(1);
 
-  // layoutMainboard->elementAt(0,0)
-  boardsSelection_ = new WSelectionBox(layoutMainboard->elementAt(0,0));
+  layoutMainboard->columnAt(0)->setWidth( WLength(160) );
+  layoutMainboard->elementAt(0,0)->setColumnSpan(2);
+  layoutMainboard->elementAt(0,0)->addWidget( new WText("Mainboard Configuration:") );
+  
+  boardsSelection_ = new WSelectionBox(layoutMainboard->elementAt(1,0));
   boardsSelection_->setModel(boardsProxyModel);
   boardsSelection_->setModelColumn(1);
   boardsSelection_->resize( 150, WLength() );
   boardsSelection_->setVerticalSize(10);
 
+  // layoutMainboard->rowAt(2)->setHeight(20);
+  // layoutMainboard->elementAt(1,0)->setColumnSpan(2);
+
+  WTable *layConfButtons;
+  layoutMainboard->elementAt(2,0)->addWidget( layConfButtons = new WTable() );
+  layConfButtons->columnAt(0)->setWidth( WLength(80) );
+  layConfButtons->columnAt(1)->setWidth( WLength(70) );
+  
   WPushButton* bBoardDevices;
-  layoutMainboard->elementAt(1,0)->addWidget( bBoardDevices = new WPushButton("Show Configuration") );
+  layConfButtons->elementAt(0,0)->addWidget( bBoardDevices = new WPushButton("Show") );
   bBoardDevices->clicked().connect(this, &MainboardsWidget::bBoardDevices_Click);
 
-  layoutMainboard->elementAt(2,0)->addWidget( new WText("Selected uKernelID: ") );
-  layoutMainboard->elementAt(2,0)->addWidget( testText_ = new WText("none") );
+  // layoutMainboard->elementAt(2,0)->addWidget( new WText("Selected uKernelID: ") );
+  // layoutMainboard->elementAt(2,0)->addWidget( testText_ = new WText("none") );
 
-  layoutMainboard->columnAt(1)->setWidth( WLength(20) ); // @TODO..
+  WPushButton *bDeleteBoard;
+  layConfButtons->elementAt(0,1)->setContentAlignment(AlignRight);
+  layConfButtons->elementAt(0,1)->addWidget( bDeleteBoard = new WPushButton("Delete") );
+  bDeleteBoard->clicked().connect(this, &MainboardsWidget::bDeleteBoard_Click);
 
-  layoutMainboard->elementAt(0,1)->addWidget( comboOS_ = new WComboBox() );
+  layoutMainboard->columnAt(1)->setWidth( WLength(80) ); // @TODO..
+  
+  layoutMainboard->columnAt(2)->setWidth( WLength(180) );
+  layoutMainboard->elementAt(0,2)->addWidget( new WText("OS specific support?") );
+  layoutMainboard->elementAt(1,2)->addWidget( new WBreak() );
+  layoutMainboard->elementAt(1,2)->addWidget( comboOS_ = new WComboBox() );
   comboOS_->resize(150,20);
-  layoutMainboard->elementAt(0,1)->addWidget( new WBreak() );
-  layoutMainboard->elementAt(0,1)->addWidget( comboDist_ = new WComboBox() );
+  layoutMainboard->elementAt(1,2)->addWidget( new WBreak() );
+  layoutMainboard->elementAt(1,2)->addWidget( comboDist_ = new WComboBox() );
   comboDist_->resize(150,20);
-  layoutMainboard->elementAt(0,1)->addWidget( new WBreak() );
-  layoutMainboard->elementAt(0,1)->addWidget( comboKer_ = new WComboBox() );
+  layoutMainboard->elementAt(1,2)->addWidget( new WBreak() );
+  layoutMainboard->elementAt(1,2)->addWidget( comboKer_ = new WComboBox() );
   comboKer_->resize(150,20);
-  layoutMainboard->elementAt(0,1)->addWidget( new WBreak() );
-
-  layoutMainboard->elementAt(0,1)->addWidget( bCheckOs_ = new WPushButton("Check!") );
+  layoutMainboard->elementAt(1,2)->addWidget( new WBreak() );
+  layoutMainboard->elementAt(1,2)->addWidget( new WBreak() );
+  layoutMainboard->elementAt(1,2)->addWidget( bCheckOs_ = new WPushButton("Check!") );
   bCheckOs_->clicked().connect(this, &MainboardsWidget::bCheckOs_Click);
   bCheckOs_->disable();
 
@@ -86,8 +105,8 @@ MainboardsWidget::MainboardsWidget( WContainerWidget* parent ) : WContainerWidge
   comboKer_->disable();
   comboDist_->activated().connect( this, &MainboardsWidget::releaseSelectionChanged );
 
-  layoutMainboard->elementAt(1,1)->addWidget( bGoHome_ = new WPushButton("Go Home"));
-  layoutMainboard->elementAt(1,1)->setContentAlignment(AlignRight);
+  layoutMainboard->elementAt(2,2)->addWidget( bGoHome_ = new WPushButton("Go Home"));
+  layoutMainboard->elementAt(2,2)->setContentAlignment(AlignRight);
   bGoHome_->clicked().connect(this, &MainboardsWidget::bGoHome_Click);
 
 }
@@ -206,7 +225,49 @@ std::vector<PciDevice> MainboardsWidget::getBoardDeviceList( std::string board_i
   return device_list;
 }
 
+int deleteBoardModel( std::string board_id ); 
 
+void MainboardsWidget::bDeleteBoard_Click()
+{
+  dialogWarn_ = new WDialog();
+  dialogWarn_->setWindowTitle("Mainboard");
+  new WText("Sure you want to delete the selected Mainboard?", dialogWarn_->contents());
+  new WBreak( dialogWarn_->contents() );
+  WPushButton *dialogWarnYes = new WPushButton("Yes", dialogWarn_->contents());
+  dialogWarnYes->clicked().connect( SLOT(dialogWarn_, WDialog::accept) );
+  WPushButton *dialogWarnNo = new WPushButton("No", dialogWarn_->contents());
+  dialogWarnNo->clicked().connect( SLOT(dialogWarn_, WDialog::reject) );
+
+  dialogWarn_->show();
+	
+  dialogWarn_->finished().connect(this, &MainboardsWidget::dialogWarn_Close);
+}
+
+void MainboardsWidget::deleteBoard()
+{
+  std::string board_id = getBoardIdentifier();
+  
+  dialogWarn_ = new WDialog();
+  
+  WText *txtWarn = new WText(dialogWarn_->contents());
+  new WBreak( dialogWarn_->contents() );
+  WPushButton *dialogWarnClose = new WPushButton("Close", dialogWarn_->contents());
+
+  dialogWarnClose->clicked().connect( SLOT(dialogWarn_, WDialog::accept) );
+
+  if( deleteBoardModel( board_id ) == 0 ){ // function at database.cc
+	dialogWarn_->setWindowTitle("Mainboard");
+	txtWarn->setText("Mainboard Configuration deleted successfully!");
+	dialogWarn_->show();
+  }
+  else {
+  	dialogWarn_->setWindowTitle("Mainboard");
+  	txtWarn->setText("There was a FAILURE during deletion of Mainboard!");
+  	dialogWarn_->show();
+  }
+
+  refreshPage();
+}
 
 std::multimap<std::string,std::string> getOsList();
 
@@ -385,7 +446,25 @@ void MainboardsWidget::bCheckOs_Click()
 	wApp->log("debug") << "PcimapResultWidget already exists! this should NOT happen!";
 }
 
-void selectWidget( WContainerWidget* widget );
+void MainboardsWidget::dialogWarn_Close( WDialog::DialogCode code )
+{
+  delete dialogWarn_;
+
+  if ( code == WDialog::Accepted ){
+	deleteBoard();
+  }
+
+}
+
+void MainboardsWidget::refreshPage()
+{
+  delete dialogWarn_;
+
+  removeWidget( MainboardsWidget::Instance() );
+  delete MainboardsWidget::Instance();
+  selectWidget( MainboardsWidget::Instance( parent_ ) );
+}
+
 void removeWidget( WContainerWidget* widget );
 
 void MainboardsWidget::bGoHome_Click()

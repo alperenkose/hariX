@@ -22,6 +22,7 @@ private:
 					  std::string board_name="", 	// passed if showing a mainboard configuration
 					  std::string ukernel_id=""); 	// passed if a specific OS support queried..
   ~PcimapResultWidget();
+  WContainerWidget* parent_;
 
   static PcimapResultWidget* instance_;
   static int instance_count;
@@ -44,10 +45,13 @@ private:
   std::vector<Wt::WStandardItem*> osToSupportRow( const std::vector<std::string>& os );
   void fillDeviceDetails( const PciDevice& selected_device );
 
+
+  void bSaveBoard_Click();
   Wt::WDialog* dialogBoard_;
   Wt::WLineEdit* editBoard_;
   void dialogBoard_Close( Wt::WDialog::DialogCode dialog_code );
-  void bSaveBoard_Click();
+  Wt::WDialog *dialogWarn_;
+  Wt::WText *txtWarn_;
 
   void storeMainBoard( std::string board_name );
   std::vector<std::string> getUniqueDevIdList();

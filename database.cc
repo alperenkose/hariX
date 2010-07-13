@@ -509,6 +509,34 @@ string queryBoardModelId( string board_name )
   return board_id;
 }
 
+
+int deleteBoardModel( std::string board_id )
+{
+  try{
+	connectDatabase();
+
+	stmt->execute("DELETE FROM board_models WHERE boardID="+ board_id);
+	commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+	return 1;
+  }
+  disconnectDatabase();
+  return 0;
+}
+
 string insertBoardModel( string board_name )
 {
   string board_id;

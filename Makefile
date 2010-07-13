@@ -9,8 +9,8 @@
 top="$(CURDIR)"/
 ede_FILES=Project.ede Makefile
 
-query_pcimap_wt_SOURCES=main.cc harixApp.cc database.cc home.cc lspci_query/pcimapQuery.cc lspci_query/pcimapResult.cc analyze_os/analyzeOS.cc pci_module/os_pci_module.cc pci_module/pci_moduleDB.cc mainboards/mainboards.cc
-query_pcimap.wt_OBJ= main.o harixApp.o database.o home.o lspci_query/pcimapQuery.o lspci_query/pcimapResult.o analyze_os/analyzeOS.o pci_module/os_pci_module.o pci_module/pci_moduleDB.o mainboards/mainboards.o
+query_pcimap_wt_SOURCES=main.cc harixApp.cc database.cc home.cc lspci_query/pcimapQuery.cc lspci_query/pcimapResult.cc analyze_os/analyzeOS.cc pci_module/os_pci_module.cc pci_module/pci_moduleDB.cc mainboards/mainboards.cc pci_ids/pci_ids.cc pci_ids/pci_devices.cc pci_ids/pci_classes.cc
+query_pcimap.wt_OBJ= main.o harixApp.o database.o home.o lspci_query/pcimapQuery.o lspci_query/pcimapResult.o analyze_os/analyzeOS.o pci_module/os_pci_module.o pci_module/pci_moduleDB.o mainboards/mainboards.o pci_ids/pci_ids.o pci_ids/pci_devices.o pci_ids/pci_classes.o
 CXX= g++
 CFLAGS= -g -Wall -Weffc++
 LIBDIRS= -L/usr/local/lib
@@ -25,7 +25,7 @@ VERSION=1.0
 DISTDIR=$(top)Harix PreAlpha-$(VERSION)
 top_builddir = 
 
-DEP_FILES=.deps/main.P .deps/harixApp.P .deps/database.P .deps/home.P .deps/pcimapQuery.P .deps/pcimapResult.P .deps/analyzeOS.P .deps/os_pci_module.P .deps/pci_moduleDB.P .deps/mainboards.P .deps/pci_device.P .deps/harixApp.P .deps/home.P .deps/os_info.P .deps/pcimapQuery.P .deps/pcimapResult.P .deps/analyzeOS.P .deps/mainboards.P
+DEP_FILES=.deps/main.P .deps/harixApp.P .deps/database.P .deps/home.P .deps/pcimapQuery.P .deps/pcimapResult.P .deps/analyzeOS.P .deps/os_pci_module.P .deps/pci_moduleDB.P .deps/mainboards.P .deps/pci_ids.P .deps/pci_devices.P .deps/pci_classes.P .deps/pci_device.P .deps/harixApp.P .deps/home.P .deps/os_info.P .deps/pcimapQuery.P .deps/pcimapResult.P .deps/analyzeOS.P .deps/mainboards.P .deps/pci_devices.P .deps/pci_classes.P
 
 all: query_pcimap.wt
 

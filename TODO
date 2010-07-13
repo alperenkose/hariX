@@ -1,14 +1,8 @@
 
+- Validate names of distro.txt and modules.pcimap in AnalyzeOS!!
 
-- In PcimapResultWidget;
-	* Filtering on Device Details; probably with OS or Kernel..
-
-- shall we allow mainboards with same names..???
+- proxy configuration for curl when downloading pci.ids..
 
 - Store device-module information in dev_mode when storing the mainboard!! ( lspciTableRowSelected'daki mantikla uModIDlerin listesini alip `dev_mod` tablosuna koyabilin.. )
 
 - if we want to delete an OS; the corresponding entries from `pcimap` and `modules` should be deleted first..
-
-- DATABASE
-	** Classes and Devices sections in database needs update procedure!!!!!
-

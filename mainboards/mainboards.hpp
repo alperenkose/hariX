@@ -7,6 +7,7 @@ namespace Wt {
   class WPanel;
   class WStandardItemModel;
   class WSortFilterProxyModel;
+  class WDialog;
 }
 
 class MainboardsWidget : public Wt::WContainerWidget
@@ -25,6 +26,11 @@ private:
   Wt::WSelectionBox *boardsSelection_;
   void fillMainboards( Wt::WStandardItemModel& boardsModel );
   void bBoardDevices_Click();
+  void bDeleteBoard_Click();
+  void deleteBoard();
+  Wt::WDialog *dialogWarn_;
+  void dialogWarn_Close( Wt::WDialog::DialogCode code );
+  void refreshPage();
 
   void showBoardConfiguration( std::string board_id  );
   std::vector<PciDevice> getBoardDeviceList( std::string board_id  );

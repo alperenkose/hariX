@@ -37,6 +37,7 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
 										string ukernel_id) : WContainerWidget(parent)
 {
   ++instance_count;
+  parent_ = parent;
 
   uKernelId_ = ukernel_id;
   // lspci_list_ = PcimapQueryWidget::getLspciList();
@@ -149,9 +150,10 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
   layoutSupport_->elementAt(2,0)->addWidget( osSupportTable_ = new WTableView() );
   layoutSupport_->rowAt(2)->setHeight( WLength(250) );
 
-  WPushButton *bSaveBoard;
+
   // layoutSupport_->elementAt(3,0)->setColumnSpan(5);
   // layoutSupport_->elementAt(3,0)->setContentAlignment(AlignLeft);
+  WPushButton *bSaveBoard;
   layoutSupport_->elementAt(3,0)->addWidget( bSaveBoard = new WPushButton("Save Mainboard!") );
   bSaveBoard->clicked().connect(this, &PcimapResultWidget::bSaveBoard_Click);
   
@@ -171,6 +173,15 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
 
   if( board_name != "" ){
 	bSaveBoard->disable();
+  }
+  else {
+	dialogWarn_ = new WDialog();
+
+	txtWarn_ = new WText(dialogWarn_->contents());
+	new WBreak( dialogWarn_->contents() );
+	WPushButton *dialogWarnClose = new WPushButton("Close", dialogWarn_->contents());
+
+	dialogWarnClose->clicked().connect( SLOT(dialogWarn_, WDialog::accept) );
   }
 
 }
@@ -378,19 +389,22 @@ void PcimapResultWidget::dialogBoard_Close( WDialog::DialogCode dialog_code )
   if ( dialog_code == WDialog::Accepted ){
 	// editVendor_->setText( editBoard_->text().narrow() ); // @test
 	string board_name = editBoard_->text().narrow();
-	storeMainBoard( board_name );
+	if( board_name != "" ){
+	  storeMainBoard( board_name );
+	  delete dialogBoard_;
+	}
+	else
+	  dialogBoard_->show();
   }
-  delete dialogBoard_;
-
 }
 
 string queryBoardModelId( string board_name );
 string insertBoardModel( string board_name );
 void insertBoardDevices( string board_id, std::vector<string>& device_id_list );
+static std::vector<PciDevice> lspci_list_backup;
 
 void PcimapResultWidget::storeMainBoard( string board_name )
 {
-
   std::vector<string> uDevIdList;
   string board_id = queryBoardModelId( board_name );
   if ( board_id  == "" ){
@@ -401,9 +415,20 @@ void PcimapResultWidget::storeMainBoard( string board_name )
 	insertBoardDevices( board_id, uDevIdList );
 
 	// @TODO: !!! ALSO INSERT INTO DEV_MOD.. something like: checkDeviceModules( uDevIdList );
+
+	dialogWarn_->setWindowTitle("Mainboard");
+	txtWarn_->setText("Mainboard Saved!");
+	dialogWarn_->show();
+
+	lspci_list_backup = lspci_list_;
+	removeWidget( PcimapResultWidget::Instance() );
+	delete PcimapResultWidget::Instance();
+	selectWidget( PcimapResultWidget::Instance( lspci_list_backup, parent_, board_name) );
   }
-  else{
-	// @TODO: WARN THAT THE BOARD ALREADY EXISTS!! nothing done..
+  else{							// Board already exists!!
+	dialogWarn_->setWindowTitle("Mainboard Exists");
+	txtWarn_->setText("Mainboard with the given name already exists in database!");
+	dialogWarn_->show();
   }
   
 }

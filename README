@@ -2,11 +2,17 @@ max-request-size in wt configuration file, /etc/wt/wt_config.xml, is increased t
 
 -rXX revision does NOT have to exist in lspci -mn, so corrected the code appropriately ;|
 
+- pci_vendors table is case sensitive so any pci.ids update with different cases will update the row..
 
-Known Issue :
+
+Known Issues :
 - Successive queries of lspci in `Query lspci list` screen repeatedly causes to session restart.. :s
 
 
+OK and Cancel buttons from iconlet:
+http://www.iconlet.com/info/22463_button_ok_16x16
+http://www.iconlet.com/info/22518_button_cancel_16x16
+GPL licensed by Pablo Fabregat!
 
 
 -----EMACS CEDET-----
@@ -15,3 +21,24 @@ go to Menu->Project->Project Options->Rescan Project Files
 then go to the new files and select Project->Target Options->Add file
 or
 ede-add-file
+
+
+
+vendors
+2005
+
+devices
+10164
+
+subsys
+15700
+
+
+classes
+18
+
+subclasses
+103
+
+progifs
+138
