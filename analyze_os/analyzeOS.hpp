@@ -23,9 +23,10 @@ private:
   
   Wt::WContainerWidget* parent_;
 
-  Wt::WPanel* panelAnalyze_;
+  Wt::WPanel* panelAnalyze_;	// @TODO: will be removed probably
   Wt::WTable* layoutAnalyze_;
   Wt::WPanel* panelAnalyzeResult_;
+  Wt::WTable* layoutResult;		// @TODO: edit this to layoutResult_
   Wt::WGroupBox* groupDetectedOs_;
   Wt::WInPlaceEdit *editOs_, *editRel_, *editKer_, *editArch_;
   Wt::WPushButton *bCheckOs_;
@@ -50,7 +51,7 @@ private:
   void bUpload_Click();
 
   Wt::WPushButton* bGoHome_;
-  void bGoHome_Click();
+  void goHome();
 
   static bool isOsUploaded_, isPcimapUploaded_;
   void osUploaded();
@@ -60,12 +61,11 @@ private:
   void readOs();
   void fillDetectedOs();
 
-  void resetAll();
   std::string os_file_, pcimap_file_; // @test
   
 public:
   static AnalyzeOsWidget* Instance( WContainerWidget* parent = 0 );
-
+  void resetAll();
 };
 
 #endif	// _ANALYZEOS_

@@ -1,0 +1,222 @@
+/************* GENERAL CSS ************/
+
+body {
+	margin: 0px;
+	padding: 0px;
+	text-align: justify;
+    font : normal 12px "Trebuchet MS", sans-serif;
+	color: #7b7b7b;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: "Trebuchet MS", sans-serif;
+	color: #4ba4c2;
+}
+
+ul, li {
+list-style-type : none;
+}
+img {
+opacity : 1.0;
+border : none;
+}
+
+a, a:hover, a:active, a:visited {
+	text-decoration: none;
+	color: #ff6600;
+}
+
+/************* HEADER STUFF ************/
+
+.header {
+	height: 80px;
+	margin: 0px auto;
+	background : #565656 url('new.gif') no-repeat top left;
+border-bottom : 6px solid #3c3c3c;
+}
+
+.header p {
+	margin: 19px 60px;
+	color:#4ba4c2;
+	font-size:20px;
+}
+.widgparty {
+height : 50px;
+width : 163px;
+position : absolute;
+left : 5px;
+background-image : url(images/ticket.jpg);
+background-position : top;
+background-repeat : no-repeat;
+}
+
+/********** it was worth a try for the program name :P
+.logoname {
+height : 70px;
+width : 200px;
+position : absolute;
+left : auto;
+right: 0px;
+background-position : top;
+background-repeat : no-repeat;
+}
+
+.logoname p {
+	margin: 1px 0px;
+	font-size:18px;
+	font-style:italic;
+}
+*/
+
+/************* MENU ************/
+
+.menu {
+	background : #3c3c3c;
+
+	padding: 6px 0px 5px 0px;
+	width:400px;
+}
+
+.menu ul {
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+	text-align: center;
+}
+/* "li"s might be removed!! */
+.menu li{
+	display: inline;
+	border-left: 1px solid #3c3c3c;
+}
+.menu li:hover{
+	display: inline;
+	margin: 0px;
+	padding: 6px 0px 0px 0px;
+}
+.menu li.selected{
+    background-color:#4ba4c2;
+	padding: 5px 0px;
+	border-top: 5px solid #4ba4c2;
+	border-bottom: 1px solid #4ba4c2;
+	border-left: none;
+}
+.menu a {
+	margin-left : 1px;
+	padding: 5px 14px;
+	text-decoration: none;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+}
+.menu a:hover {
+	padding: 5px 14px;
+	text-decoration: none;
+	font-size: 12px;
+	font-weight: bold;
+	color: #FFFFFF;
+   background-color:#4ba4c2;
+   	border-top: 1px solid #4ba4c2;
+	border-bottom: 1px solid #4ba4c2;
+
+}
+.menu a.selected{
+	background-color:#4ba4c2;
+   	border-top: 1px solid #4ba4c2;
+	border-bottom: 1px solid #4ba4c2;	
+
+}
+
+
+/************* CONTENT ************/
+
+.content, .smallr{
+	width: 770px;
+	margin: 0px auto;
+	padding: 0px 0px 0px 0px;
+}
+.content{
+	margin-top:-30px;
+}
+
+.content h2, .content h3, .content h4, .content h5, .content h6 {
+	font-weight: normal;
+}
+
+.content p, .content ul, .content ol {
+	line-height: 150%;
+}
+
+.pagearea {
+	float: left;
+	width: 480px;
+	padding: 30px 20px 40px 20px;
+}
+
+.pagequeryresult {
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.right {
+	float: right;
+	width: 210px;
+	padding: 30px 20px 10px 20px;
+}
+.smallr {
+    clear:both;
+	padding: 0px 0px 0px 0px;
+	width:770px;
+	margin-top:20px;
+}
+.column dl {
+	margin-bottom: 30px;
+	margin-left:30px;
+	width: 200px;
+	background: #222;
+	float: left;
+	}
+	.column dt {
+	padding: 10px;
+	font-size: 1.3em;
+	background: #333;
+	color: #4ba4c2;
+	border-bottom:3px solid #7b7b7b;
+	}
+	.column dd {
+	padding: 10px;
+	color: #CCC;
+	font-size: 1.2em;
+	border-bottom: 1px solid #333;
+	}
+	.column dd a {
+		color: #999;
+		padding:0 2px;
+		}
+		.column dd a:hover {
+			color: #666;
+			background:#4ba4c2;
+			}
+	.column dd cite {
+	margin: 3px 0 0;
+	font-size: .9em;
+	
+	color: #666;
+	}
+
+
+/************* FOOTER ************/
+
+.footr {
+width:300px;
+	clear: both;
+	margin: 10px auto;
+	padding:0;
+background : #f4f4f4;
+border : 1px solid #d7d7d7;
+	text-align:center;
+}
+
+.footr a:link,.footr a:hover,.footr a:active,.footr a:visited{
+color:#7b7b7b;
+text-decoration:none;
+}

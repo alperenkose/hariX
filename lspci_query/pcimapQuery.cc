@@ -7,12 +7,15 @@
 #include <Wt/WPanel>
 #include <Wt/WTable>
 #include <Wt/WText>
+#include <Wt/WAnchor>
 #include <string>
 
+#include "../harixApp.hpp"		// needed for WApplication::instance()
 #include "pcimapQuery.hpp"
 #include "../pci_device.hpp"
 #include "pcimapResult.hpp"
 #include "../home.hpp"
+#include "../div.hpp"
 
 using namespace Wt;
 
@@ -24,12 +27,43 @@ std::vector<PciDevice> PcimapQueryWidget::lspci_list;
 PcimapQueryWidget::PcimapQueryWidget( WContainerWidget* parent ) : WContainerWidget(parent)
 {
   parent_ = parent;
+
+  WContainerWidget *result;
+  addWidget( result = new WContainerWidget() );
+  Div *header = new Div(result, "header");
+  Div *logo = new Div(header, "widgparty");
+  logo->addWidget( new WText("<p>hari<a>X</a></p>") );
+  Div *content = new Div(result, "content");
+  Div *menu = new Div(content, "menu");
+  WContainerWidget *menulist = new WContainerWidget(menu);
+  menulist->setList(true);
+  
+  WAnchor *aHome;
+  menulist->addWidget( aHome = new WAnchor("","Home") );
+  aHome->setRefInternalPath("/home");
+  WAnchor *aAnalyzeOs;
+  menulist->addWidget( aAnalyzeOs = new WAnchor("","Analyze OS") );
+  aAnalyzeOs->setRefInternalPath("/analyze_os");
+  WAnchor *aQueryDevices;
+  menulist->addWidget( aQueryDevices = new WAnchor("","Query Devices") );
+  aQueryDevices->setRefInternalPath("/query_devices");
+  aQueryDevices->setStyleClass("selected");
+  WAnchor *aMainboards;
+  menulist->addWidget( aMainboards = new WAnchor("","Mainboards") );
+  aMainboards->setRefInternalPath("/mainboards");
+
+  Div *page = new Div(content, "pagearea");
+  
+
+  
   // setTitle("Query Pcimaps");                               // application title
-  WPanel *panelQuery;
-  panelQuery = new WPanel(this);
-  panelQuery->resize(470, WLength());
+  // WPanel *panelQuery;
+  // // panelQuery = new WPanel(this);
+  // page->addWidget( panelQuery = new WPanel() );
+  // panelQuery->resize(470, WLength());
   WTable* layoutQuery;
-  panelQuery->setCentralWidget( layoutQuery = new WTable() );
+  // panelQuery->setCentralWidget( layoutQuery = new WTable() );
+  page->addWidget( layoutQuery = new WTable() );
 
   layoutQuery->elementAt(0,0)->setColumnSpan(2);
   layoutQuery->elementAt(0,0)->addWidget( new WText("Paste below the output of `lspci -mn`:") );
@@ -46,9 +80,9 @@ PcimapQueryWidget::PcimapQueryWidget( WContainerWidget* parent ) : WContainerWid
 
   bQuery_->clicked().connect(this, &PcimapQueryWidget::readLspciList);
 
-  layoutQuery->elementAt(3,1)->setContentAlignment(AlignRight);
-  layoutQuery->elementAt(3,1)->addWidget( bGoHome_ = new WPushButton("Go Home"));  
-  bGoHome_->clicked().connect(this, &PcimapQueryWidget::bGoHome_Click);
+  // layoutQuery->elementAt(3,1)->setContentAlignment(AlignRight);
+  // layoutQuery->elementAt(3,1)->addWidget( bGoHome_ = new WPushButton("Go Home"));  
+  // bGoHome_->clicked().connect(this, &PcimapQueryWidget::bGoHome_Click);
 
 }
 
@@ -149,6 +183,7 @@ void PcimapQueryWidget::readLspciList()
 	selectWidget( qresult );
 
   pcimapList_->setText("");
+  WApplication::instance()->setInternalPath("/query_results");
 
 }
 
@@ -166,11 +201,8 @@ void PcimapQueryWidget::destroyLspciList()
 }
 
 
-void PcimapQueryWidget::bGoHome_Click()
+void PcimapQueryWidget::resetAll()
 {
-  HomeWidget* home_page;
-  home_page = HomeWidget::Instance();
-  selectWidget( home_page );
   pcimapList_->setText("");
   destroyLspciList();
 }

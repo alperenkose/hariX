@@ -22,10 +22,9 @@ private:
   void readLspciList();
   void destroyLspciList();
 
-  void bGoHome_Click();
-  
 public:
   ~PcimapQueryWidget();
+  void resetAll();
 
   static PcimapQueryWidget* Instance( WContainerWidget* parent = 0 );
   static std::vector<PciDevice>& getLspciList();

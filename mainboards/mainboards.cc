@@ -6,6 +6,7 @@
 #include <Wt/WSelectionBox>
 #include <Wt/WPushButton>
 #include <Wt/WText>
+#include <Wt/WAnchor>
 #include <Wt/WLogger>
 
 #include "../harixApp.hpp"		// just for wApp
@@ -13,6 +14,7 @@
 #include "../pci_device.hpp"
 #include "../lspci_query/pcimapResult.hpp"
 #include "mainboards.hpp"
+#include "../div.hpp"
 
 using namespace Wt;
 
@@ -23,10 +25,39 @@ MainboardsWidget* MainboardsWidget::instance_ = NULL;
 MainboardsWidget::MainboardsWidget( WContainerWidget* parent ) : WContainerWidget(parent)
 {
   parent_ = parent;
-  panelMainboard_ = new WPanel(this);
-  panelMainboard_->resize(420, WLength());
+
+  WContainerWidget *result;
+  addWidget( result = new WContainerWidget() );
+  Div *header = new Div(result, "header");
+  Div *logo = new Div(header, "widgparty");
+  logo->addWidget( new WText("<p>hari<a>X</a></p>") );
+  Div *content = new Div(result, "content");
+  Div *menu = new Div(content, "menu");
+  WContainerWidget *menulist = new WContainerWidget(menu);
+  menulist->setList(true);
+  
+  WAnchor *aHome;
+  menulist->addWidget( aHome = new WAnchor("","Home") );
+  aHome->setRefInternalPath("/home");
+  WAnchor *aAnalyzeOs;
+  menulist->addWidget( aAnalyzeOs = new WAnchor("","Analyze OS") );
+  aAnalyzeOs->setRefInternalPath("/analyze_os");
+  WAnchor *aQueryDevices;
+  menulist->addWidget( aQueryDevices = new WAnchor("","Query Devices") );
+  aQueryDevices->setRefInternalPath("/query_devices");
+  WAnchor *aMainboards;
+  menulist->addWidget( aMainboards = new WAnchor("","Mainboards") );
+  aMainboards->setRefInternalPath("/mainboards");
+  aMainboards->setStyleClass("selected");
+
+  Div *page = new Div(content, "pagearea");
+  
+  // // panelMainboard_ = new WPanel(this);
+  // page->addWidget( panelMainboard_ = new WPanel() );
+  // panelMainboard_->resize(420, WLength());
   WTable* layoutMainboard;
-  panelMainboard_->setCentralWidget( layoutMainboard = new WTable() );
+  // panelMainboard_->setCentralWidget( layoutMainboard = new WTable() );
+  page->addWidget( layoutMainboard = new WTable() );
 
   // WStandardItemModel* mainboards = new WStandardItemModel(this);
   mainboards = new WStandardItemModel(this);
@@ -55,10 +86,12 @@ MainboardsWidget::MainboardsWidget( WContainerWidget* parent ) : WContainerWidge
   layoutMainboard->elementAt(2,0)->addWidget( layConfButtons = new WTable() );
   layConfButtons->columnAt(0)->setWidth( WLength(80) );
   layConfButtons->columnAt(1)->setWidth( WLength(70) );
-  
+
   WPushButton* bBoardDevices;
   layConfButtons->elementAt(0,0)->addWidget( bBoardDevices = new WPushButton("Show") );
   bBoardDevices->clicked().connect(this, &MainboardsWidget::bBoardDevices_Click);
+	
+  dialogWarn_ = 0;
 
   // layoutMainboard->elementAt(2,0)->addWidget( new WText("Selected uKernelID: ") );
   // layoutMainboard->elementAt(2,0)->addWidget( testText_ = new WText("none") );
@@ -87,6 +120,12 @@ MainboardsWidget::MainboardsWidget( WContainerWidget* parent ) : WContainerWidge
   bCheckOs_->clicked().connect(this, &MainboardsWidget::bCheckOs_Click);
   bCheckOs_->disable();
 
+  if( boardsSelection_->count() == 0 ){
+	bBoardDevices->disable();
+	bDeleteBoard->disable();
+	comboOS_->disable();
+  }
+
   osModel_ = new WStandardItemModel(this);
   fillOsModel();
   comboOS_->setModel(osModel_);
@@ -104,10 +143,6 @@ MainboardsWidget::MainboardsWidget( WContainerWidget* parent ) : WContainerWidge
   comboDist_->disable();
   comboKer_->disable();
   comboDist_->activated().connect( this, &MainboardsWidget::releaseSelectionChanged );
-
-  layoutMainboard->elementAt(2,2)->addWidget( bGoHome_ = new WPushButton("Go Home"));
-  layoutMainboard->elementAt(2,2)->setContentAlignment(AlignRight);
-  bGoHome_->clicked().connect(this, &MainboardsWidget::bGoHome_Click);
 
 }
 
@@ -132,8 +167,9 @@ MainboardsWidget* MainboardsWidget::Instance( WContainerWidget* parent)
 
 MainboardsWidget::~MainboardsWidget()
 {
+  if( dialogWarn_ != 0 )
+	delete dialogWarn_;
   instance_ = NULL;
-  
 }
 
 std::multimap<std::string, std::string> getBoardList();
@@ -151,7 +187,8 @@ void MainboardsWidget::fillMainboards( WStandardItemModel& boardsModel )
   for ( board_iter=mainboard_list.begin(); board_iter!=mainboard_list.end(); ++board_iter ){
 	item = new WStandardItem( board_iter->first ); // boardID column
 	result.push_back(item);
-	item = new WStandardItem( board_iter->second ); // boardName column
+	item = new WStanda   analyze_os  deploy.sh    harixApp.hpp  home.hpp  main.cc      os_info.hpp  pci_ids         queryDistro.sh
+rdItem( board_iter->second ); // boardName column
 	result.push_back(item);
 	// wApp->log("debug") << "BOARD ID:" << board_iter->first; // @test
 	// wApp->log("debug") << "BOARD Name:" << board_iter->second; // @test
@@ -185,7 +222,8 @@ void MainboardsWidget::showBoardConfiguration( std::string board_id  )
   if ( (pcilist = PcimapResultWidget::Instance()) == NULL ){
 	selectWidget( PcimapResultWidget::Instance(device_list,parent_, boardsSelection_->currentText().narrow()) );
 	removeWidget( MainboardsWidget::Instance() );
-	delete MainboardsWidget::Instance();	
+	delete MainboardsWidget::Instance();
+	WApplication::instance()->setInternalPath("/query_results");
   }
   else
 	wApp->log("debug") << "PcimapResultWidget already exists! this should NOT happen!";
@@ -440,7 +478,8 @@ void MainboardsWidget::bCheckOs_Click()
 											   boardsSelection_->currentText().narrow(),
 											   getOsIdentifier()) );
 	removeWidget( MainboardsWidget::Instance() );
-	delete MainboardsWidget::Instance();	
+	delete MainboardsWidget::Instance();
+	WApplication::instance()->setInternalPath("/query_results");
   }
   else
 	wApp->log("debug") << "PcimapResultWidget already exists! this should NOT happen!";
@@ -448,6 +487,7 @@ void MainboardsWidget::bCheckOs_Click()
 
 void MainboardsWidget::dialogWarn_Close( WDialog::DialogCode code )
 {
+
   delete dialogWarn_;
 
   if ( code == WDialog::Accepted ){
@@ -458,21 +498,16 @@ void MainboardsWidget::dialogWarn_Close( WDialog::DialogCode code )
 
 void MainboardsWidget::refreshPage()
 {
-  delete dialogWarn_;
-
-  removeWidget( MainboardsWidget::Instance() );
-  delete MainboardsWidget::Instance();
+  // removeWidget( MainboardsWidget::Instance() );
+  // delete MainboardsWidget::Instance();
+  resetAll();
   selectWidget( MainboardsWidget::Instance( parent_ ) );
 }
 
 void removeWidget( WContainerWidget* widget );
 
-void MainboardsWidget::bGoHome_Click()
+void MainboardsWidget::resetAll()
 {
-  HomeWidget* home_page;
-  home_page = HomeWidget::Instance();
-  selectWidget( home_page );
-  // remove widget
   removeWidget( MainboardsWidget::Instance() );
   delete MainboardsWidget::Instance();
 }

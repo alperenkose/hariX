@@ -88,7 +88,7 @@ int update_device_codes( std::string pci_ids_file )
 	}
   }
 
-  // store Classes in the database
+  // store Devices in the database
   if ( store_pci_all() != 0 ){
 	delete_pci_all();
 	return 1;

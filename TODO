@@ -1,8 +1,9 @@
 
-- Validate names of distro.txt and modules.pcimap in AnalyzeOS!!
-
-- proxy configuration for curl when downloading pci.ids..
 
 - Store device-module information in dev_mode when storing the mainboard!! ( lspciTableRowSelected'daki mantikla uModIDlerin listesini alip `dev_mod` tablosuna koyabilin.. )
 
 - if we want to delete an OS; the corresponding entries from `pcimap` and `modules` should be deleted first..
+
+
+stylizr file in /resources..
+wt.css in themes/polished!!

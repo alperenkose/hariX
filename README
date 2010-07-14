@@ -42,3 +42,8 @@ subclasses
 
 progifs
 138
+
+
+first update pci.ids
+then add OSes so pcimap is filled.
+Add busTypeID 1 for PCI in `bus_type` table in db!

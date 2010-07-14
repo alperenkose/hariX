@@ -14,18 +14,23 @@ private:
   HomeWidget( Wt::WContainerWidget* parent);
   static HomeWidget* instance_;
   
-  Wt::WPushButton* bAnalyze_, *bQueryLspci_, *bListBoards_, *bPciIds_;
+  Wt::WPushButton *bPciIds_;
   Wt::WContainerWidget* parent_;
-  void bAnalyze_Click();
-  void bQueryLspci_Click();
-  void bListBoards_Click();
   void bPciIds_Click();
 
   Wt::WDialog *dialogPciIds_;
   Wt::WDialog *dialogDownload_;
+  Wt::WDialog *dialogWarn_;
   Wt::WOverlayLoadingIndicator *loading_;
-  void dialogPciEnd( Wt::WDialog::DialogCode code );
-  void dialogDownloadEnd( Wt::WDialog::DialogCode code );
+  void dialogPci_Close( Wt::WDialog::DialogCode code );
+  void dialogDownload_Close( Wt::WDialog::DialogCode code );
+  void dialogWarn_Close( Wt::WDialog::DialogCode code );
+
+  void readProxyFile();
+  std::string settingsProxy_;
+  Wt::WLineEdit* editProxy_;
+  void changeProxy();
+
 public:
   static HomeWidget* Instance( WContainerWidget* parent = 0 );
 };

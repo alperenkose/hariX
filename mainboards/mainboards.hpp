@@ -18,7 +18,7 @@ private:
   static MainboardsWidget* instance_;
   Wt::WContainerWidget* parent_;
 
-  Wt::WPanel* panelMainboard_;
+  // Wt::WPanel* panelMainboard_;
 
   std::multimap<std::string, std::string> mainboard_list; // ( boardID, boardName )
   Wt::WStandardItemModel* mainboards;
@@ -54,12 +54,10 @@ private:
   std::string getBoardIdentifier(); // Get the boardID of the selected board in SelectionBox!
   std::string getOsIdentifier(); // Get the selected uKernelID from the ComboBox selections!
   
-  Wt::WPushButton *bGoHome_;
-  void bGoHome_Click();
-
   Wt::WText* testText_;
 public:
   static MainboardsWidget* Instance( WContainerWidget* parent = 0 );
+  void resetAll();
 
 };
 

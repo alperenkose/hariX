@@ -56,13 +56,13 @@ private:
   void storeMainBoard( std::string board_name );
   std::vector<std::string> getUniqueDevIdList();
   
-  void bGoHome_Click();
 public:
   static PcimapResultWidget* Instance(std::vector<PciDevice> lspci_list,
 									  WContainerWidget* parent,
 									  std::string board_name="",
 									  std::string ukernel_id="");
   static PcimapResultWidget* Instance();
+  void resetAll();
   
 };
 

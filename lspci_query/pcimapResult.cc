@@ -8,6 +8,7 @@
 #include <Wt/WLineEdit>
 #include <Wt/WText>
 #include <Wt/WPushButton>
+#include <Wt/WAnchor>
 #include <string>
 
 #include "../home.hpp"
@@ -15,6 +16,7 @@
 #include "pcimapResult.hpp"
 #include "pcimapQuery.hpp"
 #include "../pci_device.hpp"
+#include "../div.hpp"
 
 using namespace Wt;
 using std::string;
@@ -39,17 +41,45 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
   ++instance_count;
   parent_ = parent;
 
+  WContainerWidget *result;
+  addWidget( result = new WContainerWidget() );
+  Div *header = new Div(result, "header");
+  Div *logo = new Div(header, "widgparty");
+  logo->addWidget( new WText("<p>hari<a>X</a></p>") );
+  Div *content = new Div(result, "content");
+  Div *menu = new Div(content, "menu");
+  WContainerWidget *menulist = new WContainerWidget(menu);
+  menulist->setList(true);
+  
+  WAnchor *aHome;
+  menulist->addWidget( aHome = new WAnchor("","Home") );
+  aHome->setRefInternalPath("/home");
+  WAnchor *aAnalyzeOs;
+  menulist->addWidget( aAnalyzeOs = new WAnchor("","Analyze OS") );
+  aAnalyzeOs->setRefInternalPath("/analyze_os");
+  WAnchor *aQueryDevices;
+  menulist->addWidget( aQueryDevices = new WAnchor("","Query Devices") );
+  aQueryDevices->setRefInternalPath("/query_devices");
+  aQueryDevices->setStyleClass("selected");
+  WAnchor *aMainboards;
+  menulist->addWidget( aMainboards = new WAnchor("","Mainboards") );
+  aMainboards->setRefInternalPath("/mainboards");
+
+  Div *page = new Div(result, "pagequeryresult");
+
   uKernelId_ = ukernel_id;
   // lspci_list_ = PcimapQueryWidget::getLspciList();
   lspci_list_ = lspci_list;
 
-  panelTable_ = new WPanel(this);
+  // panelTable_ = new WPanel(this);
+  page->addWidget( panelTable_ = new WPanel() );
   panelTable_->resize(1000,300);
   panelTable_->setCentralWidget( lspciTable_ = new WTableView() );
 
 
   lspciTable_->setSortingEnabled(false);
   lspciTable_->setSelectionMode(SingleSelection);
+  lspciTable_->setAlternatingRowColors(true);
 
   if( ukernel_id == "" ){
 	lspciModel_ = new WStandardItemModel( 0, 3, this );
@@ -73,7 +103,7 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
 	lspciTable_->setColumnWidth(1, WLength(180));
 	lspciTable_->setColumnWidth(2, WLength(500));
 	lspciTable_->setColumnWidth(3, WLength(60));
-	lspciTable_->setAlternatingRowColors(true); // @TODO: Requires CSS - Modify CSS
+
 
 	std::vector<string> current_os = queryOs( uKernelId_ );
 	panelTable_->setTitle("OS: "+ current_os.at(0) + " " + current_os.at(1) + " " +
@@ -90,7 +120,7 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
 
   lspciTable_->doubleClicked().connect(this, &PcimapResultWidget::lspciTableRowSelected);
 
-  addWidget( new WBreak() );
+  page->addWidget( new WBreak() );
 
   
   /**
@@ -104,7 +134,8 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
   osSupportModel_->setHeaderData(3, Horizontal, string("Arch."));
   osSupportModel_->setHeaderData(4, Horizontal, string("Driver"));
 
-  panelSupport_ = new WPanel(this);
+  // panelSupport_ = new WPanel(this);
+  page->addWidget( panelSupport_ = new WPanel() );
   panelSupport_->resize(1000, WLength() );
   panelSupport_->setTitle("Device Details");
 
@@ -157,11 +188,11 @@ PcimapResultWidget::PcimapResultWidget( std::vector<PciDevice>& lspci_list,
   layoutSupport_->elementAt(3,0)->addWidget( bSaveBoard = new WPushButton("Save Mainboard!") );
   bSaveBoard->clicked().connect(this, &PcimapResultWidget::bSaveBoard_Click);
   
-  WPushButton* bGoHome;
-  layoutSupport_->elementAt(3,1)->setColumnSpan(13);
-  layoutSupport_->elementAt(3,1)->setContentAlignment(AlignRight);
-  layoutSupport_->elementAt(3,1)->addWidget( bGoHome = new WPushButton("Go Home") );
-  bGoHome->clicked().connect(this, &PcimapResultWidget::bGoHome_Click);
+  // WPushButton* bGoHome;
+  // layoutSupport_->elementAt(3,1)->setColumnSpan(13);
+  // layoutSupport_->elementAt(3,1)->setContentAlignment(AlignRight);
+  // layoutSupport_->elementAt(3,1)->addWidget( bGoHome = new WPushButton("Go Home") );
+  // bGoHome->clicked().connect(this, &PcimapResultWidget::bGoHome_Click);
 
   osSupportTable_->setModel(osSupportModel_);
   osSupportTable_->resize(950,250);
@@ -230,6 +261,8 @@ std::multimap<string, string>
 queryPcimapOsList(string vendor_code, string device_code, string subvendor_code, string subdevice_code,
 				  string class_code, string subclass_code, string progif_code);
 
+string queryPciVendorName( string vendor_code );
+
 std::vector<WStandardItem*>
 PcimapResultWidget::pciDeviceToRowItem( const PciDevice* current_item )
 {
@@ -248,16 +281,37 @@ PcimapResultWidget::pciDeviceToRowItem( const PciDevice* current_item )
 								current_item->getSubdevice());
 
   // column 0:
-  item = new WStandardItem( full_class.at(1) ); 		// Print just the Subclass name..
+  if( !full_class.empty() ){
+	item = new WStandardItem( full_class.at(1) ); 		// Print just the Subclass name..
+  }
+  else
+	item = new WStandardItem("Unknown Class"); 		// class-subclass pair doesnot exist in db!
+
   result.push_back(item);
 
-  // column 1: 
-  item = new WStandardItem( full_device.at(0) ); 		// Print the Vendor name..
-  result.push_back(item);
-  
-  // column 2: 
-  item = new WStandardItem( full_device.at(1) ); 		// Print the Device name..
-  result.push_back(item);
+  if( !full_device.empty() ){
+	// column 1: 
+	item = new WStandardItem( full_device.at(0) ); 		// Print the Vendor name..
+	result.push_back(item);
+
+	if( full_device.at(1) != "" )
+	  // column 2: 
+	  item = new WStandardItem( full_device.at(1) ); 		// Print the Device name..
+	else
+	  item = new WStandardItem( "Unknown Device" );
+	result.push_back(item);	  
+
+  }
+  else{
+	string vendor_name;
+	if( (vendor_name = queryPciVendorName(current_item->getVendor())) == "" )
+	  item = new WStandardItem( "Unknown Vendor" );
+	else
+	  item = new WStandardItem( vendor_name );
+	result.push_back(item);
+  	item = new WStandardItem( "Unknown Device" );
+	result.push_back(item);
+  }
 
   if( uKernelId_ != "" ){
 	item = new WStandardItem();
@@ -435,8 +489,10 @@ void PcimapResultWidget::storeMainBoard( string board_name )
 
 string queryUniquePcisubId(string vendor_code, string device_code, string subvendor_code, string subdevice_code);
 string queryUniqueProgifId(string class_code, string subclass_code, string progif_code);
-string checkPciSpcId( string uPcisub_id, string uProgif_id );
+string checkPciSpcId( const PciDevice* const currentPciDevice );
 string checkUniqueDeviceId( string dev_special_id, int bus_type = 1 );
+string insertUnknownPcisubId(string vendor_code,string device_code,string subvendor_code,string subdevice_code);
+string insertUnknownProgifId(string class_code, string subclass_code, string progif_code);
 
 std::vector<string> PcimapResultWidget::getUniqueDevIdList()
 {
@@ -445,36 +501,52 @@ std::vector<string> PcimapResultWidget::getUniqueDevIdList()
 
   std::vector<PciDevice>::iterator lspci_iter;
   for( lspci_iter = lspci_list_.begin(); lspci_iter != lspci_list_.end(); ++lspci_iter ){
-	uPcisubId = queryUniquePcisubId(lspci_iter->getVendor(), 	// Returns uPcisubID from pci_subsystems..
-									lspci_iter->getDevice(),
-									lspci_iter->getSubvendor(),
-									lspci_iter->getSubdevice());
-	if( uPcisubId != "" ){
-	  uProgifId = queryUniqueProgifId(lspci_iter->getClass(), 	// Returns uProgifID from pci_prog_ifs.. 
-									  lspci_iter->getSubclass(),
-									  lspci_iter->getProgif());
+  // 	uPcisubId = queryUniquePcisubId(lspci_iter->getVendor(), 	// Returns uPcisubID from pci_subsystems..
+  // 									lspci_iter->getDevice(),
+  // 									lspci_iter->getSubvendor(),
+  // 									lspci_iter->getSubdevice());
+  // 	if( uPcisubId == "" ){
+  // 	  uPcisubId = insertUnknownPcisubId(lspci_iter->getVendor(), 	// Insert and Return uPcisubID
+  // 										lspci_iter->getDevice(),
+  // 										lspci_iter->getSubvendor(),
+  // 										lspci_iter->getSubdevice());
+  // 	}
 
-	  pciSpcId = checkPciSpcId( uPcisubId, uProgifId ); // Returns pciSpcID from pci_all, adds if not exists..
-	  uDevId = checkUniqueDeviceId( pciSpcId ); // Returns uDevID from all_devices, adds if not exists..
-	  uDevIdList.push_back( uDevId );
-	  wApp->log("debug") <<" !pciSpcId:"<< pciSpcId << " !uDevId:" << uDevId ; // @test
-	}
-	else{
-	  // @TODO: WHAT IF THE DEVICE DOESN'T EXIST IN DB!!?
-	  wApp->log("debug") << "DO SOMETHING IF DEVICE DOESN'T EXIST ON DB!!" ; // @test
-	}
+  // 	uProgifId = queryUniqueProgifId(lspci_iter->getClass(), 	// Returns uProgifID from pci_prog_ifs.. 
+  // 									lspci_iter->getSubclass(),
+  // 									lspci_iter->getProgif());
+  // 	if( uProgifId == "" ){
+  // 	  // not sure what todo here, maybe better not to allow saving!!
+  // 	  	// wApp->log("debug") << "Hmm class identifier not found!!!! " ; // @test
+  // 	  	// uProgifId = insertUnknownProgifId(lspci_iter->getClass(), 	// insert and return uProgifID
+  // 		// 								  lspci_iter->getSubclass(),
+  // 		// 								  lspci_iter->getProgif());
+  // 	}
+
+  // pciSpcId = checkPciSpcId( uPcisubId, uProgifId ); // Returns pciSpcID from pci_all, adds if not exists..
+	pciSpcId = checkPciSpcId( &*lspci_iter );
+	uDevId = checkUniqueDeviceId( pciSpcId ); // Returns uDevID from all_devices, adds if not exists..
+	uDevIdList.push_back( uDevId );
+	wApp->log("debug") <<" !pciSpcId:"<< pciSpcId << " !uDevId:" << uDevId ; // @test
+
 	
   }
 
   return uDevIdList;
 }
 
-void PcimapResultWidget::bGoHome_Click()
+// void PcimapResultWidget::bGoHome_Click()
+// {
+//   HomeWidget* home_page;
+//   home_page = HomeWidget::Instance();
+//   selectWidget( home_page );
+//   // remove widget
+//   removeWidget( PcimapResultWidget::Instance() );
+//   delete PcimapResultWidget::Instance();
+// }
+
+void PcimapResultWidget::resetAll()
 {
-  HomeWidget* home_page;
-  home_page = HomeWidget::Instance();
-  selectWidget( home_page );
-  // remove widget
   removeWidget( PcimapResultWidget::Instance() );
   delete PcimapResultWidget::Instance();
 }

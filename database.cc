@@ -17,7 +17,7 @@ using std::string;
 const string host_url("localhost");
 const string user("root");
 const string pass("alp");
-const string database("bugware0");
+const string database("harix_db");
 
 
 static sql::ResultSet* commonResultSet;
@@ -601,6 +601,188 @@ void insertBoardDevices( string board_id, std::vector<string>& device_id_list )
 	
 }
 
+string queryPciVendorName( string vendor_code ) // return vendor name
+{
+  string vendor_name="";
+  
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT vendorName FROM pci_vendors WHERE vendorCode='"
+										 + vendor_code +"'");
+
+	if( commonResultSet->next() ){
+	  vendor_name = commonResultSet->getString("vendorName");
+	}
+	
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return vendor_name;
+  
+}
+
+void insertPciVendor( string vendor_code, string vendor_name )
+{
+  try{
+	connectDatabase();
+
+	stmt->execute("INSERT INTO pci_vendors VALUES ('"+ vendor_code  +"','"+ vendor_name +"')");
+	commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+}
+
+string queryPciDeviceId( string vendor_code, string device_code ) // return deviceID from pci_devices
+{
+  string device_id="";
+  
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT deviceID FROM pci_devices WHERE vendorCode_FK='"
+										 + vendor_code +"' AND deviceCode='"+ device_code  +"'");
+
+	if( commonResultSet->next() ){
+	  device_id = commonResultSet->getString("deviceID");
+	}
+	
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return device_id;
+}
+
+string insertPciDevice( string vendor_code, string device_code, string device_name )// return deviceID
+{
+  string device_id;
+
+  try{
+	connectDatabase();
+
+	stmt->execute("INSERT INTO pci_devices(deviceCode,deviceName,vendorCode_FK) VALUES ('"+ device_code  +"',"
+				  "'"+ device_name +"','"+ vendor_code +"')");
+	commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+	if( commonResultSet->next() ){
+	  device_id = commonResultSet->getString(1);
+	}
+	
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return device_id;
+}
+
+string insertPciSubsys( string device_id , string subvendor_code, string subdevice_code, string subsysname )
+{
+  string uPcisub_id;
+
+  try{
+	connectDatabase();
+
+	stmt->execute("INSERT INTO pci_subsystems(subvendor,subdevice,subSysName,deviceID_FK)"
+				  " VALUES ('"+ subvendor_code +"','"+ subdevice_code +"','"+ subsysname +"','"+ device_id +"')");
+	commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+	if( commonResultSet->next() ){
+	  uPcisub_id = commonResultSet->getString(1);
+	}
+	
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return uPcisub_id;
+}
+
+string insertUnknownPcisubId(string vendor_code, string device_code, string subvendor_code, string subdevice_code)
+{
+  string deviceId, uPcisubId;
+  if( queryPciVendorName( vendor_code ) == "" )
+	insertPciVendor( vendor_code, "Unknown Vendor" ); // (vendor code, vendor name)
+
+  if( (deviceId = queryPciDeviceId( vendor_code, device_code )) == "" ){
+	wApp->log("debug") << "lets insert the new Device ID!!!"; 									// @test
+	deviceId = insertPciDevice( vendor_code, device_code, "Unknown Device" ); // (vendor code, device code, name )
+	wApp->log("debug") << "Unknown Device inserted with deviceId: "+ deviceId;						// @test
+  }
+
+
+  // deviceID,subvendor,subdevice,subsysname
+  uPcisubId = insertPciSubsys(deviceId, subvendor_code, subdevice_code, "Unknown");
+
+  return uPcisubId;
+}
+
+
 string queryUniquePcisubId(string vendor_code, string device_code, string subvendor_code, string subdevice_code)
 {
   string uPcisubId = "";
@@ -634,6 +816,184 @@ string queryUniquePcisubId(string vendor_code, string device_code, string subven
 
   return uPcisubId;
 }
+
+string queryPciClassName( string class_code )
+{
+  string class_name="";
+  
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT className FROM pci_classes WHERE classCode='"
+										 + class_code +"'");
+
+	if( commonResultSet->next() ){
+	  class_name = commonResultSet->getString("className");
+	}
+	
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return class_name;
+}
+
+void insertPciClass( string class_code, string class_name )
+{
+  try{
+	connectDatabase();
+
+	stmt->execute("INSERT INTO pci_classes VALUES ('"+ class_code  +"','"+ class_name +"')");
+	commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+}
+
+string queryPciSubclassId( string class_code, string subclass_code )
+{
+  string subclass_id="";
+  
+  try{
+	connectDatabase();
+
+	commonResultSet = stmt->executeQuery("SELECT subClassID FROM pci_subclasses WHERE classCode_FK='"
+										 + class_code +"' AND subClassCode='"+ subclass_code  +"'");
+
+	if( commonResultSet->next() ){
+	  subclass_id = commonResultSet->getString("subClassID");
+	}
+	
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return subclass_id;
+}
+
+string insertPciSubclass(string class_code, string subclass_code, string subclass_name )
+{
+  string subclass_id;
+
+  try{
+	connectDatabase();
+
+	stmt->execute("INSERT INTO pci_subclasses(subClassCode,subClassName,classCode_FK) "
+				  "VALUES ('"+ subclass_code +"',"
+				  "'"+ subclass_name +"','"+ class_code +"')");
+	commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+	if( commonResultSet->next() ){
+	  subclass_id = commonResultSet->getString(1);
+	}
+	
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return subclass_id;
+}
+
+string insertPciProgif( string subclassId, string progif_code, string progif_name)
+{
+  string uProgif_id;
+
+  try{
+	connectDatabase();
+
+	stmt->execute("INSERT INTO pci_prog_ifs(progifCode,progifName,subClassID_FK)"
+				  " VALUES ('"+ progif_code +"','"+ progif_name +"','"+ subclassId +"')");
+	commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+	if( commonResultSet->next() ){
+	  uProgif_id = commonResultSet->getString(1);
+	}
+	
+  }
+  catch (sql::SQLException &e) {
+  	/*
+  	  The MySQL Connector/C++ throws three different exceptions:
+  	  - sql::MethodNotImplementedException (derived from sql::SQLException)
+  	  - sql::InvalidArgumentException (derived from sql::SQLException)
+  	  - sql::SQLException (derived from std::runtime_error)
+  	*/
+	wApp->log("debug") << "# ERR: SQLException in " << __FILE__;
+	wApp->log("debug") << "(" << __FUNCTION__ << ") on line " << __LINE__;
+    /* Use what() (derived from std::runtime_error) to fetch the error message */
+	wApp->log("debug") << "# ERR: " << e.what();
+  	wApp->log("debug") << " (MySQL error code: " << e.getErrorCode();
+	wApp->log("debug") << ", SQLState: " << e.getSQLState() << " )";
+  }
+  disconnectDatabase();
+
+  return uProgif_id;
+}
+
+string insertUnknownProgifId(string class_code, string subclass_code, string progif_code)
+{
+  string subclassId, uProgifId;
+  if( queryPciClassName( class_code ) == "" )
+	insertPciClass( class_code, "Unknown" ); // (class code, classname)
+
+  if( (subclassId = queryPciSubclassId( class_code, subclass_code )) == "" ){
+	subclassId = insertPciSubclass(class_code, subclass_code, "Unknown" ); // (class code, subclass code, name )
+  }
+
+  uProgifId = insertPciProgif(subclassId, progif_code, "Unknown");
+
+  return uProgifId;
+}
+
 
 string queryUniqueProgifId(string class_code, string subclass_code, string progif_code)
 {
@@ -670,20 +1030,35 @@ string queryUniqueProgifId(string class_code, string subclass_code, string progi
   return uProgifId;
 }
 
-string checkPciSpcId( string uPcisub_id, string uProgif_id )
+
+string checkPciSpcId( const PciDevice* const currentPciDevice )
 {
   string pciSpcId;
 
   try{
 	connectDatabase();
 	
-	commonResultSet = stmt->executeQuery("SELECT pciSpcID FROM pci_all WHERE uProgifID_FK="+ uProgif_id +
-										 " AND uPcisubID_FK="+ uPcisub_id);
+	commonResultSet = stmt->executeQuery("SELECT pciSpcID FROM pci_all WHERE "
+										 "vendorCode='"+ currentPciDevice->getVendor() + "' AND " +
+										 "deviceCode='"+ currentPciDevice->getDevice() + "' AND " +
+										 "subvendorCode='"+ currentPciDevice->getSubvendor() + "' AND " +
+										 "subdeviceCode='"+ currentPciDevice->getSubdevice() + "' AND " +
+										 "classCode='"+ currentPciDevice->getClass() + "' AND " +
+										 "subclassCode='"+ currentPciDevice->getSubclass() + "' AND " +
+										 "progifCode='"+ currentPciDevice->getProgif() + "'");
 	if( commonResultSet->first() ){
 	  pciSpcId = commonResultSet->getString("pciSpcID");
 	}
 	else {
-	  stmt->execute("INSERT INTO pci_all(uProgifID_FK, uPcisubID_FK) VALUES ("+ uProgif_id +","+ uPcisub_id+")");
+	  stmt->execute("INSERT INTO pci_all"
+					"(vendorCode, deviceCode, subvendorCode, subdeviceCode, classCode,subclassCode,progifCode) "
+					"VALUES ('"+ currentPciDevice->getVendor() +"'," +
+					"'"+ currentPciDevice->getDevice() +"',"+
+					"'"+ currentPciDevice->getSubvendor() +"',"+
+					"'"+ currentPciDevice->getSubdevice() +"',"+
+					"'"+ currentPciDevice->getClass() +"',"+
+					"'"+ currentPciDevice->getSubclass() +"',"+
+					"'"+ currentPciDevice->getProgif() +"')");
 	  commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
 	  if( commonResultSet->next() ){
 		pciSpcId = commonResultSet->getString(1);
@@ -728,7 +1103,7 @@ string checkUniqueDeviceId( string dev_special_id, int bus_type = 1 )
 		uDevId = commonResultSet->getString("uDevID");
 	  }
 	  else {
-		stmt->execute("INSERT INTO all_devices(busTypeID_FK,pciSpcID_FK) VALUES ("+ type+","+ dev_special_id+")");
+		stmt->execute("INSERT INTO all_devices(busTypeID_FK,pciSpcID_FK) VALUES ("+ type +","+ dev_special_id+")");
 		commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
 		if( commonResultSet->next() ){
 		  uDevId = commonResultSet->getString(1);
@@ -851,14 +1226,14 @@ std::vector<string> queryDeviceCodes( string udev_id, int bus_type = 1 )
 	  if( commonResultSet->first() ){
 		string pci_spc_id = commonResultSet->getString("pciSpcID_FK");
 
-		commonResultSet = stmt->executeQuery("SELECT * FROM vw_pci_devices WHERE pciSpcID="+ pci_spc_id );
+		commonResultSet = stmt->executeQuery("SELECT * FROM pci_all WHERE pciSpcID="+ pci_spc_id );
 		if( commonResultSet->next() ){
 		  device_codes.push_back( commonResultSet->getString("vendorCode") );
 		  device_codes.push_back( commonResultSet->getString("deviceCode") );
-		  device_codes.push_back( commonResultSet->getString("subvendor") );
-		  device_codes.push_back( commonResultSet->getString("subdevice") );
+		  device_codes.push_back( commonResultSet->getString("subvendorCode") );
+		  device_codes.push_back( commonResultSet->getString("subdeviceCode") );
 		  device_codes.push_back( commonResultSet->getString("classCode") );
-		  device_codes.push_back( commonResultSet->getString("subClassCode") );
+		  device_codes.push_back( commonResultSet->getString("subclassCode") );
 		  device_codes.push_back( commonResultSet->getString("progifCode") );
 		}
 	  }

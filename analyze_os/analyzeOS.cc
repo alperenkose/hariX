@@ -17,6 +17,7 @@
 #include "analyzeOS.hpp"
 #include "../home.hpp"
 #include "../os_info.hpp"
+#include "../div.hpp"
 
 using namespace Wt;
 
@@ -29,12 +30,44 @@ bool AnalyzeOsWidget::isPcimapUploaded_ = false;
 AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(parent)
 {
   parent_ = parent;
+
+  WContainerWidget *result;
+  addWidget( result = new WContainerWidget() );
+  Div *header = new Div(result, "header");
+  Div *logo = new Div(header, "widgparty");
+  logo->addWidget( new WText("<p>hari<a>X</a></p>") );
+  Div *content = new Div(result, "content");
+  Div *menu = new Div(content, "menu");
+  WContainerWidget *menulist = new WContainerWidget(menu);
+  menulist->setList(true);
+  
+  WAnchor *aHome;
+  menulist->addWidget( aHome = new WAnchor("","Home") );
+  aHome->setRefInternalPath("/home");
+  WAnchor *aAnalyzeOs;
+  menulist->addWidget( aAnalyzeOs = new WAnchor("","Analyze OS") );
+  aAnalyzeOs->setRefInternalPath("/analyze_os");
+  aAnalyzeOs->setStyleClass("selected");
+  WAnchor *aQueryDevices;
+  menulist->addWidget( aQueryDevices = new WAnchor("","Query Devices") );
+  aQueryDevices->setRefInternalPath("/query_devices");
+  WAnchor *aMainboards;
+  menulist->addWidget( aMainboards = new WAnchor("","Mainboards") );
+  aMainboards->setRefInternalPath("/mainboards");
+
+  Div *page = new Div(content, "pagearea");
+
+  
   WAnchor *os_script_;
 
-  panelAnalyze_ = new WPanel(this);
-  panelAnalyze_->resize(420,200);
-  panelAnalyze_->setCentralWidget( layoutAnalyze_ = new WTable() );
-  // panelAnalyze_->setStyleClass(".Wt-panel.body .Wt-outset .center");
+  // @TODO: to be removed
+  // panelAnalyze_ = new WPanel(this);
+  // page->addWidget( panelAnalyze_ = new WPanel() );
+  // panelAnalyze_->resize(420,200);
+  // panelAnalyze_->setCentralWidget( layoutAnalyze_ = new WTable() );
+  // // panelAnalyze_->setStyleClass(".Wt-panel.body .Wt-outset .center");
+  // panelAnalyze_->setStyleClass(".center");
+  page->addWidget( layoutAnalyze_ = new WTable() );
 
   layoutAnalyze_->resize(400,160);
   layoutAnalyze_->rowAt(0)->setHeight(20);
@@ -57,10 +90,11 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   layoutAnalyze_->elementAt(3,1)->addWidget( uploadPcimap_ = new WFileUpload() );
   layoutAnalyze_->rowAt(4)->setHeight(25);
   layoutAnalyze_->elementAt(4,0)->addWidget( bUpload_ = new WPushButton("Upload") );
-  WPushButton* bGoHome1;
-  layoutAnalyze_->elementAt(4,1)->addWidget( bGoHome1 = new WPushButton("Go Home") );
-  layoutAnalyze_->elementAt(4,1)->setContentAlignment(AlignRight);
-  bGoHome1->clicked().connect(this, &AnalyzeOsWidget::bGoHome_Click);
+  
+  // WPushButton* bGoHome1;
+  // layoutAnalyze_->elementAt(4,1)->addWidget( bGoHome1 = new WPushButton("Go Home") );
+  // layoutAnalyze_->elementAt(4,1)->setContentAlignment(AlignRight);
+  // bGoHome1->clicked().connect(this, &AnalyzeOsWidget::bGoHome_Click);
 
   // Upload when the button is clicked.
   bUpload_->clicked().connect(this, &AnalyzeOsWidget::bUpload_Click);
@@ -69,11 +103,15 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   uploadOs_->uploaded().connect(this, &AnalyzeOsWidget::osUploaded);
   uploadPcimap_->uploaded().connect(this, &AnalyzeOsWidget::pcimapUploaded);
 
-  panelAnalyzeResult_ = new WPanel(this);
-  panelAnalyzeResult_->hide();
-  panelAnalyzeResult_->resize(600, WLength() );
-  WTable* layoutResult;
-  panelAnalyzeResult_->setCentralWidget( layoutResult = new WTable() );
+  // @TODO: to be removed
+  // page->addWidget( panelAnalyzeResult_ = new WPanel() );
+  // panelAnalyzeResult_ = new WPanel(this);
+  // panelAnalyzeResult_->hide();
+  // panelAnalyzeResult_->resize(600, WLength() );
+  // WTable* layoutResult;
+  // panelAnalyzeResult_->setCentralWidget( layoutResult = new WTable() );
+  page->addWidget( layoutResult = new WTable() );
+  layoutResult->hide();
 
   // layoutResult->rowAt(0)->setHeight( WLength(170) );
   layoutResult->rowAt(1)->setHeight( WLength(20) );
@@ -121,12 +159,13 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   bOsCancel_->clicked().connect(this, &AnalyzeOsWidget::bOsCancel_Click);
 
   layoutResult->elementAt(1,0)->addWidget( new WText("*Fields above are editable!") );
-  WPushButton* bGoHome2;
-  layoutResult->elementAt(1,2)->addWidget( bGoHome2 = new WPushButton("Go Home") );
-  layoutResult->elementAt(1,2)->setContentAlignment(AlignRight);
-  addWidget(new WBreak());
 
-  bGoHome2->clicked().connect(this, &AnalyzeOsWidget::bGoHome_Click);
+
+  // WPushButton* bGoHome2;
+  // layoutResult->elementAt(1,2)->addWidget( bGoHome2 = new WPushButton("Go Home") );
+  // layoutResult->elementAt(1,2)->setContentAlignment(AlignRight);
+  // addWidget(new WBreak());
+  // bGoHome2->clicked().connect(this, &AnalyzeOsWidget::bGoHome_Click);
 
 }
 
@@ -183,8 +222,8 @@ void AnalyzeOsWidget::uploadDone()
 {
   if ( isOsUploaded_ && isPcimapUploaded_ ){
 	readOs();
-	panelAnalyze_->hide();
-	panelAnalyzeResult_->show();
+	layoutAnalyze_->hide();
+	layoutResult->show();
 	isOsUploaded_=false;
 	isPcimapUploaded_=false;
   }
@@ -294,22 +333,24 @@ void AnalyzeOsWidget::bOsAddUpdate_Click()
 void AnalyzeOsWidget::redirectAndDestroyDialog( WDialog::DialogCode code )
 {
   if ( code == WDialog::Accepted )
-	bGoHome_Click();
+	goHome();
   else
 	bOsCancel_Click();
   delete dialogResult_;
 }
 
 
-void AnalyzeOsWidget::bGoHome_Click()
+void AnalyzeOsWidget::goHome()
 {
-  HomeWidget* home_page;
-  if ( (home_page = HomeWidget::Instance()) == NULL )
-	selectWidget( HomeWidget::Instance(parent_) ); // Add widget to StackedWidget and select it..
-  else
-	selectWidget( home_page );
+  WApplication::instance()->setInternalPath("/home",true);
+  // HomeWidget* home_page;
+  // if ( (home_page = HomeWidget::Instance()) == NULL )
+  // 	selectWidget( HomeWidget::Instance(parent_) ); // Add widget to StackedWidget and select it..
+  // else
+  // 	selectWidget( home_page );
 
-  resetAll();
+  
+  // resetAll();
 }
 
 void AnalyzeOsWidget::resetAll()
@@ -327,8 +368,10 @@ void AnalyzeOsWidget::resetAll()
   uploadOs_->uploaded().connect(this, &AnalyzeOsWidget::osUploaded);
   uploadPcimap_->uploaded().connect(this, &AnalyzeOsWidget::pcimapUploaded);
 
-  panelAnalyze_->show();
-  panelAnalyzeResult_->hide();
+  // panelAnalyze_->show();
+  // panelAnalyzeResult_->hide();
+  layoutAnalyze_->show();
+  layoutResult->hide();
 
   layoutCheckResult_->hide();
   groupDetectedOs_->enable();

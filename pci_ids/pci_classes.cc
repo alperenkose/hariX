@@ -40,7 +40,7 @@ int pciClass::store_db (void)
   const string host_url("localhost");
   const string user("root");
   const string pass("alp");
-  const string database("bugware0");
+  const string database("harix_db");
   string class_code, class_name, subclass_code, subclass_name, prog_code, prog_name;
 
   // Could be better with MySQL Prepared Statement
