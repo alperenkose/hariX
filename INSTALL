@@ -1,0 +1,244 @@
+CONTENTS OF THIS FILE
+---------------------
+
+ * Requirements
+ * Requirement Configurations
+ * Installation of hariX
+
+
+REQUIREMENTS
+------------
+
+- An Apache web server with fast CGI module, preferably mod_fcgid.
+- MySQL Server with development packages installed(Version 5.0 or greater).
+- Boost C++ Libraries 1.36 or newer.
+- MySQL Connector/C++(1.1.0).
+- Wt C++ Library(Version 3.1.3 or greater).
+
+
+REQUIREMENT CONFIGURATIONS
+--------------------------
+
+1. Fast CGI Configuration for Apache Server
+	- Install Apache server along with mod_fcgid.
+
+	- Configure fcgid:
+
+		shell> vim /etc/apache2/conf.d/fcgid.conf
+
+		Put the following there:
+
+		<IfModule mod_fcgid.c>
+			AddHandler fcgid-script .wt 			# extension for Wt to work
+			SocketPath /var/lib/apache2/fcgid/sock
+			IdleTimeout -1
+			ProcessLifeTime -1
+			MaxProcessCount 1
+			DefaultMaxClassProcessCount 1
+			DefaultMinClassProcessCount 1
+		</IfModule>
+
+	- You may wish to also do the following command just to check if mod_fcgid has installed:
+
+		shell> a2enmod fcgid
+
+		You should get the following output after running the above command:
+
+    		This module is already enabled!
+
+
+2. MySQL Connector/C++
+	harix is build upon the upcoming 1.1.0 release of Connector/C++ from
+	code repository. Installation instructions are as follows:
+
+	- Download the latest source code:
+
+		shell> bzr branch lp:~mysql/mysql-connector-cpp/trunk
+
+		if it doesn't compile, you can get the one used on building
+		hariX from:
+		@TODO: gna.org/harix/downloads!!!
+
+
+	- Remove CMakeCache.txt file if it exists in source root directory..
+
+	- Run CMake to build a MakeFile:
+		
+		shell:/path/to/mysql-connector-cpp> cmake .
+
+	- Clean everything and build the libraries:
+
+		shell:/path/to/mysql-connector-cpp> make clean
+		shell:/path/to/mysql-connector-cpp> make
+
+		if all is well you will see the library in /path/to/mysql-connector-cpp/cppconn/libmysqlcppconn.so
+
+	- Install header and library files:
+
+		shell:/path/to/mysql-connector-cpp> sudo make install
+
+		The header files will be copied to '/usr/local/include' which are
+		"mysql_connection.h" and "mysql_driver.h".
+		And the library files will be copied to '/usr/local/lib' which are
+		"libmysqlcppconn.so", the dynamic library, and 
+		"libmysqlcppconn-static.a", the static library.
+
+
+3. Wt C++ Library
+	Installation instructions for Wt C++ library:
+
+	- Download the latest available package:
+		You can get it from "http://www.webtoolkit.eu/wt#/download".
+		Currently hariX is built with version 3.1.3, you can also get
+		it from
+		@TODO: gna.org/harix/downloads!!!
+	
+	- Create a build directory:
+		The recommended way to build the library is in a seperate build
+		directory, for example within the top-level of the Wt package:
+
+		shell> cd /path/to/wt-x.xx
+		shell:/path/to/wt-x.xx> mkdir build
+		shell:/path/to/wt-x.xx> cd build
+
+	- Configure the library:
+
+		shell:/path/to/wt-x.xx/build> cmake ../
+
+		This will try to locate the necessary libraries. If
+		everything is OK, then this should end with something like:
+			-- Generating done
+			-- Build files have been written to: /home/kdforc0/project/wt/build
+
+
+	- Need to make some configuration for hariX and different OSes:
+
+		shell:/path/to/wt-x.xx/build> ccmake ../
+		
+		and set the following:
+
+		CONNECTOR_FCGI:BOOL=ON
+		EXAMPLES_CONNECTOR:STRING=wtfcgi
+		RUNDIR:PATH=/var/run/wt
+
+		Set this according to your Apache:
+
+		DEPLOYROOT:PATH=/var/www/wt
+		
+		and set those according to your apache user, 
+		might be apache, http etc.(this is shown for Debian):
+
+		WEBGROUP:STRING=www-data
+		WEBUSER:STRING=www-data
+
+	- Build the library
+
+		shell:/path/to/wt-x.xx/build> make
+
+	- Install the library:
+
+		shell:/path/to/wt-x.xx/build> sudo make install
+
+		The header files will be copied to '/usr/local/include/Wt'.
+		And the library files will be copied to '/usr/local/lib'.
+
+	- Make sure that directory '/var/run/wt' belongs to the apache user:
+
+		If not run(apacher user for Debian);
+		shell> chown www-data:www-data /var/run/wt -R
+
+
+INSTALLATION OF HARIX
+---------------------
+
+1. Database Configuration
+
+	- Download the database create script from
+	@TODO: gna.org/harix/downloads!!!
+
+	- Run the script on MySQL server:
+		Verify that database 'harix_db' is created.
+
+	- Configure database:
+		Run the following on a MySQL Query Browser:
+			INSERT INTO harix_db.bus_type(busName) VALUES ('PCI');
+
+		This will initialize an entry in `bus_type` table with PCI value busTypeID 1.
+
+	- WARNING: For now, the database 'root' user should have password as 'password' for hariX to work!!
+
+
+2. Install hariX
+
+	- Clean everything and build hariX:
+		shell:/path/to/harix-source> make clean
+		shell:/path/to/harix-source> make
+
+	- Edit "deploy.sh" script:
+		Change DEPLOY_HARIX variable to your Apache deployment directory
+		where your web application will reside.
+		Default directory is "/srv/http/harix". Change to "/var/www/harix" for Debian.
+
+	- Run "deploy.sh":
+		shell:/path/to/harix-source> sudo ./deploy.sh
+
+3. Configure Wt
+
+	- Edit "/etc/wt/wt_config.xml" configuration file:
+		Uncomment the <dedicated-process> region in <session-management> like this;
+
+		<dedicated-process>
+			<max-num-sessions>100</max-num-sessions>
+		</dedicated-process>
+
+		And comment the <shared-process> region like this;
+
+		<!--
+		<shared-process>
+			<num-processes>1</num-processes>
+		</shared-process>
+		-->
+
+		This way we will have seperate processes for each session!
+
+		And edit <max-request-size> region to allow "modules.pcimap" file uploads
+		with large size! ( Changed to 512 from 128 )
+
+		<!-- Maximum HTTP request size (Kb) -->
+		<max-request-size>512</max-request-size>
+
+
+4. Configure Apache FastCGI Directory
+
+	- Go to the harix config file in apache:
+		shell> vim /etc/apache2/sites-available/harix
+
+		Put the following in it:
+
+		<Directory /var/www/harix/>
+		#Order Deny,Allow
+		Allow from all
+		# Don't show indexes for directories on publicly accessible machines (Uncomment if it's a private devshell).
+		Options -Indexes
+		# Enable CGIs to be executed 
+		Options ExecCGI
+		</Directory>
+
+	- Enable the site & reload apache:
+		shell> a2ensite harix
+		shell> /etc/init.d/apache2 reload
+
+5. Ready to go
+
+	- Point your browser to:
+		http://localhost/harix/harix.wt
+
+	- Save the Proxy server in Settings if needed.
+	- Click "Update PCI IDs".
+	- Add OSes in "Analyze OS" page..
+	- And enjoy :)
+
+
+References
+----------
+- http://redmine.emweb.be/wiki/wt/Installing_Wt_on_Debian

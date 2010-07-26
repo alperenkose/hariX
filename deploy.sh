@@ -1,4 +1,5 @@
-install -m 0755 harix.wt /srv/http/harixB
-rm /srv/http/harixB/queryDistro.sh
-install -m 0755 queryDistro.sh /srv/http/harixB
-cp -R resources /srv/http/harixB
+DEPLOY_HARIX=/var/www/harix
+install -m 0755 harix.wt $DEPLOY_HARIX
+rm $DEPLOY_HARIX/queryDistro.sh
+install -m 0755 queryDistro.sh $DEPLOY_HARIX
+cp -R resources $DEPLOY_HARIX

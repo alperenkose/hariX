@@ -1,26 +1,5 @@
-max-request-size in wt configuration file, /etc/wt/wt_config.xml, is increased to let modules.pcimap upload!! 512.
-
-edit wt_config.xml for dedicated process!!!!!!!
-
-libmysqlcppconn C++ Connector library!
-wt library!
-
-deploy.sh!!
-
-=====================================================
-MySQL Connector/C++ Source repository
-
-The latest development version is also available through Launchpad.
-
-Bazaar is used for the MySQL Connector/C++ code repository. You can check out the latest source code using the bzr command line tool:
-
-shell> bzr branch lp:~mysql/mysql-connector-cpp/trunk
-======================================================
-
--rXX revision does NOT have to exist in lspci -mn, so corrected the code appropriately ;|
 
 - pci_vendors table is case sensitive so any pci.ids update with different cases will update the row..
-
 
 Known Issues :
 - Successive queries of lspci in `Query lspci list` screen repeatedly causes to session restart.. :s
@@ -31,6 +10,9 @@ http://www.iconlet.com/info/22463_button_ok_16x16
 http://www.iconlet.com/info/22518_button_cancel_16x16
 GPL licensed by Pablo Fabregat!
 
+stylizr file in /resources..
+wt.css in themes/polished!!
+
 
 -----EMACS CEDET-----
 To add files to ede in new directories, first create the files, then modify Project.ede to include them,
@@ -39,39 +21,7 @@ then go to the new files and select Project->Target Options->Add file
 or
 ede-add-file
 
+----------------------------
 
-
-vendors
-2005
-
-devices
-10164
-
-subsys
-15700
-
-
-classes
-18
-
-subclasses
-103
-
-progifs
-138
-
-
-first update pci.ids
-then add OSes so pcimap is filled.
-Add busTypeID 1 for PCI in `bus_type` table in db!
-
-
-
-
------------------------------
-
-database pass: password
-diff yap!!
-db'de 
-- sp_queryPcimap CONCAT ( fonklarindan sonraki boslugu kaldir, CONCAT( seklinde yap..
-- vw_os_pcimap i dropla sonra classMask li olarak tekrar olustur!!
+MakeFile clean icin:
+remove */*.o too!!!!!
