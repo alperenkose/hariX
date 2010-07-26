@@ -187,7 +187,8 @@ void MainboardsWidget::fillMainboards( WStandardItemModel& boardsModel )
   for ( board_iter=mainboard_list.begin(); board_iter!=mainboard_list.end(); ++board_iter ){
 	item = new WStandardItem( board_iter->first ); // boardID column
 	result.push_back(item);
-	item = new WStandardItem( board_iter->second ); // boardName column
+	item = new WStanda   analyze_os  deploy.sh    harixApp.hpp  home.hpp  main.cc      os_info.hpp  pci_ids         queryDistro.sh
+rdItem( board_iter->second ); // boardName column
 	result.push_back(item);
 	// wApp->log("debug") << "BOARD ID:" << board_iter->first; // @test
 	// wApp->log("debug") << "BOARD Name:" << board_iter->second; // @test
