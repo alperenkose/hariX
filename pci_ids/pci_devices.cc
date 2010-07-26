@@ -45,7 +45,7 @@ int pciVendor::store_db (void)
 
   const string host_url("localhost");
   const string user("root");
-  const string pass("alp");
+  const string pass("password");
   const string database("harix_db");
   string vendor_code, vendor_name, device_code, device_name, subsys_vdr, subsys_dev, subsys_name, tmp_name;
   const string quote = "\"";

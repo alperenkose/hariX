@@ -1,4 +1,21 @@
-max-request-size in wt configuration file, /etc/wt/wt_config.xml, is increased to let modules.pcimap upload!! 
+max-request-size in wt configuration file, /etc/wt/wt_config.xml, is increased to let modules.pcimap upload!! 512.
+
+edit wt_config.xml for dedicated process!!!!!!!
+
+libmysqlcppconn C++ Connector library!
+wt library!
+
+deploy.sh!!
+
+=====================================================
+MySQL Connector/C++ Source repository
+
+The latest development version is also available through Launchpad.
+
+Bazaar is used for the MySQL Connector/C++ code repository. You can check out the latest source code using the bzr command line tool:
+
+shell> bzr branch lp:~mysql/mysql-connector-cpp/trunk
+======================================================
 
 -rXX revision does NOT have to exist in lspci -mn, so corrected the code appropriately ;|
 
@@ -47,3 +64,14 @@ progifs
 first update pci.ids
 then add OSes so pcimap is filled.
 Add busTypeID 1 for PCI in `bus_type` table in db!
+
+
+
+
+-----------------------------
+
+database pass: password
+diff yap!!
+db'de 
+- sp_queryPcimap CONCAT ( fonklarindan sonraki boslugu kaldir, CONCAT( seklinde yap..
+- vw_os_pcimap i dropla sonra classMask li olarak tekrar olustur!!

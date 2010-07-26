@@ -25,7 +25,7 @@ using std::string;
 
 const string host_url("localhost");
 const string user("root");
-const string pass("alp");
+const string pass("password");
 const string database("harix_db");
 
 

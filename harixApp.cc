@@ -102,7 +102,7 @@ void HarixApp::internalPathChanged(const std::string& path)
   if ( (mainboards_page = MainboardsWidget::Instance()) != NULL ){
 	mainboards_page->resetAll(); // Deletes the widget, MainboardsWidget is recreated in every call.
   }
-  /**
+  /*
    * @}
    */
 
@@ -141,7 +141,7 @@ void HarixApp::internalPathChanged(const std::string& path)
 	else
 	  selectWidget( mainboards_page );
   }
-  /**
+  /*
    * @}
    */
 

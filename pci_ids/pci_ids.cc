@@ -80,7 +80,8 @@ int update_device_codes( std::string pci_ids_file )
 		  continue;
 		if ( !analyze_line.empty() && analyze_line.at(0) == '\t' ){
 		  if ( analyze_line.at(1) != '\t' ){
-			last_device = add_device(analyze_line, &(vendor_list.back()));
+			pciVendor& list_last = vendor_list.back();
+			last_device = add_device( analyze_line, &list_last );
 			//			add_device(analyze_line);						// @test
 		  }
 		  else if ( analyze_line.at(1) == '\t' ){

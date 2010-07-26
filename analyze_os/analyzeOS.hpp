@@ -122,7 +122,7 @@ private:
   */
   void readOs();
   /**
-   * Upload Screen
+   * Upload Screen end
    * @}
    */
 
@@ -314,7 +314,7 @@ private:
   void goHome();
   
   /**
-   * Result Screen
+   * Result Screen end
    * @}
    */
 
