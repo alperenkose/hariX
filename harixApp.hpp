@@ -38,7 +38,7 @@ public:
   /*! 
 	Binded to WApplication::internalPathChanged which is triggered on URL changes.
 
-v	Manages which widget(page) to be shown depending on the path.
+	Manages which widget(page) to be shown depending on the path.
 	\param path The URL to widget like /home, /analyze_os, /mainboards..
    */
   void internalPathChanged(const std::string& path);

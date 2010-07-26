@@ -12,10 +12,9 @@
 
 #include <Wt/WDefaultLoadingIndicator>
 #include <Wt/WOverlayLoadingIndicator>
-#include "../harixApp.hpp"		// needed for WApplication::instance()
 
+#include "../harixApp.hpp"		// needed for WApplication::instance()
 #include "analyzeOS.hpp"
-#include "../home.hpp"
 #include "../os_info.hpp"
 #include "../div.hpp"
 
@@ -109,14 +108,14 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   // panelAnalyzeResult_->hide();
   // panelAnalyzeResult_->resize(600, WLength() );
   // WTable* layoutResult;
-  // panelAnalyzeResult_->setCentralWidget( layoutResult = new WTable() );
-  page->addWidget( layoutResult = new WTable() );
-  layoutResult->hide();
+  // panelAnalyzeResult_->setCentralWidget( layoutResult_ = new WTable() );
+  page->addWidget( layoutResult_ = new WTable() );
+  layoutResult_->hide();
 
-  // layoutResult->rowAt(0)->setHeight( WLength(170) );
-  layoutResult->rowAt(1)->setHeight( WLength(20) );
-  layoutResult->columnAt(0)->setWidth( WLength(300) );
-  layoutResult->elementAt(0,0)->addWidget( groupDetectedOs_ = new WGroupBox("Detected Operating System") );
+  // layoutResult_->rowAt(0)->setHeight( WLength(170) );
+  layoutResult_->rowAt(1)->setHeight( WLength(20) );
+  layoutResult_->columnAt(0)->setWidth( WLength(300) );
+  layoutResult_->elementAt(0,0)->addWidget( groupDetectedOs_ = new WGroupBox("Detected Operating System") );
   WTable* layoutDetectedOs;
   groupDetectedOs_->addWidget( layoutDetectedOs = new WTable() );
   layoutDetectedOs->elementAt(0,0)->addWidget( new WText("OS Name:" ) );
@@ -140,10 +139,10 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   editKer_->valueChanged().connect( this, &AnalyzeOsWidget::changeKernel );
   editArch_->valueChanged().connect( this, &AnalyzeOsWidget::changeArch );
     
-  layoutResult->columnAt(1)->setWidth( WLength(50) );
+  layoutResult_->columnAt(1)->setWidth( WLength(50) );
 
-  layoutResult->columnAt(2)->setWidth( WLength(250) );
-  layoutResult->elementAt(0,2)->addWidget( layoutCheckResult_ = new WTable() );
+  layoutResult_->columnAt(2)->setWidth( WLength(250) );
+  layoutResult_->elementAt(0,2)->addWidget( layoutCheckResult_ = new WTable() );
   layoutCheckResult_->elementAt(0,0)->addWidget( new WBreak() );
   layoutCheckResult_->elementAt(1,0)->setColumnSpan(2);
   layoutCheckResult_->elementAt(1,0)->setContentAlignment(AlignCenter);
@@ -158,12 +157,12 @@ AnalyzeOsWidget::AnalyzeOsWidget( WContainerWidget* parent ) : WContainerWidget(
   bOsAddUpdate_->clicked().connect(this, &AnalyzeOsWidget::bOsAddUpdate_Click);
   bOsCancel_->clicked().connect(this, &AnalyzeOsWidget::bOsCancel_Click);
 
-  layoutResult->elementAt(1,0)->addWidget( new WText("*Fields above are editable!") );
+  layoutResult_->elementAt(1,0)->addWidget( new WText("*Fields above are editable!") );
 
 
   // WPushButton* bGoHome2;
-  // layoutResult->elementAt(1,2)->addWidget( bGoHome2 = new WPushButton("Go Home") );
-  // layoutResult->elementAt(1,2)->setContentAlignment(AlignRight);
+  // layoutResult_->elementAt(1,2)->addWidget( bGoHome2 = new WPushButton("Go Home") );
+  // layoutResult_->elementAt(1,2)->setContentAlignment(AlignRight);
   // addWidget(new WBreak());
   // bGoHome2->clicked().connect(this, &AnalyzeOsWidget::bGoHome_Click);
 
@@ -223,7 +222,7 @@ void AnalyzeOsWidget::uploadDone()
   if ( isOsUploaded_ && isPcimapUploaded_ ){
 	readOs();
 	layoutAnalyze_->hide();
-	layoutResult->show();
+	layoutResult_->show();
 	isOsUploaded_=false;
 	isPcimapUploaded_=false;
   }
@@ -371,7 +370,7 @@ void AnalyzeOsWidget::resetAll()
   // panelAnalyze_->show();
   // panelAnalyzeResult_->hide();
   layoutAnalyze_->show();
-  layoutResult->hide();
+  layoutResult_->hide();
 
   layoutCheckResult_->hide();
   groupDetectedOs_->enable();

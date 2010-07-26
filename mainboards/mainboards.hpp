@@ -10,6 +10,8 @@ namespace Wt {
   class WDialog;
 }
 
+class PciDevice;
+
 class MainboardsWidget : public Wt::WContainerWidget
 {
 private:

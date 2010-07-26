@@ -19,9 +19,6 @@
 
 #include "harixApp.hpp"
 #include "home.hpp"
-#include "analyze_os/analyzeOS.hpp"
-#include "lspci_query/pcimapQuery.hpp"
-#include "mainboards/mainboards.hpp"
 #include "div.hpp"				// Declaration of a WContainerWidget to represent an html <div>
 
 using namespace Wt;

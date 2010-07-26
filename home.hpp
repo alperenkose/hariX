@@ -20,7 +20,7 @@ namespace Wt {
 /*! 
   Contains all the elements forming the Home page.
   
-  Only one instance exists per session.
+  An instance exists for session life long, and each session having their own instance.
  */
 class HomeWidget : public Wt::WContainerWidget
 {
