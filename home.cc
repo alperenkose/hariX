@@ -1,3 +1,11 @@
+/*!
+  \file   home.cc
+  \date   Thu Jul 15 16:04:25 2010
+  
+  \brief  Implementation of HomeWidget Class
+  
+  
+*/
 #include <Wt/WPushButton>
 #include <Wt/WAnchor>
 #include <Wt/WBreak>
@@ -7,15 +15,14 @@
 #include <Wt/WLineEdit>
 #include <Wt/WDefaultLoadingIndicator>
 #include <Wt/WOverlayLoadingIndicator>
-#include "harixApp.hpp"
-#include <Wt/WLogger>			// @test
 #include <fstream>
 
+#include "harixApp.hpp"
 #include "home.hpp"
 #include "analyze_os/analyzeOS.hpp"
 #include "lspci_query/pcimapQuery.hpp"
 #include "mainboards/mainboards.hpp"
-#include "div.hpp"
+#include "div.hpp"				// Declaration of a WContainerWidget to represent an html <div>
 
 using namespace Wt;
 
@@ -27,6 +34,10 @@ HomeWidget::HomeWidget( WContainerWidget* parent ) : WContainerWidget(parent)
 {
   parent_ = parent;
 
+  /*
+   * Header Part for navigation buttons
+   * @{
+   */
   WContainerWidget *result;
   addWidget( result = new WContainerWidget() );
   Div *header = new Div(result, "header");
@@ -51,17 +62,30 @@ HomeWidget::HomeWidget( WContainerWidget* parent ) : WContainerWidget(parent)
   menulist->addWidget( aMainboards = new WAnchor("","Mainboards") );
   aMainboards->setRefInternalPath("/mainboards");
 
+  /*
+	Container 'page' holding contents shown in page apart from the Header Part.
+	Anything else from the Header to be shown in page is added to 'page' container.
+  */
   Div *page = new Div(content, "pagearea");
 
   Div *footer = new Div(result, "footr");
   footer->addWidget( new WText("<p>HARdware Information management<br />"
 							   "This site is best viewed in a Firefox browser!</p>") );
+  /*
+   * @}
+   */
 
 
-  page->addWidget( bPciIds_ = new WPushButton("Update PCI IDS") );
+  page->addWidget( bPciIds_ = new WPushButton("Update PCI IDs") );
+  // Trigger bPciIds_Click function on 'Update PCI IDs' click.
   bPciIds_->clicked().connect(this, &HomeWidget::bPciIds_Click);
 
-    WPanel *panelSettings;
+
+  /*
+   * Settings Panel
+   * @{
+   */
+  WPanel *panelSettings;
   WTable *layoutSettings;
   page->addWidget( panelSettings = new WPanel() );
   panelSettings->setTitle("Settings");
@@ -78,10 +102,16 @@ HomeWidget::HomeWidget( WContainerWidget* parent ) : WContainerWidget(parent)
   editProxy_->resize( WLength(200), WLength() );
   WPushButton *bSaveProxy;
   layoutSettings->elementAt(0,1)->addWidget( bSaveProxy = new WPushButton("Save") );
+  /*
+   * @}
+   */
+
 
   readProxyFile();
   editProxy_->setText( settingsProxy_ );
   editProxy_->setEmptyText("No Proxy Set!");
+  
+  // Trigger changeProxy function on 'Save'(bSaveProxy) button click.
   bSaveProxy->clicked().connect(this, &HomeWidget::changeProxy);
 
 }
@@ -90,32 +120,42 @@ HomeWidget* HomeWidget::Instance( WContainerWidget* parent)
 {
   if( parent == 0 ){
 	if ( !instance_ ){
-	  // wApp->log("debug") << "no instance return NULL!!"; 	// @test
+	  // we didn't receive a parent and there is no instance of HomeWidget, so return NULL..
 	  return NULL;
 	}
   }
-  else{
+  else{							// We received a parent container
 	if( !instance_ ){
-	  instance_ = new HomeWidget(parent);
-	  // wApp->log("debug") << "Object initiated!!"; 			// @test
+	  instance_ = new HomeWidget(parent); // No instance of HomeWidget, lets create one.
 	}
+	// else don't care, we already have an instance we will return that.
   }
-  // wApp->log("debug") << "return instance, No. " << instance_count; // @test
   return instance_;
 
 }
 
 
-static std::string pci_ids_file;
+static std::string pci_ids_file = "/tmp/pci.ids";
 
+/*
+  Global function from pci_ids/pci_ids.cc to update PCI IDs in database,
+  gets 'pci.ids' file as parameter.
+*/
 int update_pci_ids(std::string pci_ids_file);
+
+
 
 void HomeWidget::bPciIds_Click()
 {
+  // Change server busy indicator.
   Wt::WApplication::instance()->setLoadingIndicator( loading_ = new Wt::WOverlayLoadingIndicator() );
   loading_->setMessage("Updating..");
   
-  pci_ids_file = "/tmp/pci.ids";
+
+  /*
+   * Set the download command appropriately depending on proxy address existance.
+   * @{
+   */
   std::string download_command;
   if( settingsProxy_ != "" )
 	download_command =
@@ -123,28 +163,40 @@ void HomeWidget::bPciIds_Click()
   else
 	download_command =
 	  "curl http://pciids.sourceforge.net/v2.2/pci.ids > /tmp/pci.ids";
+  /*
+   * @}
+   */
   
-  if( system( download_command.c_str()  ) == 0 ){
+
+  if( system( download_command.c_str()  ) == 0 ){ 		// Try to download the 'pci.ids' file from net.
 	dialogDownload_ = new WDialog("PCI IDs Download");
 	new WText("Downloaded pci.ids file! <br />"
 			  "Now We will update the PCI IDs database", dialogDownload_->contents() );
 	new WBreak( dialogDownload_->contents() );
 	WPushButton* dialogDownloadOk = new WPushButton("Ok", dialogDownload_->contents() );
+
+	// Sets WDialog::DialogCode to Accepted if OK is clicked.
 	dialogDownloadOk->clicked().connect( SLOT(dialogDownload_, WDialog::accept) );
+	
 	WPushButton* dialogDownloadCancel = new WPushButton("Cancel", dialogDownload_->contents() );
+
+	// Sets WDialog::DialogCode to Rejected if Cancel is clicked.
 	dialogDownloadCancel->clicked().connect( SLOT(dialogDownload_, WDialog::reject) );
 	dialogDownload_->show();
   }
-  else {
+  else {												// 'pci.ids' Download failed!
 	dialogDownload_ = new WDialog("PCI IDs Download");
 	new WText("Failed to download pci.ids!!<br />"
 			  "Check proxy settings..", dialogDownload_->contents() );
 	new WBreak( dialogDownload_->contents() );
 	WPushButton* dialogDownloadFail = new WPushButton("Close", dialogDownload_->contents() );
+
+	// Sets WDialog::DialogCode to Rejected when Close is clicked.
 	dialogDownloadFail->clicked().connect( SLOT(dialogDownload_, WDialog::reject) );
 	dialogDownload_->show();
   }
 
+  // Trigger 'dialogDownload_Close' function on 'dialogDownload_' dialog window close.
   dialogDownload_->finished().connect(this, &HomeWidget::dialogDownload_Close);
 
 }
@@ -152,10 +204,10 @@ void HomeWidget::bPciIds_Click()
 
 void HomeWidget::dialogDownload_Close( WDialog::DialogCode code )
 {
-  if ( code == WDialog::Accepted ){
+  if ( code == WDialog::Accepted ){ 	// if download is successful and user not rejected update.
 	dialogPciIds_ = new WDialog("PCI IDs Update");
   
-	if( update_pci_ids( pci_ids_file ) == 0 ){
+	if( update_pci_ids( pci_ids_file ) == 0 ){ 		// Try to update PCI IDs.
 	  new WText("PCI IDs succesfully updated!", dialogPciIds_->contents() );
 	  new WBreak( dialogPciIds_->contents() );
 	  WPushButton* dialogPciIdsOk = new WPushButton("Ok", dialogPciIds_->contents());
@@ -164,7 +216,7 @@ void HomeWidget::dialogDownload_Close( WDialog::DialogCode code )
 
 	  dialogPciIds_->show();
 	}
-	else{
+	else{											// PCI IDs update FAILED.
 	  new WText("FAILED to update PCI IDs!!", dialogPciIds_->contents() );
 	  new WBreak( dialogPciIds_->contents() );
 	  WPushButton* dialogPciIdsFail = new WPushButton("Close", dialogPciIds_->contents());
@@ -176,6 +228,7 @@ void HomeWidget::dialogDownload_Close( WDialog::DialogCode code )
 	dialogPciIds_->finished().connect(this, &HomeWidget::dialogPci_Close);
   }
 
+  // revert back the server busy indicator to its default.
   WApplication::instance()->setLoadingIndicator( new WDefaultLoadingIndicator() );
 
   delete dialogDownload_;
@@ -189,9 +242,12 @@ void HomeWidget::dialogPci_Close( WDialog::DialogCode code )
 
 void HomeWidget::changeProxy()
 {
-  settingsProxy_ = editProxy_->text().narrow();
-  std::string save_command = "echo "+ settingsProxy_ +" > /tmp/proxy.harix";
-  if( system( save_command.c_str()  ) != 0 ){
+  settingsProxy_ = editProxy_->text().narrow(); // Put the given proxy by user into settingsProxy_ variable.
+  
+  std::string save_command = "echo "+ settingsProxy_ +" > /tmp/proxy.harix"; // Command string to save proxy.
+  
+  if( system( save_command.c_str()  ) != 0 ){ 	// Try to store the proxy address in server for later use.
+	// Warn in case of save failure! Proxy address couldn't be saved in file.
 	dialogWarn_ = new WDialog("Proxy Configuration");
 	new WText("Oops we failed to save file /tmp/proxy.harix!! <br /> "
 			  "Proxy settings will be valid only for the current session!", dialogWarn_->contents() );
@@ -212,5 +268,5 @@ void HomeWidget::dialogWarn_Close( Wt::WDialog::DialogCode code )
 void HomeWidget::readProxyFile()
 {
   std::ifstream proxy_file( "/tmp/proxy.harix" );
-  getline( proxy_file, settingsProxy_ );
+  getline( proxy_file, settingsProxy_ ); // read previously stored proxy address into settingsProxy_ variable.
 }

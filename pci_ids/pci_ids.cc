@@ -1,3 +1,13 @@
+/*!
+  \file   pci_ids.cc
+  \date   Thu Jul 15 17:44:02 2010
+  
+  \brief  Store and Update PCI and Class IDs
+  
+  Updates database with the given pci.ids file.
+  All PCI Vendors, Devices, Subsystems together with Classes, Subclasses and Prog-if's
+  are saved in database if not exists, or updated if any change happened in name.
+*/
 #include <fstream>
 #include <cstring>
 #include <iostream>
@@ -316,7 +326,16 @@ void delete_classes(void)
 }
 
 
+//! Update database with the given 'pci.ids' file.
+/*!
 
+  \relatesalso HomeWidget
+  \param pci_ids_file Path to the 'pci.ids' file
+  
+  \return Success status
+  - 0 -> (SUCCESS)
+  - 1 -> (FAIL)
+*/
 int update_pci_ids( std::string pci_ids_file )
 {
   if ( update_device_codes( pci_ids_file ) != 0 )

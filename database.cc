@@ -1,3 +1,12 @@
+/*!
+  \file   database.cc
+  \date   Thu Jul 15 17:38:56 2010
+  
+  \brief  All Database Communication
+  
+  Encapsulates all the database related functions
+  with the exception of pci_ids folder having their own functions to update PCI IDs.
+*/
 #include <cppconn/driver.h>
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>

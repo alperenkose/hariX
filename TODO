@@ -1,4 +1,9 @@
 
+- harixApp.cc den doxygen e devam et!!
+-- FORCE_LOCAL_INCLUDES u kullanabilirsin belki!!!
+-- home.cc bitti en son!!
+
+- INSTALL instructions!
 
 - Store device-module information in dev_mode when storing the mainboard!! ( lspciTableRowSelected'daki mantikla uModIDlerin listesini alip `dev_mod` tablosuna koyabilin.. )
 

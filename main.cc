@@ -1,8 +1,24 @@
+/*!
+  \file   main.cc
+  \date   Wed Jul 14 17:09:38 2010
+  
+  \brief  Starting point of the application.
+  
+  Here we run the WApplication Server.
+*/
 #include <Wt/WApplication>
 #include "harixApp.hpp"
-// #include <Wt/WLogger>
 
+//! Creates the WApplication instance.
+/*!
+  Initiates an HarixApp instance which inherits WApplication.
 
+  The environment provides information on the client, and gives access to startup arguments.
+  
+  \param env variable to access the client environment.
+  
+  \return The application server instance.
+*/
 Wt::WApplication *createApplication(const Wt::WEnvironment& env)
 {
   /*
@@ -10,31 +26,17 @@ Wt::WApplication *createApplication(const Wt::WEnvironment& env)
    * the user has permission to start a new application
    */
 
-  // // Setup the logger
-  // Wt::WLogger logger;
-  // logger.addField("datetime", false);
-  // logger.addField("session", false);
-  // logger.addField("type", false);
-  // logger.addField("message", true);
-  // logger.addField("debug", true);
-
-  // // logger.setFile("/tmp/mylog.txt");
-  // logger.setStream(std::cout);
-
-  // // Add an entry
-  // Wt::WLogEntry entry = logger.entry();
-  // entry << Wt::WLogger::timestamp << Wt::WLogger::sep
-  // 		<< '[' << wApp->sessionId() << ']' << Wt::WLogger::sep
-  // 		<< '[' << "notice" << ']' << Wt::WLogger::sep
-  // 		<< "Succesfully started.";
-
-
-  
   return new HarixApp(env);
 
 }
 
-
+//! Well here we start, everyone knows main :)
+/*!
+  The createApplication argument is a function pointer to create new application instances
+  for each new user surfing to the application.
+  
+  \return Success status to the OS.
+*/
 int main(int argc, char **argv)
 {
   /*
