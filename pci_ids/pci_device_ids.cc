@@ -1,4 +1,4 @@
-/* pci_devices.cc --- 
+/* pci_device_ids.cc --- 
  *
  * Copyright (C) 2010 Alp Eren Köse
  *

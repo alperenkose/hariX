@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$database_8cc.html#a3568503e8373ad4f0ab4e66b41dbc837" title="insertPciClass" alt="" coords="236,5,345,35"/>
+<area shape="rect" id="node5" href="$database_8cc.html#acdff04ab9dfdda2d66f0afefb9515b36" title="insertPciProgif" alt="" coords="235,59,347,88"/>
+<area shape="rect" id="node7" href="$database_8cc.html#a23115ef50a142b2bb2cdb70d01e38ae9" title="insertPciSubclass" alt="" coords="224,112,357,141"/>
+<area shape="rect" id="node9" href="$database_8cc.html#adf1cfc5a0259ae5afb770f9c045e25eb" title="queryPciClassName" alt="" coords="216,165,365,195"/>
+<area shape="rect" id="node11" href="$database_8cc.html#a25bbc44203f18d2c726a57230e1083f2" title="queryPciSubclassId" alt="" coords="219,219,363,248"/>
+</map>

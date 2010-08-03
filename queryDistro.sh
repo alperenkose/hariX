@@ -2,26 +2,13 @@
 #
 # Shell script which detects the Linux distro it's running on
 #
-# Returned distro       Version the script was tested on
-# ---------------------------------------------------------
-# opensuse              openSuSE 11.0 (no lsb_release) and 11.2 (lsb_release)
-# fedora                Fedora 12
-# centos                CentOS 5.4
-# kubuntu               Kubuntu 9.10
-# debian                Debian 5.0.3
-# arch                  Arch
-# slackware             Slackware 13.0.0.0.0
-# mandriva              Mandriva 2009.1
-# debian		            Knoppix 6.2
-# linuxmint		         Mint 8
-#
 # 10/02/17 framp at linux-tips-and-tricks dot de
 
 # Based on the queryDistro.sh script by "framp" at "linux-tips-and-tricks dot de"
-# Tested on SLES 10, SLED 11, RHEL 5.5, Ubuntu 9.10, Arch Linux
+# Tested on SLES 10, SLED 11, RHEL 5.5, Ubuntu 9.10, Arch Linux, Debian Lenny
 # Since Arch Linux is a rolling release distribution release is assumed to be last system upgrade
 # Alp Eren Koese
-# alperenkose@gmail.com
+# alperenkose at gmail dot com
 
 
 detectedDistro="Unknown"

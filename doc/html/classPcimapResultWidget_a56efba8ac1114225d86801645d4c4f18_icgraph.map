@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classMainboardsWidget.html#a7b5093de44fc8f74d81ff7caf4549c94" title="Triggered on &#39;Check&#39; button click." alt="" coords="296,5,541,35"/>
+<area shape="rect" id="node5" href="$classHarixApp.html#a9d3c2765b0dcdf3a23b0640ff2710099" title="Called at URL changes." alt="" coords="619,111,840,140"/>
+<area shape="rect" id="node7" href="$classPcimapQueryWidget.html#acd0392f97a9f148aec1b5ba4ca637fa3" title="Triggered on &#39;Query Devices&#39; button click." alt="" coords="299,109,539,139"/>
+<area shape="rect" id="node9" href="$classPcimapResultWidget.html#a01c2806a16fd617adf3e745d8e021738" title="Remove page and delete it." alt="" coords="316,163,521,192"/>
+<area shape="rect" id="node12" href="$classMainboardsWidget.html#af9630ae48e1bee4e5d338b98b3beb6a4" title="Switch to PcimapResultWidget to display mainboard configuration." alt="" coords="268,216,569,245"/>
+<area shape="rect" id="node14" href="$classPcimapResultWidget.html#a7a69b3094d8cc4fe4077e6e59addd992" title="Store Mainboard configuration in database." alt="" coords="289,269,548,299"/>
+</map>

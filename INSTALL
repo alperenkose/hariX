@@ -4,6 +4,7 @@ CONTENTS OF THIS FILE
  * Requirements
  * Requirement Configurations
  * Installation of hariX
+ * Troubleshooting
 
 
 REQUIREMENTS
@@ -237,6 +238,21 @@ INSTALLATION OF HARIX
 	- Click "Update PCI IDs".
 	- Add OSes in "Analyze OS" page..
 	- And enjoy :)
+
+
+
+
+TROUBLESHOOTING
+---------------
+
+If make fails be sure that there are no object files(.o) left in subdirectories.
+Check that the clean section in Makefile is as following:
+
+clean:
+	rm -f *.mod *.o */*.o *.obj .deps/*.P .lo
+
+type 'make clean' and try again..
+
 
 
 References

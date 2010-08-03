@@ -1,0 +1,11 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$database_8cc.html#ae2927c9d8e4641c5f71692966cac56c6" title="checkKernelModule" alt="" coords="220,5,364,35"/>
+<area shape="rect" id="node5" href="$database_8cc.html#a44416369ec811f99bb823cd30a5497cf" title="checkModuleNameId" alt="" coords="215,59,369,88"/>
+<area shape="rect" id="node7" href="$classOsInfo.html#ad78cb706952f58e0d4ce7fd4fa01bde5" title="OsInfo::getArch" alt="" coords="472,115,592,144"/>
+<area shape="rect" id="node9" href="$classOsInfo.html#a4d5a9c2feed1af362bf0b9f2c8eb7b6f" title="OsInfo::getDistro" alt="" coords="468,171,596,200"/>
+<area shape="rect" id="node11" href="$classOsInfo.html#aaa34d686cfffbc7b8908d161a491ce10" title="OsInfo::getKernel" alt="" coords="467,229,597,259"/>
+<area shape="rect" id="node13" href="$classOsInfo.html#a197b08ecbede67112713c055b054a124" title="OsInfo::getRelease" alt="" coords="463,293,601,323"/>
+<area shape="rect" id="node15" href="$database_8cc.html#a7d38b3a518622f1cd136c60465836f93" title="insertPcimap" alt="" coords="240,368,344,397"/>
+<area shape="rect" id="node17" href="$classAnalyzeOsWidget.html#a7b16e2c78f04cfd8dd7ebe0a12e6543a" title="Query unique kernel ID of an OS." alt="" coords="171,421,413,451"/>
+<area shape="rect" id="node19" href="$database_8cc.html#a86eb6930a310d18ae16db1958a516656" title="recordOsInfo" alt="" coords="241,213,343,243"/>
+</map>

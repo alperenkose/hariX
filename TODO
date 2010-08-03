@@ -5,9 +5,8 @@
 
 -- Doxygen produces missing documentation because of Wt namespace in front of function parameters..
 
---- GPL notices!!
-
-- Store device-module information in dev_mode when storing the mainboard!! ( lspciTableRowSelected'daki mantikla uModIDlerin listesini alip `dev_mod` tablosuna koyabilin.. )
+- Store device-module information in dev_mode when storing the mainboard!! 
+( lspciTableRowSelected'daki mantikla uModIDlerin listesini alip `dev_mod` tablosuna koyabilin.. )
 
 - if we want to delete an OS; the corresponding entries from `pcimap` and `modules` should be deleted first..
 

@@ -1,4 +1,3 @@
-// Hey Emacs -*- C++ -*-
 /* pci_device_ids.hpp --- 
  *
  * Copyright (C) 2010 Alp Eren Köse

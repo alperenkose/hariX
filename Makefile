@@ -43,7 +43,7 @@ tags:
 
 
 clean:
-	rm -f *.mod *.o *.obj .deps/*.P .lo
+	rm -f *.mod *.o */*.o *.obj .deps/*.P .lo
 
 .PHONY: dist
 

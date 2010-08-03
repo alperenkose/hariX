@@ -1,0 +1,9 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classPciDevice.html#ae88b1ef5f3b248191b91bc6fd4f99053" title="Get Class Code." alt="" coords="329,5,476,35"/>
+<area shape="rect" id="node5" href="$classPciDevice.html#a424f2b08b48f649c2924424b3bcec668" title="Get Device Code." alt="" coords="325,59,480,88"/>
+<area shape="rect" id="node7" href="$classPciDevice.html#a80d6d5d726f728c3d456560dc6b38e7d" title="Get Prog&#45;if Code." alt="" coords="329,112,476,141"/>
+<area shape="rect" id="node9" href="$classPciDevice.html#a5332e792bdf81bb649c4c12d43ccdf15" title="Get Subclass Code." alt="" coords="319,165,487,195"/>
+<area shape="rect" id="node11" href="$classPciDevice.html#a37ae7dbe5cb25df95bfe3656145bb481" title="Get Subdevice Code." alt="" coords="313,219,492,248"/>
+<area shape="rect" id="node13" href="$classPciDevice.html#af70b8af516651d4c346a293df12a14bf" title="Get Subvendor Code." alt="" coords="312,272,493,301"/>
+<area shape="rect" id="node15" href="$classPciDevice.html#ada515125b0edd889fd5fb0063c13d0ae" title="Get Vendor Code." alt="" coords="324,325,481,355"/>
+</map>

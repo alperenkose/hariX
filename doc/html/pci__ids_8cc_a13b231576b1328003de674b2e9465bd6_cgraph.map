@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$pci__ids_8cc.html#ae7864fe98bdb226c9fdc5f3345341042" title="Create a Pci IDs Device object." alt="" coords="221,5,315,35"/>
+<area shape="rect" id="node5" href="$pci__ids_8cc.html#acc7ee45ccbaae69b2c197acff5ac6e21" title="Create a Pci IDs Subsystem object." alt="" coords="220,59,316,88"/>
+<area shape="rect" id="node7" href="$pci__ids_8cc.html#add1416319611aee5033c70a1b511e709" title="Create a Pci IDs Vendor object." alt="" coords="220,112,316,141"/>
+<area shape="rect" id="node9" href="$pci__ids_8cc.html#a5dc5a28089ac8f403f0187943bfa0255" title="Delete objects holding Pci IDs Device Codes." alt="" coords="215,165,321,195"/>
+<area shape="rect" id="node11" href="$pci__ids_8cc.html#a29e25d2efea388a7a8cfcbf32d0dc645" title="Store PCI Device Codes." alt="" coords="217,219,319,248"/>
+</map>

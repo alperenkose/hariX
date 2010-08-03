@@ -1,27 +1,30 @@
 
+SEE THE INSTALL FILE FOR INSTRUCTIONS ON HOW TO SETUP AND INSTALL.
+
+Known Issues:
+-------------
+- Successive queries of lspci in `Query lspci list` screen repeatedly might cause to session restart.. :s
+
+
+Known but not an issue:)
+-----------------------
 - pci_vendors table is case sensitive so any pci.ids update with different cases will update the row..
 
-Known Issues :
-- Successive queries of lspci in `Query lspci list` screen repeatedly causes to session restart.. :s
 
-
+Query Devices Result Page Support Column Icons:
+-----------------------------------------------
 OK and Cancel buttons from iconlet:
 http://www.iconlet.com/info/22463_button_ok_16x16
 http://www.iconlet.com/info/22518_button_cancel_16x16
 GPL licensed by Pablo Fabregat!
 
-stylizr file in /resources..
-wt.css in themes/polished!!
 
+Web Page Design:
+----------------
+Page design is get from Open Designs website(http://www.opendesigns.org/design/switchr/).
+Design is called "switchr" and made by user 'dinamoo'. 
+GPL Licensed.
+(CSS file stylizr.css in /resources)
 
------EMACS CEDET-----
-To add files to ede in new directories, first create the files, then modify Project.ede to include them,
-go to Menu->Project->Project Options->Rescan Project Files
-then go to the new files and select Project->Target Options->Add file
-or
-ede-add-file
-
-----------------------------
-
-MakeFile clean icin:
-remove */*.o too!!!!!
+Also the widget designs that come along with Wt Library is used.
+(CSS file wt.css in themes/polished)

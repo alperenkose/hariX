@@ -1,5 +1,4 @@
-// Hey Emacs -*- C++ -*-
-/* pci_classes.h --- 
+/* pci_class_ids.hpp --- 
  *
  * Copyright (C) 2010 Alp Eren Köse
  *

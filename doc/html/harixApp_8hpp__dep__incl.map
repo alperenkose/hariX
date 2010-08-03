@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$analyzeOS_8cc.html" title="Implementation of AnalyzeOsWidget Class." alt="" coords="5,83,187,112"/>
+<area shape="rect" id="node5" href="$database_8cc.html" title="All Database Communication." alt="" coords="211,83,309,112"/>
+<area shape="rect" id="node7" href="$harixApp_8cc.html" title="Implementation of HarixApp Class." alt="" coords="333,83,429,112"/>
+<area shape="rect" id="node9" href="$home_8cc.html" title="Implementation of HomeWidget Class." alt="" coords="453,83,531,112"/>
+<area shape="rect" id="node11" href="$pcimapQuery_8cc.html" title="Implementation of PcimapQueryWidget Class." alt="" coords="555,83,752,112"/>
+<area shape="rect" id="node13" href="$pcimapResult_8cc.html" title="Implementation of PcimapResultWidget Class." alt="" coords="776,83,976,112"/>
+<area shape="rect" id="node15" href="$main_8cc.html" title="Starting point of the application." alt="" coords="1000,83,1072,112"/>
+<area shape="rect" id="node17" href="$mainboards_8cc.html" title="Implementation of MainboardsWidget Class." alt="" coords="1096,83,1291,112"/>
+<area shape="rect" id="node19" href="$pci__ids_8cc.html" title="Store and Update PCI and Class IDs." alt="" coords="1315,83,1445,112"/>
+<area shape="rect" id="node21" href="$pci__moduleDB_8cc.html" title="Database relation of os_pci_module.cc." alt="" coords="1469,83,1677,112"/>
+</map>

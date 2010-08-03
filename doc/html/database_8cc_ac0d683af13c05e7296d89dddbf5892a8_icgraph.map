@@ -1,0 +1,36 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$database_8cc.html#ae2927c9d8e4641c5f71692966cac56c6" title="Check if the Kernel has the provided Module in database." alt="" coords="217,5,361,35"/>
+<area shape="rect" id="node5" href="$database_8cc.html#a44416369ec811f99bb823cd30a5497cf" title="Check if Module with given name exists." alt="" coords="212,59,367,88"/>
+<area shape="rect" id="node7" href="$database_8cc.html#a1346c1956749beff187ac68052370f15" title="Check if the provided PCI device is stored before." alt="" coords="233,112,345,141"/>
+<area shape="rect" id="node9" href="$database_8cc.html#a722020cba119bd361cde555362180af9" title="Check if the provided device is stored before." alt="" coords="211,165,368,195"/>
+<area shape="rect" id="node11" href="$database_8cc.html#a23a69fd9214a80be264c360414fc33ea" title="Delete Mainboard with given ID." alt="" coords="220,219,359,248"/>
+<area shape="rect" id="node13" href="$database_8cc.html#af509070ec13ceb2d6381362a539c520f" title="Retrieve all previously saved mainboards." alt="" coords="239,272,340,301"/>
+<area shape="rect" id="node15" href="$database_8cc.html#a66baf5cbe8aa61ab73138bf82fcdca69" title="Retrieve all Distributions." alt="" coords="248,325,331,355"/>
+<area shape="rect" id="node17" href="$database_8cc.html#ae8d674b5d5b8e638a25ba3434909c730" title="Store devices of given mainboard." alt="" coords="216,379,363,408"/>
+<area shape="rect" id="node19" href="$database_8cc.html#afb43f772f85f2ed8ca1042ed6e51b4fe" title="Store the provided mainboard." alt="" coords="223,432,356,461"/>
+<area shape="rect" id="node21" href="$database_8cc.html#a3568503e8373ad4f0ab4e66b41dbc837" title="insertPciClass" alt="" coords="235,485,344,515"/>
+<area shape="rect" id="node23" href="$database_8cc.html#abba4122db7bc15a6ed82667f90d45732" title="insertPciDevice" alt="" coords="231,539,348,568"/>
+<area shape="rect" id="node25" href="$database_8cc.html#a7d38b3a518622f1cd136c60465836f93" title="Update pcimap&#45;list entry of a given Module of OS." alt="" coords="237,592,341,621"/>
+<area shape="rect" id="node27" href="$database_8cc.html#acdff04ab9dfdda2d66f0afefb9515b36" title="insertPciProgif" alt="" coords="233,645,345,675"/>
+<area shape="rect" id="node29" href="$database_8cc.html#a23115ef50a142b2bb2cdb70d01e38ae9" title="insertPciSubclass" alt="" coords="223,699,356,728"/>
+<area shape="rect" id="node31" href="$database_8cc.html#a9a2768303d8f8f838909b1d1dc353a79" title="insertPciSubsys" alt="" coords="228,752,351,781"/>
+<area shape="rect" id="node33" href="$database_8cc.html#a37f9d8bcc3a19d72997eded84e3d37ba" title="insertPciVendor" alt="" coords="229,805,349,835"/>
+<area shape="rect" id="node35" href="$database_8cc.html#addef5a8fa04ebeeb0508265d477b07e5" title="Query devices belonging to given mainboard." alt="" coords="209,859,369,888"/>
+<area shape="rect" id="node37" href="$database_8cc.html#a78090febeb1372b4fbe0b29e5141c443" title="Query ID of the mainboard with provided name." alt="" coords="217,912,361,941"/>
+<area shape="rect" id="node39" href="$database_8cc.html#ad5869d4d50ffa5af65bc4e75f003c4ae" title="Query full class name for provided codes." alt="" coords="224,965,355,995"/>
+<area shape="rect" id="node41" href="$database_8cc.html#a43e9c7a753e1be6c987f38a16939b2d1" title="Query hardware codes of a Device." alt="" coords="219,1019,360,1048"/>
+<area shape="rect" id="node43" href="$database_8cc.html#afc0574023d6a17a145bee5b20233b8e3" title="Query full device name for provided codes." alt="" coords="220,1072,359,1101"/>
+<area shape="rect" id="node45" href="$database_8cc.html#aa89b21e4475086db39b97c6154269691" title="Query Name of the Module having the provided ID." alt="" coords="219,1125,360,1155"/>
+<area shape="rect" id="node47" href="$database_8cc.html#a09b3812efbf604de4285ae8a8ccdc59d" title="Query full name of an OS." alt="" coords="252,1179,327,1208"/>
+<area shape="rect" id="node49" href="$database_8cc.html#a7b16e2c78f04cfd8dd7ebe0a12e6543a" title="Query unique kernel ID of an OS." alt="" coords="227,1232,352,1261"/>
+<area shape="rect" id="node51" href="$database_8cc.html#a63f07ebb300c9bd658f632200b478629" title="Query Releases of provided OS Distribution." alt="" coords="224,1285,355,1315"/>
+<area shape="rect" id="node53" href="$database_8cc.html#adf1cfc5a0259ae5afb770f9c045e25eb" title="queryPciClassName" alt="" coords="215,1339,364,1368"/>
+<area shape="rect" id="node55" href="$database_8cc.html#a48c4765d4fde3171be9ca0b004387edd" title="queryPciDeviceId" alt="" coords="224,1392,355,1421"/>
+<area shape="rect" id="node57" href="$database_8cc.html#a68ebd5a1e98cea1cf63af170d86c24b9" title="Query list of OSes with their modules that support the provided device." alt="" coords="217,1445,361,1475"/>
+<area shape="rect" id="node59" href="$database_8cc.html#a25bbc44203f18d2c726a57230e1083f2" title="queryPciSubclassId" alt="" coords="217,1499,361,1528"/>
+<area shape="rect" id="node61" href="$database_8cc.html#ad7bed9de80f7a17913024bc5ed0de1dc" title="Query Vendor name for provided code." alt="" coords="209,1552,369,1581"/>
+<area shape="rect" id="node63" href="$database_8cc.html#adf7ae9a3c6621c7a1634b61ce11e7e23" title="Query Kernels of provided Distribution Release." alt="" coords="213,1605,365,1635"/>
+<area shape="rect" id="node65" href="$database_8cc.html#a68c643dbef4e74fe3f83e12695fb68f9" title="queryUniquePcisubId" alt="" coords="212,1659,367,1688"/>
+<area shape="rect" id="node67" href="$database_8cc.html#a507c2f0a85462a53b4b1e1082e4d59e0" title="queryUniqueProgifId" alt="" coords="215,1712,364,1741"/>
+<area shape="rect" id="node69" href="$database_8cc.html#a86eb6930a310d18ae16db1958a516656" title="Record the given OS in database." alt="" coords="239,1765,340,1795"/>
+</map>

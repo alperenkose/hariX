@@ -1,4 +1,4 @@
-/* pci_classes.cc --- 
+/* pci_class_ids.cc --- 
  *
  * Copyright (C) 2010 Alp Eren Köse
  *
