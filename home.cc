@@ -118,6 +118,11 @@ HomeWidget::HomeWidget( WContainerWidget* parent ) : WContainerWidget(parent)
   editProxy_->resize( WLength(200), WLength() );
   WPushButton *bSaveProxy;
   layoutSettings->elementAt(0,1)->addWidget( bSaveProxy = new WPushButton("Save") );
+
+  WAnchor *aDoc;
+  layoutSettings->elementAt(1,1)->addWidget( aDoc = new WAnchor("doc/html/index.html",
+																"<p>--- Documentation of Source Code ---</p>") );
+  aDoc->setTarget(TargetNewWindow);
   /*
    * @}
    */
