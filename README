@@ -11,6 +11,14 @@ Known but not an issue:)
 - pci_vendors table is case sensitive so any pci.ids update with different cases will update the row..
 
 
+Documentation of the Source Code:
+---------------------------------
+Documentation is done with Doxygen, Doxyfile is provided in the source code directory, so the html
+documentation can be created from there. 
+The tarball release versions of harix in Download Area will be having the documentation readily accessible 
+at <source-directory>/doc/html/index.html.
+
+
 Query Devices Result Page Support Column Icons:
 -----------------------------------------------
 OK and Cancel buttons from iconlet:
@@ -36,7 +44,7 @@ Based on the queryDistro.sh script by "framp" at "linux-tips-and-tricks dot de".
 (http://www.linux-tips-and-tricks.de/index.php/Latest/How-to-find-out-which-Linux-distribution-a-bash-script-runs-on.html)
 
 
-Doxygen Doxfile settings:
+Doxygen Doxyfile settings:
 -------------------------
 HIDE_UNDOC_CLASSES     = NO
 GENERATE_LATEX         = NO

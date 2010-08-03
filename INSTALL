@@ -57,8 +57,7 @@ REQUIREMENT CONFIGURATIONS
 		shell> bzr branch lp:~mysql/mysql-connector-cpp/trunk
 
 		if it doesn't compile, you can get the one used on building
-		hariX from:
-		@TODO: gna.org/harix/downloads!!!
+		hariX from: "http://download.gna.org/harix/connectorC++.tar.gz".
 
 
 	- Remove CMakeCache.txt file if it exists in source root directory..
@@ -91,8 +90,7 @@ REQUIREMENT CONFIGURATIONS
 	- Download the latest available package:
 		You can get it from "http://www.webtoolkit.eu/wt#/download".
 		Currently hariX is built with version 3.1.3, you can also get
-		it from
-		@TODO: gna.org/harix/downloads!!!
+		it from "http://download.gna.org/harix/wt-3.1.3.tar.gz".
 	
 	- Create a build directory:
 		The recommended way to build the library is in a seperate build
@@ -154,8 +152,10 @@ INSTALLATION OF HARIX
 
 1. Database Configuration
 
-	- Download the database create script from
-	@TODO: gna.org/harix/downloads!!!
+	- Get the database create script:
+		You can find the create script for harix database in source code directory
+		with the name "database_for_harix-X.XX.sql", if it doesn't exist there you can
+		also download it at "http://download.gna.org/harix/".
 
 	- Run the script on MySQL server.
 
