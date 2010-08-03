@@ -1322,7 +1322,7 @@ string checkPciSpcId( const PciDevice* const currentPciDevice )
   If bus type is not provided, it is assumed that it is a PCI device.
   Might be any device depending on bus type, designed for future growth of database with different busses.
   
-  \todo Might add different types of buses like USB, PNP in future..
+  \todo FUTURE WORK: Might add different types of buses like USB, PNP..
   
   \param dev_special_id Special Device ID depending on bus type.
   \param bus_type Bus type ID.

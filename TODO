@@ -1,13 +1,9 @@
 
 -- FORCE_LOCAL_INCLUDES u kullanabilirsin belki!!!
 
--- pci_ids folder!!!
--- pci_ids.cc done.
--- pci_device_ids.hpp done.
--- pci_device_ids.cc done.
--- pci_class_ids.hpp done.
--- pci_class_ids.cc done.
+-- database.cc documentation not complete!
 
+-- Doxygen produces missing documentation because of Wt namespace in front of function parameters..
 
 --- GPL notices!!
 

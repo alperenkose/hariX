@@ -83,7 +83,7 @@ MainboardsWidget::MainboardsWidget( WContainerWidget* parent ) : WContainerWidge
   page->addWidget( layoutMainboard = new WTable() );
 
   mainboards_ = new WStandardItemModel(this);
-  fillMainboards( *mainboards_ ); 					// Fill in the source model for selection box of mainboards.
+  fillMainboards(); 								// Fill in the source model for selection box of mainboards.
 
 
   boardsProxyModel_ = new WSortFilterProxyModel(this); // Setup a proxy model, to filter and sort on source model.
@@ -213,7 +213,7 @@ MainboardsWidget::~MainboardsWidget()
 std::multimap<std::string, std::string> getBoardList();
 
 
-void MainboardsWidget::fillMainboards( WStandardItemModel& boardsModel )
+void MainboardsWidget::fillMainboards()
 {
   mainboard_list_ = getBoardList(); 		// Get list of Mainboards stored in database.
 
@@ -228,7 +228,7 @@ void MainboardsWidget::fillMainboards( WStandardItemModel& boardsModel )
 	item = new WStandardItem( board_iter->second ); // boardName column
 	result.push_back(item);
 
-	boardsModel.appendRow(result); 			// Add an entry to the model.
+	mainboards_->appendRow(result); 			// Add an entry to the model.
 	result.clear();
   }
 }
@@ -388,7 +388,9 @@ std::multimap<std::string,std::string> getOsList();
 
 void MainboardsWidget::fillOsModel()
 {
-  osList_ = getOsList();					// Get list of all OS Distributions.
+  std::multimap<std::string,std::string> osList;
+  
+  osList = getOsList();					// Get list of all OS Distributions.
 
   std::vector<WStandardItem *> result; 		// Line to be added to osModel_. 
   WStandardItem *item;
@@ -402,7 +404,7 @@ void MainboardsWidget::fillOsModel()
 
   // Iterate through the list of retrieved Distributions, while getting their IDs and Names.
   std::multimap<std::string,std::string>::iterator os_iter;
-  for ( os_iter=osList_.begin(); os_iter!=osList_.end(); ++os_iter ){
+  for ( os_iter=osList.begin(); os_iter!=osList.end(); ++os_iter ){
 	item = new WStandardItem( os_iter->first ); 	// osID column
 	result.push_back(item);
 	item = new WStandardItem( os_iter->second ); 	// osName column
@@ -426,8 +428,10 @@ std::multimap<std::string,std::string> queryOsReleases( std::string os_id );
 void MainboardsWidget::fillReleaseModel( std::string os_id )
 {
   releaseModel_->removeRows(0, releaseModel_->rowCount()); 	// reset model..
+
+  std::multimap<std::string,std::string> releaseList;  
   
-  releaseList_ = queryOsReleases( os_id ); 	// Get Release list of given Distribution ( releaseID, releaseName ).
+  releaseList = queryOsReleases( os_id ); 	// Get Release list of given Distribution ( releaseID, releaseName ).
   
   std::vector<WStandardItem *> result; 		// Line to be added to releaseModel_.
   WStandardItem *item;
@@ -441,7 +445,7 @@ void MainboardsWidget::fillReleaseModel( std::string os_id )
 
   // Iterate through the list of retrieved Releases, while getting their IDs and Names.
   std::multimap<std::string,std::string>::iterator release_iter;
-  for ( release_iter=releaseList_.begin(); release_iter!=releaseList_.end(); ++release_iter ){
+  for ( release_iter=releaseList.begin(); release_iter!=releaseList.end(); ++release_iter ){
 	item = new WStandardItem( release_iter->first ); 	// releaseID column
 	result.push_back(item);
 	item = new WStandardItem( release_iter->second ); 	// releaseName column
@@ -465,15 +469,17 @@ void MainboardsWidget::fillKernelModel( std::string release_id )
 {
   kernelModel_->removeRows(0, kernelModel_->rowCount()); // reset model..
 
+  std::multimap<std::string,std::string> kernelList;  
+
   // Get Kernel list of given Release (uKerneID,kernelVersion-machineHardware )
-  kernelList_ = queryReleaseKernels( release_id ); 
+  kernelList = queryReleaseKernels( release_id ); 
   
   std::vector<WStandardItem *> result; 		// Line to be added to kernelModel_.
   WStandardItem *item;
 
   // Iterate through the list of retrieved Kernels, while getting their IDs and Version-Arch's.
   std::multimap<std::string,std::string>::iterator kernel_iter;
-  for ( kernel_iter=kernelList_.begin(); kernel_iter!=kernelList_.end(); ++kernel_iter ){
+  for ( kernel_iter=kernelList.begin(); kernel_iter!=kernelList.end(); ++kernel_iter ){
 	item = new WStandardItem( kernel_iter->first ); 	// uKernelID column
 	result.push_back(item);
 	item = new WStandardItem( kernel_iter->second ); 	// kernelVersion-machineHardware column

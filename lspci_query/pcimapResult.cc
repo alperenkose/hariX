@@ -589,7 +589,7 @@ void PcimapResultWidget::storeMainBoard( string board_name )
 	insertBoardDevices( board_id, uDevIdList ); 		// Insert devices belonging to the board to database.
 
 	// @TODO: !!! ALSO INSERT INTO DEV_MOD.. something like: checkDeviceModules( uDevIdList );
-	//! \todo Also insert into database `dev_mod' table.. something like: checkDeviceModules( uDevIdList );
+	//! \todo FUTURE WORK: Also insert into db `dev_mod' table.. something like: checkDeviceModules( uDevIdList );
 
 	dialogWarn_->setWindowTitle("Mainboard");
 	txtWarn_->setText("Mainboard Saved!");

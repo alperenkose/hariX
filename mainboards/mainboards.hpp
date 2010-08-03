@@ -101,11 +101,8 @@ private:
 	Then fill in the source model #mainboards_. 
 	
 	\param boardsModel Source model to be filled in.
-
-	\todo Remove the parameter, we do not need to pass it since #mainboards_
-	is a member variable now!!
   */
-  void fillMainboards( Wt::WStandardItemModel& boardsModel );
+  void fillMainboards();
 
   
   
@@ -218,13 +215,6 @@ private:
 									 \sa fillReleaseModel() */
 	*kernelModel_;					/*!< Source model for #comboKer_ holding Kernels retrieved from database.
 									 \sa fillKernelModel() */
-
-  //! \todo Check if we need this public???
-  std::multimap<std::string,std::string> osList_; // @TODO: Check if we need this public???
-  //! \todo Check if we need this public???
-  std::multimap<std::string,std::string> releaseList_; // @TODO: Check if we need this public???
-  //! \todo Check if we need this public???
-  std::multimap<std::string,std::string> kernelList_; // @TODO: Check if we need this public???
 
 
   //! Fill in the #osModel_.
