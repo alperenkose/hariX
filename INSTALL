@@ -157,14 +157,11 @@ INSTALLATION OF HARIX
 	- Download the database create script from
 	@TODO: gna.org/harix/downloads!!!
 
-	- Run the script on MySQL server:
+	- Run the script on MySQL server.
+
+	- Verify database:
 		Verify that database 'harix_db' is created.
-
-	- Configure database:
-		Run the following on a MySQL Query Browser:
-			INSERT INTO harix_db.bus_type(busName) VALUES ('PCI');
-
-		This will initialize an entry in `bus_type` table with PCI value busTypeID 1.
+		And ensure that an entry exists in `bus_type` table with PCI value busTypeID 1.
 
 	- WARNING: For now, the database 'root' user should have password as 'password' for hariX to work!!
 

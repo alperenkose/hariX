@@ -1,8 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$database_8cc.html#a7fe0f238d45b4579bd690a15b5ae75f9" title="connectDatabase" alt="" coords="168,5,301,35"/>
-<area shape="rect" id="node5" href="$database_8cc.html#ac0d683af13c05e7296d89dddbf5892a8" title="disconnectDatabase" alt="" coords="159,59,311,88"/>
-<area shape="rect" id="node7" href="$classOsInfo.html#ad78cb706952f58e0d4ce7fd4fa01bde5" title="Retrieve the architecture the Kernel compiled for." alt="" coords="175,112,295,141"/>
-<area shape="rect" id="node9" href="$classOsInfo.html#a4d5a9c2feed1af362bf0b9f2c8eb7b6f" title="Retrieve name of the Distribution." alt="" coords="171,165,299,195"/>
-<area shape="rect" id="node11" href="$classOsInfo.html#aaa34d686cfffbc7b8908d161a491ce10" title="Retrieve Kernel version of the Release." alt="" coords="169,219,300,248"/>
-<area shape="rect" id="node13" href="$classOsInfo.html#a197b08ecbede67112713c055b054a124" title="Retrieve name of the Release." alt="" coords="165,272,304,301"/>
-</map>

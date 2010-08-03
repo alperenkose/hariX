@@ -1,9 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classPcimapResultWidget.html#a9b4f1178df63dd9282a6caede9402fc5" title="Retrieve unique device IDs of listed PCI Devices." alt="" coords="312,5,595,35"/>
-<area shape="rect" id="node5" href="$database_8cc.html#ae8d674b5d5b8e638a25ba3434909c730" title="Store devices of given mainboard." alt="" coords="380,59,527,88"/>
-<area shape="rect" id="node7" href="$database_8cc.html#afb43f772f85f2ed8ca1042ed6e51b4fe" title="Store the provided mainboard." alt="" coords="387,112,520,141"/>
-<area shape="rect" id="node9" href="$classPcimapResultWidget.html#a56efba8ac1114225d86801645d4c4f18" title="Check whether an instance already exists." alt="" coords="348,165,559,195"/>
-<area shape="rect" id="node11" href="$database_8cc.html#a78090febeb1372b4fbe0b29e5141c443" title="Query ID of the mainboard with provided name." alt="" coords="381,219,525,248"/>
-<area shape="rect" id="node13" href="$harixApp_8cc.html#a6e7a43873d7aef8e90e39b73168fe150" title="Global function to remove a widget(page) to be shown." alt="" coords="396,272,511,301"/>
-<area shape="rect" id="node15" href="$harixApp_8cc.html#a99313cbf21275d8e6e7a35f5de863671" title="Global function to select current widget(page)." alt="" coords="403,325,504,355"/>
-</map>

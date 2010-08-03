@@ -1,5 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classAnalyzeOsWidget.html#aa7cb68854d6fdc2434bda4607d644655" title="Triggered on &#39;Upload&#39; button click." alt="" coords="252,5,481,35"/>
-<area shape="rect" id="node5" href="$classAnalyzeOsWidget.html#a2273a49e40547a9ec6c2e7a0a9394433" title="Called on uploaded() event of uploadOs_ File Upload." alt="" coords="259,59,475,88"/>
-<area shape="rect" id="node7" href="$classAnalyzeOsWidget.html#a6da9ecd068101c9d879ff88d7ec22c9c" title="Called on uploaded() event of uploadPcimap_ File Upload." alt="" coords="243,112,491,141"/>
-</map>

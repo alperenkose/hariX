@@ -344,7 +344,7 @@ queryDeviceName(string vendor_code,string device_code,string subvendor_code,stri
   Query Vendor name of a device with provided code.
 */
 //! \relates database.cc
-string queryPciVendorName( string vendor_code );
+string queryPciIdsVendorName( string vendor_code );
 
 
 /*
@@ -400,7 +400,7 @@ PcimapResultWidget::pciDeviceToRowItem( const PciDevice* current_item )
   }
   else{							// Vendor-Device pair does not exist in database!
 	string vendor_name;
-	if( (vendor_name = queryPciVendorName(current_item->getVendor())) == "" ) // Query only for Vendor name.
+	if( (vendor_name = queryPciIdsVendorName(current_item->getVendor())) == "" ) // Query only for Vendor name.
 	  item = new WStandardItem( "Unknown Vendor" );
 	else
 	  item = new WStandardItem( vendor_name );

@@ -34,26 +34,43 @@
 #include <cppconn/exception.h>
 #include <vector>
 #include <map>
-#include <string>
+// #include <string>
 
 
 #include "os_info.hpp"
 #include "pci_device.hpp"
-#include "harixApp.hpp"			// @test
+#include "harixApp.hpp"			// needed for wApp
 #include <Wt/WLogger>
 
 using std::string;
 
+
+//! Where MySQL Server is located.
 const string host_url("localhost");
+
+//! User to connect to the server.
 const string user("root");
+
+//! Password of the user.
 const string pass("password");
+
+//! Database to connect to.
 const string database("harix_db");
 
-
+//! Object to retrieve results of queries.
 static sql::ResultSet* commonResultSet;
+
+//! Object to establish SQL Server connection.
 static sql::Connection* connector;
+
+//! SQL statements are given through this.
 static sql::Statement* stmt;
 
+
+//! Connect to Database with MySQL Connector/C++.
+/*! 
+  Used in the beginning of each function to open a connection to database.
+ */
 inline void connectDatabase()
 {
   sql::Driver* driver = get_driver_instance();
@@ -62,6 +79,11 @@ inline void connectDatabase()
   stmt = connector->createStatement();
 }
 
+
+//! Delete the objects used to connect database.
+/*! 
+  Used in the end of each function to delete the #stmt, #commonResultSet and #connector.
+ */
 inline void disconnectDatabase()
 {
   delete commonResultSet;
@@ -828,7 +850,7 @@ void insertBoardDevices( string board_id, std::vector<string>& device_id_list )
 
 
 
-//! Query Vendor name for provided code.
+//! Query PCI IDs Vendor name for provided code.
 /*!
   Retrieve vendor name corresponding to provided code.
   
@@ -836,7 +858,7 @@ void insertBoardDevices( string board_id, std::vector<string>& device_id_list )
   
   \return Vendor name that correspond to provided code.
 */
-string queryPciVendorName( string vendor_code )
+string queryPciIdsVendorName( string vendor_code )
 {
   string vendor_name="";		// Hold Vendor name.
   
@@ -872,7 +894,19 @@ string queryPciVendorName( string vendor_code )
   
 }
 
-void insertPciVendor( string vendor_code, string vendor_name )
+
+
+
+//! Insert a PCI IDs Vendor entry.
+/*!
+  Insert a PCI Vendor to database, does not check for anything.
+  
+  \param vendor_code Vendor Code.
+  \param vendor_name Vendor Name.
+
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>
+*/
+void insertPciIdsVendor( string vendor_code, string vendor_name )
 {
   try{
 	connectDatabase();
@@ -897,7 +931,22 @@ void insertPciVendor( string vendor_code, string vendor_name )
   disconnectDatabase();
 }
 
-string queryPciDeviceId( string vendor_code, string device_code ) // return deviceID from pci_devices
+
+
+
+
+//! Query ID of a PCI IDs Device entry in database.
+/*!
+  Retrieve ID of a PCI IDs Device entry(pci.ids device line) stored in database.
+  
+  \param vendor_code Vendor Code of Device entry.
+  \param device_code Device Code.
+  
+  \return ID representing the PCI IDs Device entry.
+
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>
+*/
+string queryPciIdsDeviceId( string vendor_code, string device_code )
 {
   string device_id="";
   
@@ -931,7 +980,21 @@ string queryPciDeviceId( string vendor_code, string device_code ) // return devi
   return device_id;
 }
 
-string insertPciDevice( string vendor_code, string device_code, string device_name )// return deviceID
+
+
+//! Insert a PCI IDs Device entry in database.
+/*!
+  Add a PCI IDs Device entry(pci.ids device line) to database..
+  
+  \param vendor_code Vendor Code of the Device entry.
+  \param device_code Device Code.
+  \param device_name Device Name.
+  
+  \return ID representing the PCI IDs Device entry.
+
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>
+*/
+string insertPciIdsDevice( string vendor_code, string device_code, string device_name )
 {
   string device_id;
 
@@ -965,7 +1028,22 @@ string insertPciDevice( string vendor_code, string device_code, string device_na
   return device_id;
 }
 
-string insertPciSubsys( string device_id , string subvendor_code, string subdevice_code, string subsysname )
+
+
+//! Insert a PCI IDs subsystem entry in database.
+/*!
+  Add a PCI IDs Subsystem entry(pci.ids subsystem line) to database..
+  
+  \param device_id ID representing the Subsystem's Device in database.
+  \param subvendor_code Subvendor Code.
+  \param subdevice_code Subdevice Code.
+  \param subsysname Subsystem Name.
+  
+  \return ID representing the PCI IDs Subsystem entry.
+
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>
+*/
+string insertPciIdsSubsys( string device_id , string subvendor_code, string subdevice_code, string subsysname )
 {
   string uPcisub_id;
 
@@ -999,27 +1077,22 @@ string insertPciSubsys( string device_id , string subvendor_code, string subdevi
   return uPcisub_id;
 }
 
-string insertUnknownPcisubId(string vendor_code, string device_code, string subvendor_code, string subdevice_code)
-{
-  string deviceId, uPcisubId;
-  if( queryPciVendorName( vendor_code ) == "" )
-	insertPciVendor( vendor_code, "Unknown Vendor" ); // (vendor code, vendor name)
-
-  if( (deviceId = queryPciDeviceId( vendor_code, device_code )) == "" ){
-	wApp->log("debug") << "lets insert the new Device ID!!!"; 									// @test
-	deviceId = insertPciDevice( vendor_code, device_code, "Unknown Device" ); // (vendor code, device code, name )
-	wApp->log("debug") << "Unknown Device inserted with deviceId: "+ deviceId;						// @test
-  }
 
 
-  // deviceID,subvendor,subdevice,subsysname
-  uPcisubId = insertPciSubsys(deviceId, subvendor_code, subdevice_code, "Unknown");
+//! Query unique ID of a PCI IDs Subsystem entry in database.
+/*!
+  Retrieve ID of a PCI IDs Subsystem entry(pci.ids subsystem line) stored in database.
+  
+  \param vendor_code Vendor Code of the Device of the Subsystem.
+  \param device_code Code of the Subsystem's Device.
+  \param subvendor_code Subvendor Code.
+  \param subdevice_code Subdevice Code.
+  
+  \return ID representing the PCI IDs Subsystem entry.
 
-  return uPcisubId;
-}
-
-
-string queryUniquePcisubId(string vendor_code, string device_code, string subvendor_code, string subdevice_code)
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>
+*/
+string queryPciIdsSubsysId(string vendor_code, string device_code, string subvendor_code, string subdevice_code)
 {
   string uPcisubId = "";
 
@@ -1053,7 +1126,19 @@ string queryUniquePcisubId(string vendor_code, string device_code, string subven
   return uPcisubId;
 }
 
-string queryPciClassName( string class_code )
+
+
+//! Query PCI IDs Class name for provided code.
+/*!
+  Retrieve class name corresponding to provided code.
+  
+  \param class_code Class code of a device.
+  
+  \return Class name.
+
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>
+*/
+string queryPciIdsClassName( string class_code )
 {
   string class_name="";
   
@@ -1087,7 +1172,18 @@ string queryPciClassName( string class_code )
   return class_name;
 }
 
-void insertPciClass( string class_code, string class_name )
+
+
+//! Insert a PCI IDs Class entry.
+/*!
+  Insert a PCI Class to database, does not check for anything.
+  
+  \param class_code Class Code.
+  \param class_name Class Name.
+
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>
+*/
+void insertPciIdsClass( string class_code, string class_name )
 {
   try{
 	connectDatabase();
@@ -1112,7 +1208,20 @@ void insertPciClass( string class_code, string class_name )
   disconnectDatabase();
 }
 
-string queryPciSubclassId( string class_code, string subclass_code )
+
+
+//! Query ID of a PCI IDs Subclass entry in database.
+/*!
+  Retrieve ID of a PCI IDs Subclass entry(pci.ids subclass line) stored in database.
+  
+  \param class_code Class Code of Subclass entry.
+  \param subclass_code Subclass Code.
+  
+  \return ID representing the PCI IDs Subsystem entry.
+
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>  
+*/
+string queryPciIdsSubclassId( string class_code, string subclass_code )
 {
   string subclass_id="";
   
@@ -1146,7 +1255,21 @@ string queryPciSubclassId( string class_code, string subclass_code )
   return subclass_id;
 }
 
-string insertPciSubclass(string class_code, string subclass_code, string subclass_name )
+
+
+//! Insert a PCI IDs Subclass entry.
+/*!
+  Add a PCI IDs Subclass entry(pci.ids subclass line) to database..
+  
+  \param class_code Class Code of the Subclass entry.
+  \param subclass_code Subclass Code.
+  \param subclass_name Subclass Name.
+  
+  \return ID representing the PCI IDs Subclass entry.
+
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>  
+*/
+string insertPciIdsSubclass(string class_code, string subclass_code, string subclass_name )
 {
   string subclass_id;
 
@@ -1181,7 +1304,21 @@ string insertPciSubclass(string class_code, string subclass_code, string subclas
   return subclass_id;
 }
 
-string insertPciProgif( string subclassId, string progif_code, string progif_name)
+
+
+//! Insert a PCI IDs Prog-if entry in database.
+/*!
+  Add a PCI IDs Prog-if entry(pci.ids prog-if line) to database..  
+  
+  \param subclassId ID representing the Prog-if's Subclass in database.
+  \param progif_code Prog-if Code.
+  \param progif_name Prog-if Name.
+  
+  \return ID representing the PCI IDs Prog-if entry.
+
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>  
+*/
+string insertPciIdsProgif( string subclassId, string progif_code, string progif_name)
 {
   string uProgif_id;
 
@@ -1215,23 +1352,21 @@ string insertPciProgif( string subclassId, string progif_code, string progif_nam
   return uProgif_id;
 }
 
-string insertUnknownProgifId(string class_code, string subclass_code, string progif_code)
-{
-  string subclassId, uProgifId;
-  if( queryPciClassName( class_code ) == "" )
-	insertPciClass( class_code, "Unknown" ); // (class code, classname)
-
-  if( (subclassId = queryPciSubclassId( class_code, subclass_code )) == "" ){
-	subclassId = insertPciSubclass(class_code, subclass_code, "Unknown" ); // (class code, subclass code, name )
-  }
-
-  uProgifId = insertPciProgif(subclassId, progif_code, "Unknown");
-
-  return uProgifId;
-}
 
 
-string queryUniqueProgifId(string class_code, string subclass_code, string progif_code)
+//! Query unique ID of a PCI IDs Prog-if entry in database.
+/*!
+  Retrieve ID of a PCI IDs Prog-if entry(pci.ids prog-if line) stored in database.  
+  
+  \param class_code Class Code of the Subclass of the Prog-if.
+  \param subclass_code Code of the Prog-if's Subclass.
+  \param progif_code Prog-if Code.
+  
+  \return ID representing the PCI IDs Prog-if entry.
+
+  \warning <b>THIS FUNCTION IS NOT USED IN THE APPLICATION!</b>  
+*/
+string queryPciIdsProgifId(string class_code, string subclass_code, string progif_code)
 {
   string uProgifId = "";
 

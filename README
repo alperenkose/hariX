@@ -28,3 +28,25 @@ GPL Licensed.
 
 Also the widget designs that come along with Wt Library is used.
 (CSS file wt.css in themes/polished)
+
+
+queryDistro.sh Script:
+----------------------
+Based on the queryDistro.sh script by "framp" at "linux-tips-and-tricks dot de".
+(http://www.linux-tips-and-tricks.de/index.php/Latest/How-to-find-out-which-Linux-distribution-a-bash-script-runs-on.html)
+
+
+Doxygen Doxfile settings:
+-------------------------
+HIDE_UNDOC_CLASSES     = NO
+GENERATE_LATEX         = NO
+TAB_SIZE               = 4
+BUILTIN_STL_SUPPORT    = YES
+EXTRACT_ALL            = YES
+RECURSIVE              = YES
+SOURCE_BROWSER         = YES
+ALPHABETICAL_INDEX     = YES
+GENERATE_TREEVIEW      = YES
+SEARCHENGINE           = YES
+SHOW_NAMESPACES        = NO
+FORCE_LOCAL_INCLUDES   = YES

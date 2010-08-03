@@ -1,8 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$database_8cc.html" title="All Database Communication." alt="" coords="5,83,104,112"/>
-<area shape="rect" id="node5" href="$pcimapQuery_8cc.html" title="Implementation of PcimapQueryWidget Class." alt="" coords="128,83,325,112"/>
-<area shape="rect" id="node7" href="$pcimapResult_8cc.html" title="Implementation of PcimapResultWidget Class." alt="" coords="349,83,549,112"/>
-<area shape="rect" id="node9" href="$mainboards_8cc.html" title="Implementation of MainboardsWidget Class." alt="" coords="573,83,768,112"/>
-<area shape="rect" id="node11" href="$os__pci__module_8cc.html" title="Organize OS&#45;Modules Save." alt="" coords="792,83,1003,112"/>
-<area shape="rect" id="node13" href="$pci__moduleDB_8cc.html" title="Database relation of os_pci_module.cc." alt="" coords="1027,83,1235,112"/>
-</map>

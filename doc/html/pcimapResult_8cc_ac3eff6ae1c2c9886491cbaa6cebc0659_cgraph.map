@@ -1,7 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$database_8cc.html#abba4122db7bc15a6ed82667f90d45732" title="insertPciDevice" alt="" coords="243,5,360,35"/>
-<area shape="rect" id="node5" href="$database_8cc.html#a9a2768303d8f8f838909b1d1dc353a79" title="insertPciSubsys" alt="" coords="240,59,363,88"/>
-<area shape="rect" id="node7" href="$database_8cc.html#a37f9d8bcc3a19d72997eded84e3d37ba" title="insertPciVendor" alt="" coords="241,112,361,141"/>
-<area shape="rect" id="node9" href="$database_8cc.html#a48c4765d4fde3171be9ca0b004387edd" title="queryPciDeviceId" alt="" coords="236,165,367,195"/>
-<area shape="rect" id="node11" href="$database_8cc.html#ad7bed9de80f7a17913024bc5ed0de1dc" title="Query Vendor name for provided code." alt="" coords="221,219,381,248"/>
-</map>

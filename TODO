@@ -1,13 +1,7 @@
 
--- FORCE_LOCAL_INCLUDES u kullanabilirsin belki!!!
-
--- database.cc documentation not complete!
-
 -- Doxygen produces missing documentation because of Wt namespace in front of function parameters..
 
 - Store device-module information in dev_mode when storing the mainboard!! 
 ( lspciTableRowSelected'daki mantikla uModIDlerin listesini alip `dev_mod` tablosuna koyabilin.. )
-
-- if we want to delete an OS; the corresponding entries from `pcimap` and `modules` should be deleted first..
 
 - There should be a user created with the new database, and the application should connect with that user!

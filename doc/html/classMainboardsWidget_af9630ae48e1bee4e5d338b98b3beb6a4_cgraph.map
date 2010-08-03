@@ -1,6 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classMainboardsWidget.html#ae0a2e631671ba24e1c24d6b1d427064f" title="Retrieve list of devices for the mainboard with passed ID." alt="" coords="359,5,628,35"/>
-<area shape="rect" id="node5" href="$classPcimapResultWidget.html#a56efba8ac1114225d86801645d4c4f18" title="Check whether an instance already exists." alt="" coords="388,59,599,88"/>
-<area shape="rect" id="node7" href="$classMainboardsWidget.html#aef4b5c098e98b98c05bc93a195f445da" title="Remove page and delete it." alt="" coords="396,112,591,141"/>
-<area shape="rect" id="node9" href="$harixApp_8cc.html#a99313cbf21275d8e6e7a35f5de863671" title="Global function to select current widget(page)." alt="" coords="443,165,544,195"/>
-</map>

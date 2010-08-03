@@ -1,7 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classMainboardsWidget.html#a7b5093de44fc8f74d81ff7caf4549c94" title="MainboardsWidget::bCheckOs_Click" alt="" coords="187,5,432,35"/>
-<area shape="rect" id="node5" href="$classPcimapQueryWidget.html#acd0392f97a9f148aec1b5ba4ca637fa3" title="PcimapQueryWidget::readLspciList" alt="" coords="189,59,429,88"/>
-<area shape="rect" id="node7" href="$classMainboardsWidget.html#a97db090b294660ab64cb610f3cec459e" title="MainboardsWidget::refreshPage" alt="" coords="199,112,420,141"/>
-<area shape="rect" id="node9" href="$classMainboardsWidget.html#af9630ae48e1bee4e5d338b98b3beb6a4" title="MainboardsWidget::showBoardConfiguration" alt="" coords="159,165,460,195"/>
-<area shape="rect" id="node11" href="$classPcimapResultWidget.html#a7a69b3094d8cc4fe4077e6e59addd992" title="PcimapResultWidget::storeMainBoard" alt="" coords="180,219,439,248"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classPcimapResultWidget.html#a1b4ae6e6fdcfbbf8d13cea846cce8ea5" title="Triggered on &#39;Save Mainboard&#39; button click." alt="" coords="355,5,627,35"/>
-<area shape="rect" id="node5" href="$classPcimapResultWidget.html#abef44968c77f511ae1a6dc8a06e749e7" title="Triggered on a double click of a line in lspciTable_." alt="" coords="341,59,640,88"/>
-<area shape="rect" id="node7" href="$classPcimapResultWidget.html#ae1e56e8f0af4c1439e63ebc156351c5d" title="Create a line to be added to lspciModel_ from given PCI Device." alt="" coords="348,112,633,141"/>
-<area shape="rect" id="node9" href="$database_8cc.html#a09b3812efbf604de4285ae8a8ccdc59d" title="Query full name of an OS." alt="" coords="453,165,528,195"/>
-</map>

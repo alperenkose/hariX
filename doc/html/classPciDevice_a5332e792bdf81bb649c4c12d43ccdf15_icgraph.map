@@ -1,6 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$database_8cc.html#a1346c1956749beff187ac68052370f15" title="Check if the provided PCI device is stored before." alt="" coords="311,5,423,35"/>
-<area shape="rect" id="node5" href="$classPcimapResultWidget.html#ab6fa3b6f6e85ad13d6f0c585529c67f1" title="Fill in the fields in Device Details to show PCI Device Codes." alt="" coords="237,59,496,88"/>
-<area shape="rect" id="node7" href="$database_8cc.html#a7d38b3a518622f1cd136c60465836f93" title="Update pcimap&#45;list entry of a given Module of OS." alt="" coords="315,112,419,141"/>
-<area shape="rect" id="node9" href="$classPcimapResultWidget.html#ae1e56e8f0af4c1439e63ebc156351c5d" title="Create a line to be added to lspciModel_ from given PCI Device." alt="" coords="224,165,509,195"/>
-</map>

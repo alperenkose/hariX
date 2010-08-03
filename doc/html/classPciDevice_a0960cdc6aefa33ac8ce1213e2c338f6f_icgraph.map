@@ -1,5 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classMainboardsWidget.html#ae0a2e631671ba24e1c24d6b1d427064f" title="Retrieve list of devices for the mainboard with passed ID." alt="" coords="209,5,479,35"/>
-<area shape="rect" id="node5" href="$os__pci__module_8cc.html#a8881b7915b748978d359313b092a2a5e" title="Organize saving of OS&#45;pcimap_list in database." alt="" coords="285,59,403,88"/>
-<area shape="rect" id="node7" href="$classPcimapQueryWidget.html#acd0392f97a9f148aec1b5ba4ca637fa3" title="Triggered on &#39;Query Devices&#39; button click." alt="" coords="224,112,464,141"/>
-</map>

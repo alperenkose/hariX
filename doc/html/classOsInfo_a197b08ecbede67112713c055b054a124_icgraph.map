@@ -1,6 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classAnalyzeOsWidget.html#ace0500ace0b2c4ce82403f6062f85700" title="Triggered on &#39;Check Record&#39; button click." alt="" coords="195,5,435,35"/>
-<area shape="rect" id="node5" href="$classAnalyzeOsWidget.html#a5314919cd4fd5de7ec781ff130476b1b" title="Fill Edit regions of Analyze Result screen." alt="" coords="200,59,429,88"/>
-<area shape="rect" id="node7" href="$database_8cc.html#a86eb6930a310d18ae16db1958a516656" title="Record the given OS in database." alt="" coords="264,112,365,141"/>
-<area shape="rect" id="node9" href="$pci__moduleDB_8cc.html#a85530f39324a11e8de366b97dd331c47" title="Store/Update OS&#45;pcimap_list in database." alt="" coords="484,139,599,168"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$analyzeOS_8cc.html" title="Implementation of AnalyzeOsWidget Class." alt="" coords="5,83,187,112"/>
-<area shape="rect" id="node5" href="$home_8cc.html" title="Implementation of HomeWidget Class." alt="" coords="211,83,288,112"/>
-<area shape="rect" id="node7" href="$pcimapQuery_8cc.html" title="Implementation of PcimapQueryWidget Class." alt="" coords="312,83,509,112"/>
-<area shape="rect" id="node9" href="$pcimapResult_8cc.html" title="Implementation of PcimapResultWidget Class." alt="" coords="533,83,733,112"/>
-<area shape="rect" id="node11" href="$mainboards_8cc.html" title="Implementation of MainboardsWidget Class." alt="" coords="757,83,952,112"/>
-</map>
