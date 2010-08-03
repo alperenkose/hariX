@@ -23,8 +23,6 @@
 
 using namespace Wt;
 
-void selectWidget( WContainerWidget* widget );
-
 HomeWidget* HomeWidget::instance_ = NULL;
 
 HomeWidget::HomeWidget( WContainerWidget* parent ) : WContainerWidget(parent)
@@ -131,13 +129,14 @@ HomeWidget* HomeWidget::Instance( WContainerWidget* parent)
 
 }
 
-
+//! Path to the "pci.ids" file to be downloaded and read.
 static std::string pci_ids_file = "/tmp/pci.ids";
 
 /*
   Global function from pci_ids/pci_ids.cc to update PCI IDs in database,
   gets 'pci.ids' file as parameter.
 */
+//! \relates pci_ids.cc
 int update_pci_ids(std::string pci_ids_file);
 
 
@@ -156,10 +155,10 @@ void HomeWidget::bPciIds_Click()
   std::string download_command;
   if( settingsProxy_ != "" )
 	download_command =
-	  "curl http://pciids.sourceforge.net/v2.2/pci.ids --proxy "+ settingsProxy_ +" > /tmp/pci.ids";
+	  "curl http://pciids.sourceforge.net/v2.2/pci.ids --proxy "+ settingsProxy_ +" > " + pci_ids_file;
   else
 	download_command =
-	  "curl http://pciids.sourceforge.net/v2.2/pci.ids > /tmp/pci.ids";
+	  "curl http://pciids.sourceforge.net/v2.2/pci.ids > " + pci_ids_file;
   /*
    * @}
    */

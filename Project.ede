@@ -7,8 +7,8 @@
    (ede-proj-target-makefile-program "harix.wt"
     :name "harix.wt"
     :path ""
-    :source '("main.cc" "harixApp.cc" "database.cc" "home.cc" "lspci_query/pcimapQuery.cc" "lspci_query/pcimapResult.cc" "analyze_os/analyzeOS.cc" "pci_module/os_pci_module.cc" "pci_module/pci_moduleDB.cc" "mainboards/mainboards.cc" "pci_ids/pci_ids.cc" "pci_ids/pci_devices.cc" "pci_ids/pci_classes.cc")
-    :auxsource '("pci_device.hpp" "harixApp.hpp" "home.hpp" "os_info.hpp" "lspci_query/pcimapQuery.hpp" "lspci_query/pcimapResult.hpp" "analyze_os/analyzeOS.hpp" "mainboards/mainboards.hpp" "pci_ids/pci_devices.hpp" "pci_ids/pci_classes.hpp" "div.hpp")
+    :source '("main.cc" "harixApp.cc" "database.cc" "home.cc" "lspci_query/pcimapQuery.cc" "lspci_query/pcimapResult.cc" "analyze_os/analyzeOS.cc" "pci_module/os_pci_module.cc" "pci_module/pci_moduleDB.cc" "mainboards/mainboards.cc" "pci_ids/pci_ids.cc" "pci_ids/pci_device_ids.cc" "pci_ids/pci_class_ids.cc")
+    :auxsource '("pci_device.hpp" "harixApp.hpp" "home.hpp" "os_info.hpp" "lspci_query/pcimapQuery.hpp" "lspci_query/pcimapResult.hpp" "analyze_os/analyzeOS.hpp" "mainboards/mainboards.hpp" "pci_ids/pci_device_ids.hpp" "pci_ids/pci_class_ids.hpp" "div.hpp")
     )
    )
   )

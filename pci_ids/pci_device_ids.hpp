@@ -1,5 +1,5 @@
 // Hey Emacs -*- C++ -*-
-/** pci_devices.h --- 
+/** pci_device_ids.hpp --- 
  *
  * Copyright (C) 2010 Alp Eren Köse
  *
@@ -21,32 +21,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if !defined( _PCI_DEVICES_ )
-#define _PCI_DEVICES_
+#if !defined( _PCI_DEVICE_IDS_ )
+#define _PCI_DEVICE_IDS_
 
 #include <vector>
 #include <string>
 
 //#define DEBUG
 
-class pciDevice;
-class pciSubsystem;
+class PciIdsDevice;
+class PciIdsSubsys;
 
-class pciVendor
+class PciIdsVendor
 {
 private:
   std::string code;
   std::string name;
-  std::vector<pciDevice*> kid_list; // hold devices of the vendor
+  std::vector<PciIdsDevice*> kid_list; // hold devices of the vendor
   
 public:
-  pciVendor(std::string vCode, std::string vName) : code(vCode), name(vName)
+  PciIdsVendor(std::string vCode, std::string vName) : code(vCode), name(vName)
   {
   }
 
-  ~pciVendor();
+  ~PciIdsVendor();
   
-  void add_kid(pciDevice* kid)
+  void add_kid(PciIdsDevice* kid)
   {
   	kid_list.push_back(kid);
   }
@@ -65,22 +65,22 @@ public:
 
 };
 
-class pciDevice
+class PciIdsDevice
 {
 private:
-  pciVendor* parent_vendor;
+  PciIdsVendor* parent_vendor;
   std::string code, name;
-  std::vector<pciSubsystem*> subsystem_list; // hold subsystems of the device
+  std::vector<PciIdsSubsys*> subsystem_list; // hold subsystems of the device
 
 public:
-  pciDevice(pciVendor* dParent, std::string dCode, std::string dName) : parent_vendor(dParent), code(dCode), name(dName)
+  PciIdsDevice(PciIdsVendor* dParent, std::string dCode, std::string dName) : parent_vendor(dParent), code(dCode), name(dName)
   {
 	dParent->add_kid(this);
   }
 
-  ~pciDevice();
+  ~PciIdsDevice();
 
-  void add_subsystem(pciSubsystem* subsystem)
+  void add_subsystem(PciIdsSubsys* subsystem)
   {
   	subsystem_list.push_back(subsystem);
   }
@@ -95,23 +95,23 @@ public:
 	return name;
   }
 
-  const pciVendor* const get_parent (void) const
+  const PciIdsVendor* const get_parent (void) const
   {
 	return parent_vendor;
   }
 
-  friend int pciVendor::store_db(void);
+  friend int PciIdsVendor::store_db(void);
     
 };
 
-class pciSubsystem
+class PciIdsSubsys
 {
 private:
-  pciDevice* parent_device;
+  PciIdsDevice* parent_device;
   std::string subvendor, subdevice, name;
 
 public:
-  pciSubsystem(pciDevice* sParent, std::string sVendor, std::string sDevice, std::string sName) : parent_device(sParent), subvendor(sVendor), subdevice(sDevice), name(sName)
+  PciIdsSubsys(PciIdsDevice* sParent, std::string sVendor, std::string sDevice, std::string sName) : parent_device(sParent), subvendor(sVendor), subdevice(sDevice), name(sName)
   {
 	sParent->add_subsystem(this);
   }
@@ -131,7 +131,7 @@ public:
 	return name;
   }
 
-  const pciDevice* const get_parent (void) const
+  const PciIdsDevice* const get_parent (void) const
   {
 	return parent_device;
   }
@@ -139,4 +139,4 @@ public:
 };
 
 
-#endif	// _PCI_DEVICES_H
+#endif	// _PCI_DEVICE_IDS_

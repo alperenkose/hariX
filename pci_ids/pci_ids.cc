@@ -16,23 +16,23 @@
 #include <Wt/WLogger>
 #include "../harixApp.hpp"
 
-#include "pci_devices.hpp"
-#include "pci_classes.hpp"
+#include "pci_device_ids.hpp"
+#include "pci_class_ids.hpp"
 
-std::list<pciVendor> vendor_list;
+std::list<PciIdsVendor> vendor_list;
 
 void add_vendor (std::string);
-pciDevice* add_device (std::string, pciVendor*);
-void add_subsys (std::string, pciDevice*);
+PciIdsDevice* add_device (std::string, PciIdsVendor*);
+void add_subsys (std::string, PciIdsDevice*);
 int store_pci_all (void);
 void delete_pci_all(void);
 
 
-list<pciClass> class_list;
+list<PciIdsClass> class_list;
 
 void add_class (string);
-pciSubclass* add_subclass (string, pciClass*);
-void add_progif (string, pciSubclass*);
+PciIdsSubclass* add_subclass (string, PciIdsClass*);
+void add_progif (string, PciIdsSubclass*);
 int store_classes (void);
 void delete_classes(void);
 
@@ -40,7 +40,7 @@ void delete_classes(void);
 
 int update_device_codes( std::string pci_ids_file )
 {
-  pciDevice* last_device;
+  PciIdsDevice* last_device;
   std::string analyze_line;
   std::string hex_chars = "0123456789abcdef";
   const int LSIZE = 200;
@@ -80,7 +80,7 @@ int update_device_codes( std::string pci_ids_file )
 		  continue;
 		if ( !analyze_line.empty() && analyze_line.at(0) == '\t' ){
 		  if ( analyze_line.at(1) != '\t' ){
-			pciVendor& list_last = vendor_list.back();
+			PciIdsVendor& list_last = vendor_list.back();
 			last_device = add_device( analyze_line, &list_last );
 			//			add_device(analyze_line);						// @test
 		  }
@@ -121,13 +121,13 @@ void add_vendor (std::string analyze)
   beg_pos = analyze.find_first_not_of(" ",end_pos);
   vendor_name = analyze.substr(beg_pos);
 
-  pciVendor* new_vendor = new pciVendor(vendor_code, vendor_name);
+  PciIdsVendor* new_vendor = new PciIdsVendor(vendor_code, vendor_name);
   vendor_list.push_back(*new_vendor);		// here a copy of new_vendor is added to list
   delete new_vendor;
 }
 
 //void add_device (std::string analyze)
-pciDevice* add_device (std::string analyze, pciVendor* parent_vendor)
+PciIdsDevice* add_device (std::string analyze, PciIdsVendor* parent_vendor)
 {
   std::string dev_code, dev_name;
   std::string::size_type beg_pos, end_pos;
@@ -139,12 +139,12 @@ pciDevice* add_device (std::string analyze, pciVendor* parent_vendor)
   dev_name = analyze.substr(beg_pos);
 
   //  std::cout << '\t' << dev_code << " - " << dev_name << std::endl; // @test
-  pciDevice* new_device = new pciDevice(parent_vendor, dev_code, dev_name);
+  PciIdsDevice* new_device = new PciIdsDevice(parent_vendor, dev_code, dev_name);
   return new_device;
 }
 
 // void add_subsys (std::string analyze)
-void add_subsys (std::string analyze, pciDevice* parent_device)
+void add_subsys (std::string analyze, PciIdsDevice* parent_device)
 {
   std::string subsys_vdr, subsys_dev, subsys_name;
   std::string::size_type beg_pos, end_pos;
@@ -160,7 +160,7 @@ void add_subsys (std::string analyze, pciDevice* parent_device)
   subsys_name = analyze.substr(beg_pos);
   
   //  std::cout << '\t'<< '\t' << subsys_vdr << " " << subsys_dev << " - " << subsys_name << std::endl; // @test
-  pciSubsystem* new_subsys = new pciSubsystem(parent_device, subsys_vdr, subsys_dev, subsys_name);
+  PciIdsSubsys* new_subsys = new PciIdsSubsys(parent_device, subsys_vdr, subsys_dev, subsys_name);
 }
 
 
@@ -176,7 +176,7 @@ void delete_pci_all(void)
 
 int store_pci_all(void)
 {
-  std::list<pciVendor>::iterator iter;
+  std::list<PciIdsVendor>::iterator iter;
 
   for( iter = vendor_list.begin(); iter != vendor_list.end(); ++iter ){
   	if ( iter->store_db() != 0 )
@@ -190,7 +190,7 @@ int store_pci_all(void)
 
 int update_class_codes( std::string pci_ids_file )
 {
-  pciSubclass* last_subclass;
+  PciIdsSubclass* last_subclass;
   string analyze_line;
   const int LSIZE = 200;
   char read_linec[LSIZE];
@@ -269,12 +269,12 @@ void add_class (string analyze)
   beg_pos = analyze.find_first_not_of(" ",end_pos);
   class_name = analyze.substr(beg_pos);
 
-  pciClass* new_class = new pciClass(class_code, class_name);
+  PciIdsClass* new_class = new PciIdsClass(class_code, class_name);
   class_list.push_back(*new_class);		// here a copy of new_class is added to list
   delete new_class;
 }
 
-pciSubclass* add_subclass (string analyze, pciClass* parent_class)
+PciIdsSubclass* add_subclass (string analyze, PciIdsClass* parent_class)
 {
   string sub_code, sub_name;
   string::size_type beg_pos, end_pos;
@@ -285,11 +285,11 @@ pciSubclass* add_subclass (string analyze, pciClass* parent_class)
   beg_pos = analyze.find_first_not_of(" ",end_pos);
   sub_name = analyze.substr(beg_pos);
 
-  pciSubclass* new_subclass = new pciSubclass(parent_class, sub_code, sub_name);
+  PciIdsSubclass* new_subclass = new PciIdsSubclass(parent_class, sub_code, sub_name);
   return new_subclass;
 }
 
-void add_progif (string analyze, pciSubclass* parent_subclass)
+void add_progif (string analyze, PciIdsSubclass* parent_subclass)
 {
   string prog_code, prog_name;
   string::size_type beg_pos, end_pos;
@@ -300,13 +300,13 @@ void add_progif (string analyze, pciSubclass* parent_subclass)
   beg_pos = analyze.find_first_not_of(" ",end_pos);
   prog_name = analyze.substr(beg_pos);
 
-  pciProgif* new_progif = new pciProgif(parent_subclass, prog_code, prog_name);
+  PciIdsProgif* new_progif = new PciIdsProgif(parent_subclass, prog_code, prog_name);
 }
 
 
 int store_classes(void)
 {
-  list<pciClass>::iterator iter;
+  list<PciIdsClass>::iterator iter;
 
   for( iter = class_list.begin(); iter != class_list.end(); ++iter ){
   	if( iter->store_db() != 0 )
@@ -330,7 +330,6 @@ void delete_classes(void)
 //! Update database with the given 'pci.ids' file.
 /*!
 
-  \relatesalso HomeWidget
   \param pci_ids_file Path to the 'pci.ids' file
   
   \return Success status

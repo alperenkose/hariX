@@ -30,12 +30,12 @@ class OsInfo;
 class AnalyzeOsWidget : public Wt::WContainerWidget
 {
 private:
-  //! Constructor
+  //! Constructor.
   /*! 
-	Private to accept calls just from #Instance() function.
+	Private to accept calls just from Instance() function.
 	This way creation of AnalyzeOsWidget objects with direct calls to constructor is rejected.
 	
-	\param parent Parent container of AnalyzeOsWidget instance
+	\param parent Parent container of AnalyzeOsWidget instance.
   */
   AnalyzeOsWidget( Wt::WContainerWidget* parent);
 

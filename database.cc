@@ -49,13 +49,27 @@ inline void disconnectDatabase()
 }
 
 
+
+//! Query full class name for provided codes.
+/*!
+  Retrieve a string list of Class, Subclass and Prog-if names
+  corresponding to provided codes.
+  
+  \param class_code Class Code of a device.
+  \param subclass_code Subclass Code of a device.
+  \param progif_code Programming interface Code of a device.
+  
+  \return Class, Subclass and Prog-if names that correspond to provided codes.
+*/
 std::vector<string> queryClassName(string class_code, string subclass_code, string progif_code)
 {
-  std::vector<string> full_class_name;
+  std::vector<string> full_class_name; 	// Hold Class, Subclass and Prog-if name.
   
   try{
 	connectDatabase();
 
+	// Make a call to the stored procedure which will return a line of corresponding names to the codes.
+	// At least Class-Subclass code pair should exist in database for non-empty return.
 	commonResultSet = stmt->executeQuery("CALL sp_queryClassName('"+ class_code +"','"+ subclass_code +"'," +
 										 "'" + progif_code  + "')");
 
@@ -87,14 +101,30 @@ std::vector<string> queryClassName(string class_code, string subclass_code, stri
 }
 
 
+
+
+//! Query full device name for provided codes.
+/*!
+  Retrieve a string list of Vendor, Device and Subsystem names
+  corresponding to provided codes.
+  
+  \param vendor_code Vendor Code of a device.
+  \param device_code Device Code of a device.
+  \param subvendor_code Subvendor Code of a device.
+  \param subdevice_code Subdevice Code of a device.
+  
+  \return Vendor, Device and Subsystem name that correspond to provided codes.
+*/
 std::vector<string>
 queryDeviceName(string vendor_code, string device_code, string subvendor_code, string subdevice_code)
 {
-  std::vector<string> full_device_name;
+  std::vector<string> full_device_name; 	// Hold Vendor, Device and Subsystem name.
   
   try{
 	connectDatabase();
 
+	// Make a call to the stored procedure which will return a line of corresponding names to the codes.
+	// At least Vendor-Device code pair should exist in database for non-empty return.
 	commonResultSet = stmt->executeQuery("CALL sp_queryDeviceName('"+ vendor_code +"','"+ device_code +"'," +
 										 "'" + subvendor_code + "','" + subdevice_code + "')");
 
@@ -125,6 +155,22 @@ queryDeviceName(string vendor_code, string device_code, string subvendor_code, s
 }
 
 
+
+//! Query list of OSes with their modules that support the provided device.
+/*!
+  Retrieves list of Unique IDs representing OSes and their modules which
+  support the provided device.
+  
+  \param vendor_code Vendor Code of provided device.
+  \param device_code Device Code of provided device.
+  \param subvendor_code Subvendor Code of provided device.
+  \param subdevice_code Subdevice Code of provided device.
+  \param class_code Class Code of provided device.
+  \param subclass_code Subclass Code of provided device.
+  \param progif_code Prog-if Code of provided device.
+  
+  \return List of (Unique OS ID - Module Name ID) pairs.
+*/
 std::multimap<string, string>
 queryPcimapOsList(string vendor_code, string device_code, string subvendor_code, string subdevice_code,
 			   string class_code, string subclass_code, string progif_code)
@@ -134,12 +180,12 @@ queryPcimapOsList(string vendor_code, string device_code, string subvendor_code,
   try{
 	connectDatabase();
 
+	// Make a call to the stored procedure which will return a list of OS-Module pairs that support the device.
 	commonResultSet = stmt->executeQuery("CALL sp_queryPcimap('"+ vendor_code +"','"+ device_code +"'," +
 										 "'" + subvendor_code + "','" + subdevice_code + "'," +
 										 "'" + class_code + subclass_code + "','" + progif_code + "')");
 
 	while( commonResultSet->next() ){
-	  // ukernel_module_map[ commonResultSet->getString("uKernelID") ] = commonResultSet->getString("modNameID");
 	  ukernel_module_map.insert( std::pair<string,string>(commonResultSet->getString("uKernelID"), commonResultSet->getString("modNameID") ) );
 	}
 	
@@ -163,6 +209,16 @@ queryPcimapOsList(string vendor_code, string device_code, string subvendor_code,
   return ukernel_module_map;
 }
 
+
+
+//! Query full name of an OS.
+/*!
+  Queries full OS name with it's unique id and puts them into a std::vector container.
+  
+  \param unique_kernel_id Unique kernel ID of an OS.
+  
+  \return List of Distribution name, Release name, Kernel version and architecture.
+*/
 std::vector<string> queryOs( string unique_kernel_id )
 {
   std::vector<string> full_os_details;
@@ -200,11 +256,23 @@ std::vector<string> queryOs( string unique_kernel_id )
   
 }
 
+
+
+//! Query unique kernel ID of an OS.
+/*!
+  Queries the Unique Kernel ID representing each OS stored in database.
+
+  \param os_name Distribution name(e.g. Ubuntu).
+  \param release Release name of given distribution(e.g. 9.10).
+  \param kernel Kernel Version of given distribution(e.g. 2.6.32).
+  \param architecture Architecture of the kernel compiled for(e.g. i686).
+  
+  \return The Unique Kernel ID of OS.
+*/
 string queryOsKernelId( string os_name, string release, string kernel, string architecture )
 {
   string ukernel_id="";
-  // release="2010-02-15";			// @test
-  // kernel="2.6.32-ARCH";			// @test
+
   try{
 	connectDatabase();
 
@@ -236,13 +304,24 @@ string queryOsKernelId( string os_name, string release, string kernel, string ar
   return ukernel_id;
 }
 
+
+
+
+//! Query Name of the Module having the provided ID.
+/*! 
+  
+  \param mod_name_id ID of a Module name in database.
+  
+  \return Name of the Module.
+*/
 string queryModuleName( string mod_name_id )
 {
-  string module_name;
+  string module_name;			// Hold name of module.
   
   try{
 	connectDatabase();
 
+	// Select name of the module with provided ID.
 	commonResultSet = stmt->executeQuery("SELECT modName FROM module_names WHERE modNameID='"
 										 + mod_name_id +"'");
 
@@ -272,57 +351,79 @@ string queryModuleName( string mod_name_id )
 }
 
 
+
+//! Record the given OS in database.
+/*!
+  Updates database tables `OSes' and `os_releases' if they don't
+  have the corresponding entries for current OS, and lastly writes an entry
+  into `kernels' table for the new OS.
+  
+  \param osInfo Object holding information of the OS.
+  
+  \return The Unique Kernel ID of added OS.
+*/
 string recordOsInfo (OsInfo osInfo)
 {
   string osId_="", releaseId_="", uKernelId_="";
   try{
 	connectDatabase();
-	/**
+	/*
 	 * Check OS Name entry in DB
 	 * @{
 	 */
 	commonResultSet = stmt->executeQuery("SELECT osID FROM OSes WHERE osName='"+ osInfo.getDistro() +"'");
-	if( commonResultSet->first() ){
-	  osId_ = commonResultSet->getString("osID");
+	
+	if( commonResultSet->first() ){ 	// We alread have a distribution with that name.
+	  
+	  osId_ = commonResultSet->getString("osID");		// Return the osID from `OSes` table.
+	  
 	}
-	else{
-	  // Insert Distribution into OSes and retrieve osID
+	else{								// Distribution with given OS name doesn't exist.
+	  
+	  // Insert Distribution into OSes.
 	  stmt->execute("INSERT INTO OSes(osName) VALUES ('"+ osInfo.getDistro() +"')");
+
 	  commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
 	  if( commonResultSet->next() ){
-		osId_ = commonResultSet->getString(1);
+		osId_ = commonResultSet->getString(1); 			// Return the currently inserted osID from `OSes` table.
 	  }
+	  
 	}
 	assert( osId_ != "" );
-	/**
+	/*
 	 * @}
 	 */
 
 
-	/**
+	/*
 	 * Check Release entry in DB
 	 * @{
 	 */
 	commonResultSet = stmt->executeQuery("SELECT releaseID FROM os_releases WHERE osID_FK="+ osId_ +
 										 " AND releaseName='"+ osInfo.getRelease() +"'");
-	if( commonResultSet->first() ){
-	  releaseId_ = commonResultSet->getString("releaseID");
+	
+	if( commonResultSet->first() ){ 	// We alread have a distribution with given OS and Release names.
+	  
+	  releaseId_ = commonResultSet->getString("releaseID"); // Return the releaseID from `os_releases` table.
 	}
-	else{
-	  // Insert Dist.Release into os_releases and retrieve releaseID
+	else{					  			// Distribution with given Release name doesn't exist.
+	  
+	  // Insert Dist.Release into os_releases.
 	  stmt->execute("INSERT INTO os_releases(osID_FK,releaseName) VALUES("+ osId_ +",'"+ osInfo.getRelease() +"')");
 	  commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
 	  if( commonResultSet->next() ){
+		// Return the currently inserted releaseID from `os_releases` table.
 		releaseId_ = commonResultSet->getString(1);
 	  }
+	  
 	}
 	assert( releaseId_ != "" );
-	/**
+	/*
 	 * @}
 	 */
 
   
-	/**
+	/*
 	 * Insert uKernel entry in DB
 	 * @{
 	 */
@@ -333,10 +434,10 @@ string recordOsInfo (OsInfo osInfo)
 	if( commonResultSet->next() ){
 	  uKernelId_ = commonResultSet->getString(1);
 	}
-	/**
+	/*
 	 * @}
 	 */
-	wApp->log("debug") << "UKERNEL INSERTED!!!"; 									// @test
+
   }
   catch (sql::SQLException &e) {
   	/*
@@ -359,6 +460,16 @@ string recordOsInfo (OsInfo osInfo)
 }
 
 
+
+//! Check if Module with given name exists.
+/*!
+  Query the database `module_names' table with given name, and
+  insert it if it doesn't exist. Returns modNameID from `module_names' table.
+  
+  \param module_name Name of the Kernel module(driver).
+  
+  \return The ID representing the given module name.
+*/
 string checkModuleNameId( string module_name )
 {
   string mod_name_id;
@@ -366,14 +477,19 @@ string checkModuleNameId( string module_name )
 	connectDatabase();
 	commonResultSet = stmt->executeQuery("SELECT modNameID FROM module_names WHERE modName='"
 										 + module_name +"'");
-	if( commonResultSet->first() ){
-	  mod_name_id = commonResultSet->getString("modNameID");
+	
+	if( commonResultSet->first() ){ 		// If the given module name is already in database.
+	  
+	  mod_name_id = commonResultSet->getString("modNameID"); // Get it's ID.
+	  
 	}
-	else {
+	else {									// If module name is not found, insert it..
+	  
 	  stmt->execute("INSERT INTO module_names(modName) VALUES ('"+ module_name +"')");
+	  
 	  commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
 	  if( commonResultSet->next() ){
-		mod_name_id = commonResultSet->getString(1);
+		mod_name_id = commonResultSet->getString(1); 		// And get it's ID.
 	  }
 	}
   }
@@ -398,6 +514,17 @@ string checkModuleNameId( string module_name )
 }
 
 
+
+//! Check if the Kernel has the provided Module in database.
+/*!
+  Query the database `modules' table with "Unique Kernel ID" - "Module Name ID" pair,
+  and insert if it doesn't exist.
+  
+  \param uKernelId Unique Kernel ID of an OS.
+  \param modNameId ID representing a module name.
+  
+  \return The unique ID representing the given Module of the given OS.
+*/
 string checkKernelModule (string uKernelId, string modNameId)
 {
   string uniqueModuleId_="";
@@ -406,14 +533,17 @@ string checkKernelModule (string uKernelId, string modNameId)
 	
 	commonResultSet = stmt->executeQuery("SELECT uModID FROM modules WHERE uKernelID_FK="+ uKernelId +
 										 " AND modNameID_FK="+ modNameId);
-	if( commonResultSet->first() ){
-	  uniqueModuleId_ = commonResultSet->getString("uModID");
+	
+	if( commonResultSet->first() ){ 			// We found the Module for the OS.
+	  uniqueModuleId_ = commonResultSet->getString("uModID"); 	// So get it's ID.
+	  
 	}
-	else {
+	else {										// Module is not found for the OS, so insert a new record.
 	  stmt->execute("INSERT INTO modules(uKernelID_FK, modNameID_FK) VALUES ("+ uKernelId +","+ modNameId +")");
+	  
 	  commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
 	  if( commonResultSet->next() ){
-		uniqueModuleId_ = commonResultSet->getString(1);
+		uniqueModuleId_ = commonResultSet->getString(1); 		// Get it's ID, which is the last inserted one.
 	  }
 	}
   }
@@ -438,11 +568,26 @@ string checkKernelModule (string uKernelId, string modNameId)
 }
 
 
+
+//! Update pcimap-list entry of a given Module of OS.
+/*!
+  First check if the entry already exists in database,
+  if not add an entry with Unique Module ID(uModID from `modules' table) and
+  the given device.
+  
+  \param currentPciDevice Object holding the device details.
+  \param uniqueModuleId Unique ID representing a Module of an OS.
+  
+  \return Success status
+  - 0 -> (SUCCESS)
+  - 1 -> (FAIL)
+*/
 int insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueModuleId )
 {
   try{
 	connectDatabase();
 
+	// Select from the database `pcimap' table for pcimap-list entry of a specific Module of an OS.
 	commonResultSet = stmt->executeQuery("SELECT * FROM pcimap WHERE uModID_FK="+ uniqueModuleId +
 										 " AND vendor='"+ currentPciDevice->getVendor() +"'"+
 										 " AND device='"+ currentPciDevice->getDevice() +"'"+
@@ -451,7 +596,8 @@ int insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueMo
  " AND class='"+ currentPciDevice->getClass() + currentPciDevice->getSubclass() + currentPciDevice->getProgif() +"'"+
 										 " AND classMask='"+ currentPciDevice->getClassMask() +"'");
 
-	if( !commonResultSet->first() ){
+	if( !commonResultSet->first() ){ 			// The provided entry does not exist in pcimap-list so insert it.
+	  
 	  std::string insertPciEntry = 
 		"INSERT INTO pcimap VALUES ("+ uniqueModuleId  +",'"+ currentPciDevice->getVendor() +"',"
 		+"'"+ currentPciDevice->getDevice() +"','"+ currentPciDevice->getSubvendor() +"',"
@@ -459,9 +605,10 @@ int insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueMo
 		+"'"+ currentPciDevice->getClass() + currentPciDevice->getSubclass() + currentPciDevice->getProgif() +"',"
 		+"'"+ currentPciDevice->getClassMask() + "')";
 	  stmt->execute(insertPciEntry);
-	  wApp->log("debug") << "INSERTED PCIMAP ENTRY!!!"; 					// @test
 	  // @TODO: check success of insertion with Statement -stmt- ; and put return
+	  
 	}
+	
   }
   catch (sql::SQLException &e) {
 	/*
@@ -485,12 +632,23 @@ int insertPcimap ( const PciDevice* const currentPciDevice, std::string uniqueMo
 }
 
 
+
+//! Query ID of the mainboard with provided name.
+/*!
+  Retrieves ID of the mainboard, returns an empty string if it
+  does not exist in database.
+  
+  \param board_name Name of a mainboard.
+  
+  \return The ID representing the provided mainboard in database.
+*/
 string queryBoardModelId( string board_name )
 {
-  string board_id = "";
+  string board_id = "";				// Hold the ID of the mainboard.
   try{
 	connectDatabase();
 
+	// Select ID of the mainboard with given name.
 	commonResultSet = stmt->executeQuery("SELECT boardID FROM board_models WHERE boardName='"
 										 + board_name +"'");
 
@@ -519,11 +677,24 @@ string queryBoardModelId( string board_name )
 }
 
 
+
+//! Delete Mainboard with given ID.
+/*!
+  Delete the mainboard from database together with the devices
+  belonging to it in `dev_board' table.
+  
+  \param board_id ID of a mainboard.
+  
+  \return Success status
+  - 0 -> (SUCCESS)
+  - 1 -> (FAIL)
+*/
 int deleteBoardModel( std::string board_id )
 {
   try{
 	connectDatabase();
 
+	// Delete board from `board_models' table, which will cascade into `dev_board' to delete it's devices.
 	stmt->execute("DELETE FROM board_models WHERE boardID="+ board_id);
 	commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
   }
@@ -546,14 +717,28 @@ int deleteBoardModel( std::string board_id )
   return 0;
 }
 
+
+
+//! Store the provided mainboard.
+/*!
+  Stores the mainboard with given name in database and
+  return it's ID.
+  
+  \param board_name Name of the mainboard to be saved.
+  
+  \return The ID of currently stored mainboard.
+*/
 string insertBoardModel( string board_name )
 {
-  string board_id;
+  string board_id;				// Hold the ID of the mainboard.
 
   try{
 	connectDatabase();
 
+	// Insert the given mainboard in database.
 	stmt->execute("INSERT INTO board_models(boardName) VALUES ('"+ board_name +"')");
+
+	// Retrieve the ID given at last insertion which is the currently inserted mainboard ID.
 	commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
 	if( commonResultSet->next() ){
 	  board_id = commonResultSet->getString(1);
@@ -579,12 +764,22 @@ string insertBoardModel( string board_name )
   return board_id;
 }
 
+
+
+//! Store devices of given mainboard.
+/*!
+  Insert the provided devices belonging to the given mainboard
+  to database.
+  
+  \param board_id ID of the mainboard the devices intented to be added to.
+  \param device_id_list Unique ID list of devices to be added.
+*/
 void insertBoardDevices( string board_id, std::vector<string>& device_id_list )
 {
-  string device_id;
   try{
   	connectDatabase();
 
+	// Iterate through the list of devices and insert them in `dev_board' database table with given mainboard.
   	std::vector<string>::iterator device_iter;
   	for( device_iter = device_id_list.begin(); device_iter != device_id_list.end(); ++device_iter ){
   	  stmt->execute("INSERT INTO dev_board VALUES ("+ board_id +","+ *device_iter +")");
@@ -610,13 +805,24 @@ void insertBoardDevices( string board_id, std::vector<string>& device_id_list )
 	
 }
 
-string queryPciVendorName( string vendor_code ) // return vendor name
+
+
+//! Query Vendor name for provided code.
+/*!
+  Retrieve vendor name corresponding to provided code.
+  
+  \param vendor_code Vendor Code of a device.
+  
+  \return Vendor name that correspond to provided code.
+*/
+string queryPciVendorName( string vendor_code )
 {
-  string vendor_name="";
+  string vendor_name="";		// Hold Vendor name.
   
   try{
 	connectDatabase();
 
+	// Make a call to the stored procedure which will return an entry of corresponding name to the code.
 	commonResultSet = stmt->executeQuery("SELECT vendorName FROM pci_vendors WHERE vendorCode='"
 										 + vendor_code +"'");
 
@@ -1040,13 +1246,25 @@ string queryUniqueProgifId(string class_code, string subclass_code, string progi
 }
 
 
+
+//! Check if the provided PCI device is stored before.
+/*!
+  Query the `pci_all' database table and see if the PCI device is stored
+  before, if not add it to the database. And return it's PCI special ID
+  from `pci_all' database table.
+  
+  \param currentPciDevice PCI device pointing to the instance to be checked.
+  
+  \return PCI special ID of provided device.
+*/
 string checkPciSpcId( const PciDevice* const currentPciDevice )
 {
   string pciSpcId;
 
   try{
 	connectDatabase();
-	
+
+	// Select PCI special ID of provided device.
 	commonResultSet = stmt->executeQuery("SELECT pciSpcID FROM pci_all WHERE "
 										 "vendorCode='"+ currentPciDevice->getVendor() + "' AND " +
 										 "deviceCode='"+ currentPciDevice->getDevice() + "' AND " +
@@ -1058,7 +1276,7 @@ string checkPciSpcId( const PciDevice* const currentPciDevice )
 	if( commonResultSet->first() ){
 	  pciSpcId = commonResultSet->getString("pciSpcID");
 	}
-	else {
+	else {						// if device doesn't exist, insert it..
 	  stmt->execute("INSERT INTO pci_all"
 					"(vendorCode, deviceCode, subvendorCode, subdeviceCode, classCode,subclassCode,progifCode) "
 					"VALUES ('"+ currentPciDevice->getVendor() +"'," +
@@ -1068,6 +1286,8 @@ string checkPciSpcId( const PciDevice* const currentPciDevice )
 					"'"+ currentPciDevice->getClass() +"',"+
 					"'"+ currentPciDevice->getSubclass() +"',"+
 					"'"+ currentPciDevice->getProgif() +"')");
+
+	  // Retrieve the ID given at last insertion which is the currently inserted PCI special ID.
 	  commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
 	  if( commonResultSet->next() ){
 		pciSpcId = commonResultSet->getString(1);
@@ -1093,9 +1313,25 @@ string checkPciSpcId( const PciDevice* const currentPciDevice )
   return pciSpcId;
 }
 
+
+
+//! Check if the provided device is stored before.
+/*!
+  Query the `all_devices' database table and see if the device is stored
+  before, if not add it to the database.
+  If bus type is not provided, it is assumed that it is a PCI device.
+  Might be any device depending on bus type, designed for future growth of database with different busses.
+  
+  \todo Might add different types of buses like USB, PNP in future..
+  
+  \param dev_special_id Special Device ID depending on bus type.
+  \param bus_type Bus type ID.
+  
+  \return Unique Device ID of provided device.
+*/
 string checkUniqueDeviceId( string dev_special_id, int bus_type = 1 )
 {
-  string uDevId;
+  string uDevId;				// Hold the unique device ID.
   std::stringstream ss;
   ss << bus_type;
   string type = ss.str();
@@ -1103,15 +1339,18 @@ string checkUniqueDeviceId( string dev_special_id, int bus_type = 1 )
   try{
 	connectDatabase();
 
+	// See what type of a bus is the device?
 	switch (bus_type){
-	case 1:
+	  
+	case 1:						// If it is a PCI device
+	  // See if it is already stored before.
 	  commonResultSet = stmt->executeQuery("SELECT uDevID FROM all_devices WHERE busTypeID_FK="+ type +
 										   " AND pciSpcID_FK="+ dev_special_id);
 
 	  if( commonResultSet->first() ){
 		uDevId = commonResultSet->getString("uDevID");
 	  }
-	  else {
+	  else {					// If the given PCI device doesn't exist in `all_devices' db table, add it..
 		stmt->execute("INSERT INTO all_devices(busTypeID_FK,pciSpcID_FK) VALUES ("+ type +","+ dev_special_id+")");
 		commonResultSet = stmt->executeQuery("SELECT LAST_INSERT_ID()");
 		if( commonResultSet->next() ){
@@ -1145,17 +1384,26 @@ string checkUniqueDeviceId( string dev_special_id, int bus_type = 1 )
 }
 
 
+
+//! Retrieve all previously saved mainboards.
+/*! 
+  Retrieve all entries in `board_models' database table.
+  
+  \return List of (Board ID - Board Name) pairs.
+*/
 std::multimap<string, string>
 getBoardList()
 {
-  std::multimap<string, string> mainboard_list; // ( boardID, boardName )
+  std::multimap<string, string> mainboard_list; 	// Hold list of mainboard entries ( boardID, boardName ).
   
   try{
 	connectDatabase();
 
+	// Select all from `board_models' table.
 	commonResultSet = stmt->executeQuery("SELECT * FROM board_models");
 
 	while( commonResultSet->next() ){
+	  // Insert retrieved entries to mainboard_list.
 	  mainboard_list.insert( std::pair<string,string>( commonResultSet->getString("boardID"),
 													   commonResultSet->getString("boardName") ) );
 	}
@@ -1181,17 +1429,27 @@ getBoardList()
 }
 
 
-// return uDevID list of devices on given board
+
+//! Query devices belonging to given mainboard.
+/*!
+  Retrieve a string list of Unique Device IDs belonging to
+  the provided mainboard.
+  
+  \param board_id ID of a Mainboard.
+  
+  \return List of Unique Device IDs.
+*/
 std::vector<string> queryBoardDeviceList( string board_id )
 {
-  std::vector<string> udev_id_list;
+  std::vector<string> udev_id_list; 			// Hold list of Unique Device IDs to be returned.
 
   try{
 	connectDatabase();
-
+	
+	// Select from `dev_board' database table with provided mainboard ID.
 	commonResultSet = stmt->executeQuery("SELECT uDevID_FK FROM dev_board WHERE boardID_FK="+ board_id );
 
-	while( commonResultSet->next() ){
+	while( commonResultSet->next() ){ 			// Get list of unique device IDs.
 	  udev_id_list.push_back( commonResultSet->getString("uDevID_FK") );
 	}
 
@@ -1216,10 +1474,22 @@ std::vector<string> queryBoardDeviceList( string board_id )
 }
 
 
-// return vendor,subvendor,progif,class ... codes IF PCI device..
+
+//! Query hardware codes of a Device.
+/*!
+  Retrieve hardware codes of a device depending on it's bus type.
+  
+  \param udev_id Unique ID of a device.
+  \param bus_type Bus type ID.
+  
+  \return Hardware codes of a device.
+
+  \warning Only works for PCI bus type now which is 1.
+  \todo FUTURE WORK: support for additional busses.
+*/
 std::vector<string> queryDeviceCodes( string udev_id, int bus_type = 1 )
 {
-  std::vector<string> device_codes;
+  std::vector<string> device_codes; 			// Hold hardware code list of a device to be returned.
 
   std::stringstream ss;
   ss << bus_type;
@@ -1230,11 +1500,13 @@ std::vector<string> queryDeviceCodes( string udev_id, int bus_type = 1 )
 
 	switch (bus_type){
 	case 1:						// if it is a PCI Device
+	  // Find the PCI special ID of the device.
 	  commonResultSet = stmt->executeQuery("SELECT pciSpcID_FK FROM all_devices WHERE uDevID="+ udev_id);
 
 	  if( commonResultSet->first() ){
 		string pci_spc_id = commonResultSet->getString("pciSpcID_FK");
 
+		// And retrieve it's hardware codes from `pci_all' database table.
 		commonResultSet = stmt->executeQuery("SELECT * FROM pci_all WHERE pciSpcID="+ pci_spc_id );
 		if( commonResultSet->next() ){
 		  device_codes.push_back( commonResultSet->getString("vendorCode") );
@@ -1271,17 +1543,26 @@ std::vector<string> queryDeviceCodes( string udev_id, int bus_type = 1 )
 }
 
 
+
+//! Retrieve all Distributions.
+/*! 
+  Retrieve all entries from `OSes' database table.
+  
+  \return List of ( OS ID - OS Name ) pairs.
+*/
 std::multimap<string,string>
 getOsList()
 {
-  std::multimap<string, string> os_list; // ( osID, osName )
+  std::multimap<string, string> os_list; 			// Hold list of OS Distribution entries ( osID, osName ).
   
   try{
 	connectDatabase();
 
+	// Select all entries from `OSes' table.
 	commonResultSet = stmt->executeQuery("SELECT * FROM OSes");
 
 	while( commonResultSet->next() ){
+	  // Insert entries to os_list.
 	  os_list.insert( std::pair<string,string>( commonResultSet->getString("osID"),
 												commonResultSet->getString("osName") ) );
 	}
@@ -1306,17 +1587,29 @@ getOsList()
   return os_list;
 }
 
+
+
+//! Query Releases of provided OS Distribution.
+/*!
+  Retrieve list of Releases of the provided Distribution with os_id.
+  
+  \param os_id ID of an OS Distribution.
+  
+  \return List of ( release ID - release Name ) pairs.
+*/
 std::multimap<string,string>
 queryOsReleases( string os_id )
 {
-  std::multimap<string,string> release_list; // ( releaseID, releaseName )
+  std::multimap<string,string> release_list; 	// Hold list of release entries ( releaseID, releaseName ).
 
   try{
 	connectDatabase();
 
+	// Select entries from the `os_releases' table which belong to the Distribution with os_id ID.
 	commonResultSet = stmt->executeQuery("SELECT * FROM os_releases WHERE osID_FK="+ os_id );
 
 	while( commonResultSet->next() ){
+	  // Insert retrieved entries into release_list.
 	  release_list.insert( std::pair<string,string>( commonResultSet->getString("releaseID"),
 												commonResultSet->getString("releaseName") ) );
 	}
@@ -1341,17 +1634,29 @@ queryOsReleases( string os_id )
   return release_list;
 }
 
-std::multimap<std::string,std::string> 		// multimap( uKerneID, kernelVersion-machineHardware )
+
+
+//! Query Kernels of provided Distribution Release.
+/*!
+  Retrieve Kernel list of provided Distribution Release with release_id ID.
+  
+  \param release_id Unique ID representing an OS.
+  
+  \return List of ( Unique Kernel ID - Kernel Version-Arch ) pairs.
+*/
+std::multimap<std::string,std::string>
 queryReleaseKernels( std::string release_id )
 {
-  std::multimap<string,string> kernel_list; // ( uKernelID, kernelVersion-Arch )
+  std::multimap<string,string> kernel_list; 	// Hold list of Kernels(uKernelID, kernelVersion-machineHardware)
 
   try{
 	connectDatabase();
 
+	// Select entries from the `kernels' table which belong to the Release with release_id ID.
 	commonResultSet = stmt->executeQuery("SELECT * FROM kernels WHERE releaseID_FK="+ release_id );
 
 	while( commonResultSet->next() ){
+	  // Insert retrieved entries into kernel_list. Put Kernel Version and it's architecture together.
 	  kernel_list.insert( std::pair<string,string>( commonResultSet->getString("uKernelID"),
 													commonResultSet->getString("kernelVersion") +
 													"-" + commonResultSet->getString("machineHardware") ) );

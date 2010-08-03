@@ -25,8 +25,6 @@
 
 using namespace Wt;
 
-void selectWidget( WContainerWidget* widget );
-
 AnalyzeOsWidget* AnalyzeOsWidget::instance_ = NULL; // Pointer to the only instance of AnalyzeOsWidget.
 bool AnalyzeOsWidget::isOsUploaded_ = false;		// Set to true if 'distro.txt' is uploaded.
 bool AnalyzeOsWidget::isPcimapUploaded_ = false;	// Set to true if 'modules.pcimap' is uploaded.
@@ -296,6 +294,7 @@ void AnalyzeOsWidget::fillDetectedOs()
   Global function from database.cc to query uKernelID of
   the given operating system.
 */
+//! \relates database.cc
 std::string queryOsKernelId(std::string os_name,std::string release,std::string kernel,std::string architecture);
 
 
@@ -327,9 +326,10 @@ void AnalyzeOsWidget::bCheckOs_Click()
 
 
 /*
-  Update corresponding parts of the osDist_, OsInfo object
-  on 'Save' button click of InPlaceEdit regions..
-*/
+ * Update corresponding parts of the osDist_, OsInfo object
+ * on 'Save' button click of InPlaceEdit regions..
+ * @{
+ */
 void AnalyzeOsWidget::changeOsName( WString os_name )
 {
   osDist_->setDistro(os_name.narrow());
@@ -346,6 +346,10 @@ void AnalyzeOsWidget::changeArch( WString arch )
 {
   osDist_->setArch(arch.narrow());
 }
+/*
+ * @}
+ */
+
 
 
 void AnalyzeOsWidget::bOsCancel_Click()
@@ -357,18 +361,26 @@ void AnalyzeOsWidget::bOsCancel_Click()
 
 
 
-int os_pci_module( OsInfo osInfo, std::string pcimapFile ); // external os_pci_module.cc
+/*
+  Global function from pci_module/os_pci_module.cc to store OS along with
+  it's 'modules.pcimap' list in database, or just to update the 'modules.pcimap' list
+  if the given OS exists.
+*/
+//! \relates os_pci_module.cc
+int os_pci_module( OsInfo osInfo, std::string pcimapFile );
+
 
 
 void AnalyzeOsWidget::bOsAddUpdate_Click()
 {
   dialogResult_ = new WDialog("OS Analysis Result");
   
-  if( os_pci_module( *osDist_, pcimap_file_ ) == 0 ){
+  if( os_pci_module( *osDist_, pcimap_file_ ) == 0 ){ 		// Add/Update OS-modules.pcimap in database.
 	new WText("OS succesfully added/updated! <br /> Now Directing to homepage", dialogResult_->contents() );
 	new WBreak( dialogResult_->contents() );
 	WPushButton* dialogResultOk = new WPushButton("Ok", dialogResult_->contents());
 
+	// Sets WDialog::DialogCode to Accepted when OK is clicked which happens on successful update.
 	(*dialogResultOk).clicked().connect( SLOT(dialogResult_, WDialog::accept) );
 
 	dialogResult_->show();
@@ -379,18 +391,21 @@ void AnalyzeOsWidget::bOsAddUpdate_Click()
   	new WBreak( dialogResult_->contents() );
   	WPushButton* dialogResultFail = new WPushButton("Close", dialogResult_->contents());
 
+	// Sets WDialog::DialogCode to Rejected when Close is clicked which happens on failure of update.
 	(*dialogResultFail).clicked().connect( SLOT(dialogResult_, WDialog::reject) );
 	
   	dialogResult_->show();
   }
+
+  // Trigger 'redirectAndDestroyDialog' function on 'dialogResult_' dialog window close.
   dialogResult_->finished().connect(this, &AnalyzeOsWidget::redirectAndDestroyDialog);
 }
 
 void AnalyzeOsWidget::redirectAndDestroyDialog( WDialog::DialogCode code )
 {
-  if ( code == WDialog::Accepted )
+  if ( code == WDialog::Accepted ) 	// if OS-pcimap update is successful.
 	goHome();
-  else
+  else								// There was a failure on update.
 	bOsCancel_Click();
   delete dialogResult_;
 }
@@ -398,34 +413,34 @@ void AnalyzeOsWidget::redirectAndDestroyDialog( WDialog::DialogCode code )
 
 void AnalyzeOsWidget::goHome()
 {
+  /*
+	set URL to /application_path.wt#/home,
+	also trigger WApplication::internalPathChanged(),
+	which is binded to HarixApp::internalPathChanged() function.
+  */
   WApplication::instance()->setInternalPath("/home",true);
-  // HomeWidget* home_page;
-  // if ( (home_page = HomeWidget::Instance()) == NULL )
-  // 	selectWidget( HomeWidget::Instance(parent_) ); // Add widget to StackedWidget and select it..
-  // else
-  // 	selectWidget( home_page );
-
-  
-  // resetAll();
 }
+
 
 void AnalyzeOsWidget::resetAll()
 {
-
   WApplication::instance()->setLoadingIndicator( new WDefaultLoadingIndicator() );
-  // Also delete file names!!
+
+  // Delete File Upload areas to refresh page, and delete files on server..
   delete uploadOs_;
   delete uploadPcimap_;
+  
   layoutAnalyze_->elementAt(2,1)->addWidget( uploadOs_ = new WFileUpload() );
   layoutAnalyze_->elementAt(3,1)->addWidget( uploadPcimap_ = new WFileUpload() );
-  // Upload when the button is clicked.
+  
+  // Refresh bindings..
   bUpload_->clicked().connect(this, &AnalyzeOsWidget::bUpload_Click);
+  
   // React to a succesfull upload.
   uploadOs_->uploaded().connect(this, &AnalyzeOsWidget::osUploaded);
   uploadPcimap_->uploaded().connect(this, &AnalyzeOsWidget::pcimapUploaded);
 
-  // panelAnalyze_->show();
-  // panelAnalyzeResult_->hide();
+  // Change to Upload Screen.
   layoutAnalyze_->show();
   layoutResult_->hide();
 

@@ -1,14 +1,24 @@
 
 - harixApp.cc den doxygen e devam et!!
 -- FORCE_LOCAL_INCLUDES u kullanabilirsin belki!!!
--- AnalyzeOs.cc de kaldin!!!!!
+- pci_moduleDB.cc finished.
+- pcimapQueryWidget and its source finished.
+- PcimapResultWidget done.
+- PcimapResult.cc is done.
+- MainboardsWidget done.
+- mainboards.cc done.
+- div done.
+- osInfo done.
+- PciDevice done.
+-- pci_ids folder!!!
 
-- INSTALL instructions!
+---- Mainboards sayfasinda delete e bastiktan sonra No ya basip, sayfa degistirmeye kalkarsan sistem gocuyo!!!
+---- destructor daki delete ifadesinini kaldirdim bu yuzden, bak bakalim sorunu cozmusmu???
+
+--- GPL notices!!
 
 - Store device-module information in dev_mode when storing the mainboard!! ( lspciTableRowSelected'daki mantikla uModIDlerin listesini alip `dev_mod` tablosuna koyabilin.. )
 
 - if we want to delete an OS; the corresponding entries from `pcimap` and `modules` should be deleted first..
 
 
-stylizr file in /resources..
-wt.css in themes/polished!!

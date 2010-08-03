@@ -24,7 +24,7 @@
 #include <cppconn/prepared_statement.h>
 #include <cppconn/exception.h>
 
-#include "pci_devices.hpp"
+#include "pci_device_ids.hpp"
 
 using std::string;
 
@@ -35,13 +35,13 @@ static void throw_call_garbage(sql::Statement*);
 int on_off = 1;
 #endif
 
-int pciVendor::store_db (void)
+int PciIdsVendor::store_db (void)
 {
-  std::vector<pciDevice*>::iterator iter_dev;
-  std::vector<pciSubsystem*>::iterator iter_subsys;
+  std::vector<PciIdsDevice*>::iterator iter_dev;
+  std::vector<PciIdsSubsys*>::iterator iter_subsys;
 
-  pciDevice* tmp_dev;
-  pciSubsystem* tmp_subsys;
+  PciIdsDevice* tmp_dev;
+  PciIdsSubsys* tmp_subsys;
 
   const string host_url("localhost");
   const string user("root");
@@ -176,7 +176,7 @@ static void throw_call_garbage(sql::Statement* normal_stmt)
 }
 
 
-pciVendor::~pciVendor()
+PciIdsVendor::~PciIdsVendor()
 {
   int device_list_size = kid_list.size();
 
@@ -187,7 +187,7 @@ pciVendor::~pciVendor()
 
 }
 
-pciDevice::~pciDevice()
+PciIdsDevice::~PciIdsDevice()
 {
   int subsystem_list_size = subsystem_list.size();
 

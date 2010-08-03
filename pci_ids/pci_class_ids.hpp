@@ -22,8 +22,8 @@
  */
 
 
-#if !defined ( _PCI_CLASSES_H )
-#define _PCI_CLASSES_H
+#if !defined ( _PCI_CLASS_IDS_ )
+#define _PCI_CLASS_IDS_
 
 #include <vector>
 #include <string>
@@ -32,26 +32,26 @@
 
 using namespace std;
 
-class pciClass;
-class pciSubclass;
-class pciProgif;
+class PciIdsClass;
+class PciIdsSubclass;
+class PciIdsProgif;
 
 
-class pciClass
+class PciIdsClass
 {
 private:
   string code;
   string name;
-  vector<pciSubclass*> kid_list; // hold subclasses of the class
+  vector<PciIdsSubclass*> kid_list; // hold subclasses of the class
   
 public:
-  pciClass(string cCode, string cName) : code(cCode), name(cName)
+  PciIdsClass(string cCode, string cName) : code(cCode), name(cName)
   {
   }
 
-  ~pciClass();
+  ~PciIdsClass();
   
-  void add_kid(pciSubclass* kid)
+  void add_kid(PciIdsSubclass* kid)
   {
   	kid_list.push_back(kid);
   }
@@ -70,22 +70,22 @@ public:
 
 };
 
-class pciSubclass
+class PciIdsSubclass
 {
 private:
-  pciClass* parent_class;
+  PciIdsClass* parent_class;
   string code, name;
-  vector<pciProgif*> progif_list; // hold progIfs of the subclass
+  vector<PciIdsProgif*> progif_list; // hold progIfs of the subclass
 
 public:
-  pciSubclass(pciClass* sParent, string sCode, string sName) : parent_class(sParent), code(sCode), name(sName)
+  PciIdsSubclass(PciIdsClass* sParent, string sCode, string sName) : parent_class(sParent), code(sCode), name(sName)
   {
 	sParent->add_kid(this);
   }
 
-  ~pciSubclass();
+  ~PciIdsSubclass();
 
-  void add_progif(pciProgif* progif)
+  void add_progif(PciIdsProgif* progif)
   {
 	progif_list.push_back(progif);
   }
@@ -100,23 +100,23 @@ public:
 	return name;
   }
 
-  const pciClass* const get_parent (void) const
+  const PciIdsClass* const get_parent (void) const
   {
 	return parent_class;
   }
 
-  friend int pciClass::store_db(void);
+  friend int PciIdsClass::store_db(void);
     
 };
 
-class pciProgif
+class PciIdsProgif
 {
 private:
-  pciSubclass* parent_subclass;
+  PciIdsSubclass* parent_subclass;
   string code, name;
 
 public:
-  pciProgif(pciSubclass* pParent, string pCode, string pName) : parent_subclass(pParent), code(pCode), name(pName)
+  PciIdsProgif(PciIdsSubclass* pParent, string pCode, string pName) : parent_subclass(pParent), code(pCode), name(pName)
   {
 	pParent->add_progif(this);
   }
@@ -131,11 +131,11 @@ public:
 	return name;
   }
 
-  const pciSubclass* const get_parent (void) const
+  const PciIdsSubclass* const get_parent (void) const
   {
 	return parent_subclass;
   }
   
 };
 
-#endif	// _PCI_CLASSES_H
+#endif	// _PCI_CLASS_IDS_

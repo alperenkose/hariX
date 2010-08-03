@@ -25,17 +25,17 @@
 #include <cppconn/prepared_statement.h>
 #include <cppconn/exception.h>
 
-#include "pci_classes.hpp"
+#include "pci_class_ids.hpp"
 
 static void throw_call_garbage(sql::Statement*);
 
-int pciClass::store_db (void)
+int PciIdsClass::store_db (void)
 {
-  vector<pciSubclass*>::iterator iter_sub;
-  vector<pciProgif*>::iterator iter_prog;
+  vector<PciIdsSubclass*>::iterator iter_sub;
+  vector<PciIdsProgif*>::iterator iter_prog;
 
-  pciSubclass* tmp_sub;
-  pciProgif* tmp_prog;
+  PciIdsSubclass* tmp_sub;
+  PciIdsProgif* tmp_prog;
 
   const string host_url("localhost");
   const string user("root");
@@ -117,7 +117,7 @@ static void throw_call_garbage(sql::Statement* normal_stmt)
   } while (normal_stmt->getMoreResults());
 }
 
-pciClass::~pciClass()
+PciIdsClass::~PciIdsClass()
 {
   int subclass_list_size = kid_list.size();
 
@@ -128,7 +128,7 @@ pciClass::~pciClass()
 
 }
 
-pciSubclass::~pciSubclass()
+PciIdsSubclass::~PciIdsSubclass()
 {
   int progif_list_size = progif_list.size();
 
