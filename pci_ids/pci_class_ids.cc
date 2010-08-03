@@ -1,4 +1,4 @@
-/** pci_classes.cc --- 
+/* pci_classes.cc --- 
  *
  * Copyright (C) 2010 Alp Eren Köse
  *
@@ -19,67 +19,112 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
-
-
+/*!
+  \file   pci_class_ids.cc
+  \date   Fri Jul 30 15:17:24 2010
+  
+  \brief  Implementation of PciIdsClass::store_db().
+  
+  Contains the implementation of PciIdsClass::store_db() function which
+  updates/stores PCI IDs class codes to database.
+*/
 #include <cppconn/driver.h>
 #include <cppconn/prepared_statement.h>
 #include <cppconn/exception.h>
 
 #include "pci_class_ids.hpp"
 
+using std::string;
+
+
+/*
+  Declaration of local function.
+*/
 static void throw_call_garbage(sql::Statement*);
+
+
+
 
 int PciIdsClass::store_db (void)
 {
-  vector<PciIdsSubclass*>::iterator iter_sub;
-  vector<PciIdsProgif*>::iterator iter_prog;
+  std::vector<PciIdsSubclass*>::iterator iter_sub;
+  std::vector<PciIdsProgif*>::iterator iter_prog;
 
   PciIdsSubclass* tmp_sub;
   PciIdsProgif* tmp_prog;
 
-  const string host_url("localhost");
-  const string user("root");
-  const string pass("password");
-  const string database("harix_db");
+  const string host_url("localhost"); // Where MySQL Server is located.
+  const string user("root");		  // User to connect to the server.
+  const string pass("password");	  // Password of the user.
+  const string database("harix_db");  // Database to connect to.
+
+  // Hold names and codes of the Pci IDs class entries.
   string class_code, class_name, subclass_code, subclass_name, prog_code, prog_name;
 
   // Could be better with MySQL Prepared Statement
   // but it's buggy operating with Stored Procedures at the moment
+  
   try{
+
+	/*
+	 * Connect to Database with MySQL Connector/C++
+	 * @{
+	 */
 	sql::Driver* driver = get_driver_instance();
 	std::auto_ptr<sql::Connection> connector( driver->connect(host_url, user, pass) );
 	connector->setSchema(database);
 	std::auto_ptr<sql::Statement> stmt(connector->createStatement());
+	/*
+	 * @}
+	 */
 
-	class_code = "\"" + get_code() + "\"" ;
-	class_name = "\"" + get_name() + "\"";
+	class_code = "\"" + get_code() + "\"" ; 	// Get code of current Pci IDs class object.
+	class_name = "\"" + get_name() + "\"";		// Get name of current Pci IDs class object.
+
+	// Call the stored procedure to add or update the given class.	
 	stmt->execute("CALL sp_pciClassesAdd("+ class_code + "," + class_name + ")");
-	throw_call_garbage(stmt.get());
-	// std::cout << class_code << " - " << class_name << std::endl; 						// @test
 
+	// Empty the retrieved result set, so we don't have problems with next statement.	
+	throw_call_garbage(stmt.get());
+
+
+	// Iterate through Subclass list of the Class
 	for( iter_sub = kid_list.begin(); iter_sub != kid_list.end(); ++iter_sub ){
+	  
 	  tmp_sub = *iter_sub;
-	  subclass_code = "\"" + tmp_sub->get_code() + "\"" ;
-	  subclass_name = "\"" + tmp_sub->get_name() + "\"";
+	  subclass_code = "\"" + tmp_sub->get_code() + "\"" ; 	// Get code of current Pci IDs subclass object.
+	  subclass_name = "\"" + tmp_sub->get_name() + "\"";	// Get name of current Pci IDs subclass object.
+
+	  // Call the stored procedure to add or update the given subclass of the class.
 	  stmt->execute("CALL sp_pciSubClassesAdd("+ class_code + "," + subclass_code + "," + subclass_name + ")");
 	  throw_call_garbage(stmt.get());
-	  // std::cout << '\t' << subclass_code << " - " << subclass_name << std::endl; 		// @test
 
-	  if( (tmp_sub->progif_list).size() == 0  ){
-		prog_code =  "null" ;
-		prog_name =  "null" ;
-		stmt->execute("CALL sp_pciProgifsAdd("+ class_code + "," + subclass_code + "," + prog_code +  "," + prog_name + ")");
+
+	  if( (tmp_sub->progif_list).size() == 0  ){ 			// If current Pci IDs subclass has no progif entry,
+		
+		prog_code =  "null" ;								// for the currently stored subclass,
+		prog_name =  "null" ;								// put an entry in `pci_prog_ifs' with
+															// progifCode and progifName values being null.
+		stmt->execute("CALL sp_pciProgifsAdd("
+					  + class_code + "," + subclass_code + "," + prog_code +  "," + prog_name + ")");
 		throw_call_garbage(stmt.get());
-		// std::cout << '\t' << '\t' << prog_code << " " << prog_name << std::endl;//@test
-		continue;
+
+		continue;											// Continue to look for other subclasses of the class.
 	  }
+
+	  // When the current Pci IDs subclass, has progif entries,
+	  // iterate through the progif list of the subclass	  
 	  for( iter_prog = (tmp_sub->progif_list).begin(); iter_prog != (tmp_sub->progif_list).end(); ++iter_prog ){
+		
 		  tmp_prog = *iter_prog;
-		  prog_code =  "\"" + tmp_prog->get_code() + "\"" ;
-		  prog_name =  "\"" + tmp_prog->get_name() + "\"" ;
-		  stmt->execute("CALL sp_pciProgifsAdd("+ class_code + "," + subclass_code + "," + prog_code +  "," + prog_name +")");
+		  prog_code =  "\"" + tmp_prog->get_code() + "\"" ; // Get code of current Pci IDs progif object.
+		  prog_name =  "\"" + tmp_prog->get_name() + "\"" ; // Get name of current Pci IDs progif object.
+
+		  // Call the stored procedure to add or update the given progif of the subclass.		  
+		  stmt->execute("CALL sp_pciProgifsAdd("
+						+ class_code + "," + subclass_code + "," + prog_code +  "," + prog_name +")");
 		  throw_call_garbage(stmt.get());
-		  // std::cout << '\t' << '\t' << prog_code << " " << prog_name << std::endl;//@test
+
 		}
 	}
   }
@@ -103,37 +148,60 @@ int PciIdsClass::store_db (void)
   return 0;
 }
 
-// Throw the unneeded result returned from the CALL to the SP
+
+
+
+//! Empty result set of provided statement.
+/*! 
+  Empty the retrieved result set from the provided statement,
+  so we don't have problems with next statement.
+  
+  \param normal_stmt SQL Statement object.
+*/
 static void throw_call_garbage(sql::Statement* normal_stmt)
 {
   std::auto_ptr< sql::ResultSet > res;
   do {
-	res.reset(normal_stmt->getResultSet());
-	while (res->next()) {
+	res.reset(normal_stmt->getResultSet()); 	// Get result set of the statement,
+	while (res->next()) {						// and process until there are no more values left.
 #ifdef DEBUG
 	  std::cout << res->getInt(1) << " -> expected value is 0" << std::endl;
 #endif
 	}
-  } while (normal_stmt->getMoreResults());
+  } while (normal_stmt->getMoreResults()); 		// continue if more ResultSets exists, which is not really likely
 }
+
+
+
 
 PciIdsClass::~PciIdsClass()
 {
   int subclass_list_size = kid_list.size();
 
+  // Loop through the Subclasses(kid_list) of current Class and delete them.  
   for ( int k=0; k<subclass_list_size; k++ ){
-	delete kid_list.back();
-	kid_list.pop_back();
+	
+	delete kid_list.back();		// Since we store pointers in kid_list,
+								// at first we delete the data pointed by the pointer.
+
+	kid_list.pop_back();		// Then we remove the pointer from kid_list.
   }
 
 }
+
+
+
 
 PciIdsSubclass::~PciIdsSubclass()
 {
   int progif_list_size = progif_list.size();
 
+  // Loop through the Prog-ifs(progif_list) of current Subclass and delete them.	  
   for (int k=0; k < progif_list_size; k++){
-	delete progif_list.back();
-	progif_list.pop_back();
+	
+	delete progif_list.back();	// Since we store pointers in progif_list,
+								// at first we delete the data pointed by the pointer.
+	
+	progif_list.pop_back();		// Then we remove the pointer from progif_list.
   }
 }

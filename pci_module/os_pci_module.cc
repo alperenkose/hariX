@@ -2,7 +2,7 @@
   \file   os_pci_module.cc
   \date   Wed Jul 21 16:08:28 2010
   
-  \brief  Organize OS-Pcimap_list Save
+  \brief  Organize OS-Modules Save
 
   Read 'modules.pcimap' and Organize storing of OS-pcimap_list into database.
 */

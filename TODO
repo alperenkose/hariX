@@ -1,19 +1,13 @@
 
-- harixApp.cc den doxygen e devam et!!
 -- FORCE_LOCAL_INCLUDES u kullanabilirsin belki!!!
-- pci_moduleDB.cc finished.
-- pcimapQueryWidget and its source finished.
-- PcimapResultWidget done.
-- PcimapResult.cc is done.
-- MainboardsWidget done.
-- mainboards.cc done.
-- div done.
-- osInfo done.
-- PciDevice done.
--- pci_ids folder!!!
 
----- Mainboards sayfasinda delete e bastiktan sonra No ya basip, sayfa degistirmeye kalkarsan sistem gocuyo!!!
----- destructor daki delete ifadesinini kaldirdim bu yuzden, bak bakalim sorunu cozmusmu???
+-- pci_ids folder!!!
+-- pci_ids.cc done.
+-- pci_device_ids.hpp done.
+-- pci_device_ids.cc done.
+-- pci_class_ids.hpp done.
+-- pci_class_ids.cc done.
+
 
 --- GPL notices!!
 
@@ -21,4 +15,4 @@
 
 - if we want to delete an OS; the corresponding entries from `pcimap` and `modules` should be deleted first..
 
-
+- There should be a user created with the new database, and the application should connect with that user!
