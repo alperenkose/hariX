@@ -595,6 +595,7 @@ void insertBoardDevices( string board_id, std::vector<string>& device_id_list );
 
 //! To temporarily store list of PCI devices on page refresh.
 static std::vector<PciDevice> lspci_list_backup;
+static string board_name_backup;
 
 
 void PcimapResultWidget::storeMainBoard( string board_name )
@@ -617,11 +618,12 @@ void PcimapResultWidget::storeMainBoard( string board_name )
 	dialogWarn_->show();
 
 	lspci_list_backup = lspci_list_; 			// Stash lspci_list_ so we can refresh the page with board name.
+	board_name_backup = board_name;
 
 	// So remove the page, delete it and create a new instance providing currently saved board name.
 	removeWidget( PcimapResultWidget::Instance() );
 	delete PcimapResultWidget::Instance();
-	selectWidget( PcimapResultWidget::Instance( lspci_list_backup, parent_, board_name) );
+	selectWidget( PcimapResultWidget::Instance( lspci_list_backup, parent_, board_name_backup) );
   }
   else{													// Board already exists, so we do nothing, just warn!
 	dialogWarn_->setWindowTitle("Mainboard Exists");
