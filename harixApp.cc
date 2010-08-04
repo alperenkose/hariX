@@ -46,6 +46,11 @@ HarixApp::HarixApp( const WEnvironment& env ) : WApplication(env)
   setCssTheme("polished"); // use the polished theme folder from /resources/themes/
   useStyleSheet("resources/stylizr.css");
 
+
+  useStyleSheet("wt_ie.css","IE gte 7");
+  useStyleSheet("wt_ie6.css","IE gte 6");
+
+
   // Common stack to hold any pages..
   stackedContent_ = new WStackedWidget(root());
 
