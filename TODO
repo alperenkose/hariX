@@ -5,3 +5,5 @@
 ( lspciTableRowSelected'daki mantikla uModIDlerin listesini alip `dev_mod` tablosuna koyabilin.. )
 
 - There should be a user created with the new database, and the application should connect with that user!
+
+- Indentation and TAB size is 4, to be changed to 8. Also change TAB characters with spaces.

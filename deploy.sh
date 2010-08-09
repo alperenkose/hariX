@@ -6,3 +6,4 @@ rm -f $DEPLOY_HARIX/queryDistro.sh
 install -m 0755 queryDistro.sh $DEPLOY_HARIX
 cp -R resources $DEPLOY_HARIX
 cp -R doc $DEPLOY_HARIX
+cp harixManual.pdf $DEPLOY_HARIX

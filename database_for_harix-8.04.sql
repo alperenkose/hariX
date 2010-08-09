@@ -7,6 +7,8 @@ CREATE SCHEMA IF NOT EXISTS `harix_db` DEFAULT CHARACTER SET latin1 ;
 -- -----------------------------------------------------
 -- Table `harix_db`.`OSes`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`OSes` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`OSes` (
   `osID` SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `osName` VARCHAR(45) NOT NULL ,
@@ -18,6 +20,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`bus_type`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`bus_type` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`bus_type` (
   `busTypeID` TINYINT(3) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `busName` VARCHAR(45) NOT NULL ,
@@ -29,6 +33,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`pci_all`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`pci_all` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`pci_all` (
   `pciSpcID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `vendorCode` CHAR(4) NOT NULL ,
@@ -46,6 +52,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`all_devices`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`all_devices` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`all_devices` (
   `uDevID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `busTypeID_FK` TINYINT(3) UNSIGNED NOT NULL DEFAULT '1' ,
@@ -69,6 +77,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`board_models`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`board_models` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`board_models` (
   `boardID` MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `boardName` VARCHAR(100) NOT NULL ,
@@ -80,10 +90,11 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`dev_board`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`dev_board` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`dev_board` (
   `boardID_FK` MEDIUMINT(8) UNSIGNED NOT NULL ,
   `uDevID_FK` INT(10) UNSIGNED NOT NULL ,
-  PRIMARY KEY (`boardID_FK`, `uDevID_FK`) ,
   INDEX `fk_dev_board_board_models1` (`boardID_FK` ASC) ,
   INDEX `fk_dev_board_all_devices1` (`uDevID_FK` ASC) ,
   CONSTRAINT `fk_dev_board_all_devices1`
@@ -97,12 +108,15 @@ CREATE  TABLE IF NOT EXISTS `harix_db`.`dev_board` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1;
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
 
 
 -- -----------------------------------------------------
 -- Table `harix_db`.`os_releases`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`os_releases` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`os_releases` (
   `releaseID` MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `osID_FK` SMALLINT(5) UNSIGNED NOT NULL ,
@@ -120,6 +134,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`kernels`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`kernels` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`kernels` (
   `uKernelID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `releaseID_FK` MEDIUMINT(8) UNSIGNED NOT NULL ,
@@ -139,6 +155,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`module_names`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`module_names` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`module_names` (
   `modNameID` SMALLINT(5) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `modName` VARCHAR(45) NOT NULL ,
@@ -150,6 +168,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`modules`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`modules` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`modules` (
   `uModID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `uKernelID_FK` INT(10) UNSIGNED NOT NULL ,
@@ -173,6 +193,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`dev_mod`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`dev_mod` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`dev_mod` (
   `uDevID_FK` INT(10) UNSIGNED NOT NULL ,
   `uModID_FK` INT(10) UNSIGNED NOT NULL ,
@@ -197,6 +219,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`pci_classes`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`pci_classes` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`pci_classes` (
   `classCode` CHAR(2) NOT NULL ,
   `className` VARCHAR(100) NOT NULL ,
@@ -208,6 +232,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`pci_vendors`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`pci_vendors` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`pci_vendors` (
   `vendorCode` CHAR(4) NOT NULL ,
   `vendorName` VARCHAR(100) NULL DEFAULT NULL ,
@@ -219,6 +245,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`pci_devices`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`pci_devices` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`pci_devices` (
   `deviceID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `deviceCode` CHAR(4) NOT NULL ,
@@ -238,6 +266,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`pci_subclasses`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`pci_subclasses` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`pci_subclasses` (
   `subClassID` TINYINT(3) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `subClassCode` CHAR(2) NOT NULL ,
@@ -257,6 +287,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`pci_prog_ifs`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`pci_prog_ifs` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`pci_prog_ifs` (
   `uProgifID` TINYINT(3) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `progifCode` CHAR(2) NULL DEFAULT NULL ,
@@ -276,6 +308,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`pci_subsystems`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`pci_subsystems` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`pci_subsystems` (
   `uPcisubID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `subvendor` CHAR(4) NULL DEFAULT NULL ,
@@ -296,6 +330,8 @@ DEFAULT CHARACTER SET = latin1;
 -- -----------------------------------------------------
 -- Table `harix_db`.`pcimap`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `harix_db`.`pcimap` ;
+
 CREATE  TABLE IF NOT EXISTS `harix_db`.`pcimap` (
   `uModID_FK` INT(10) UNSIGNED NOT NULL ,
   `vendor` CHAR(4) NOT NULL ,
@@ -337,6 +373,8 @@ CREATE TABLE IF NOT EXISTS `harix_db`.`vw_pciDeviceList` (`vendorCode` INT, `dev
 -- -----------------------------------------------------
 -- procedure sp_pciClassesAdd
 -- -----------------------------------------------------
+USE `harix_db`;
+DROP procedure IF EXISTS `harix_db`.`sp_pciClassesAdd`;
 
 DELIMITER $$
 USE `harix_db`$$
@@ -367,6 +405,8 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure sp_pciProgifsAdd
 -- -----------------------------------------------------
+USE `harix_db`;
+DROP procedure IF EXISTS `harix_db`.`sp_pciProgifsAdd`;
 
 DELIMITER $$
 USE `harix_db`$$
@@ -401,6 +441,8 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure sp_pciSubclassesAdd
 -- -----------------------------------------------------
+USE `harix_db`;
+DROP procedure IF EXISTS `harix_db`.`sp_pciSubclassesAdd`;
 
 DELIMITER $$
 USE `harix_db`$$
@@ -432,6 +474,8 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure sp_pci_DevicesAdd
 -- -----------------------------------------------------
+USE `harix_db`;
+DROP procedure IF EXISTS `harix_db`.`sp_pci_DevicesAdd`;
 
 DELIMITER $$
 USE `harix_db`$$
@@ -463,6 +507,8 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure sp_pci_SubsystemsAdd
 -- -----------------------------------------------------
+USE `harix_db`;
+DROP procedure IF EXISTS `harix_db`.`sp_pci_SubsystemsAdd`;
 
 DELIMITER $$
 USE `harix_db`$$
@@ -498,6 +544,8 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure sp_pci_VendorsAdd
 -- -----------------------------------------------------
+USE `harix_db`;
+DROP procedure IF EXISTS `harix_db`.`sp_pci_VendorsAdd`;
 
 DELIMITER $$
 USE `harix_db`$$
@@ -528,6 +576,8 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure sp_queryClassName
 -- -----------------------------------------------------
+USE `harix_db`;
+DROP procedure IF EXISTS `harix_db`.`sp_queryClassName`;
 
 DELIMITER $$
 USE `harix_db`$$
@@ -570,6 +620,8 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure sp_queryDeviceName
 -- -----------------------------------------------------
+USE `harix_db`;
+DROP procedure IF EXISTS `harix_db`.`sp_queryDeviceName`;
 
 DELIMITER $$
 USE `harix_db`$$
@@ -609,6 +661,8 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- procedure sp_queryPcimap
 -- -----------------------------------------------------
+USE `harix_db`;
+DROP procedure IF EXISTS `harix_db`.`sp_queryPcimap`;
 
 DELIMITER $$
 USE `harix_db`$$
@@ -669,26 +723,31 @@ DELIMITER ;
 -- -----------------------------------------------------
 -- View `harix_db`.`vw_osList`
 -- -----------------------------------------------------
+DROP VIEW IF EXISTS `harix_db`.`vw_osList` ;
 DROP TABLE IF EXISTS `harix_db`.`vw_osList`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `harix_db`.`vw_osList` AS select `ker`.`uKernelID` AS `uKernelID`,`rel`.`releaseID` AS `releaseID`,`os`.`osID` AS `osID`,`os`.`osName` AS `osName`,`rel`.`releaseName` AS `releaseName`,`ker`.`kernelVersion` AS `kernelVersion`,`ker`.`machineHardware` AS `machineHardware` from (`harix_db`.`OSes` `os` left join (`harix_db`.`os_releases` `rel` left join `harix_db`.`kernels` `ker` on((`ker`.`releaseID_FK` = `rel`.`releaseID`))) on((`rel`.`osID_FK` = `os`.`osID`)));
 
 -- -----------------------------------------------------
 -- View `harix_db`.`vw_os_pcimap`
 -- -----------------------------------------------------
+DROP VIEW IF EXISTS `harix_db`.`vw_os_pcimap` ;
 DROP TABLE IF EXISTS `harix_db`.`vw_os_pcimap`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `harix_db`.`vw_os_pcimap` AS select `mdl`.`uKernelID_FK` AS `uKernelID_FK`,`mdl`.`uModID` AS `uModID`,`harix_db`.`pcimap`.`vendor` AS `vendor`,`harix_db`.`pcimap`.`device` AS `device`,`harix_db`.`pcimap`.`subvendor` AS `subvendor`,`harix_db`.`pcimap`.`subdevice` AS `subdevice`,`harix_db`.`pcimap`.`class` AS `class`,`harix_db`.`pcimap`.`classMask` AS `classMask`,`mdl`.`modNameID_FK` AS `modNameID_FK` from (`harix_db`.`modules` `mdl` left join `harix_db`.`pcimap` on((`harix_db`.`pcimap`.`uModID_FK` = `mdl`.`uModID`)));
 
 -- -----------------------------------------------------
 -- View `harix_db`.`vw_pciClassList`
 -- -----------------------------------------------------
+DROP VIEW IF EXISTS `harix_db`.`vw_pciClassList` ;
 DROP TABLE IF EXISTS `harix_db`.`vw_pciClassList`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `harix_db`.`vw_pciClassList` AS select `cl`.`classCode` AS `classCode`,`sub`.`subClassCode` AS `subClassCode`,`ifs`.`progifCode` AS `progifCode`,`ifs`.`progifName` AS `progifName`,`sub`.`subClassName` AS `subClassName`,`cl`.`className` AS `className`,`sub`.`subClassID` AS `subClassID`,`ifs`.`uProgifID` AS `uProgifID` from (`harix_db`.`pci_classes` `cl` left join (`harix_db`.`pci_subclasses` `sub` left join `harix_db`.`pci_prog_ifs` `ifs` on((`ifs`.`subClassID_FK` = `sub`.`subClassID`))) on((`sub`.`classCode_FK` = `cl`.`classCode`)));
 
 -- -----------------------------------------------------
 -- View `harix_db`.`vw_pciDeviceList`
 -- -----------------------------------------------------
+DROP VIEW IF EXISTS `harix_db`.`vw_pciDeviceList` ;
 DROP TABLE IF EXISTS `harix_db`.`vw_pciDeviceList`;
 CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `harix_db`.`vw_pciDeviceList` AS select `vdr`.`vendorCode` AS `vendorCode`,`dev`.`deviceCode` AS `deviceCode`,`sub`.`subvendor` AS `subvendor`,`sub`.`subdevice` AS `subdevice`,`vdr`.`vendorName` AS `vendorName`,`dev`.`deviceName` AS `deviceName`,`sub`.`subSysName` AS `subSysName`,`dev`.`deviceID` AS `deviceID`,`sub`.`uPcisubID` AS `uPcisubID` from (`harix_db`.`pci_vendors` `vdr` left join (`harix_db`.`pci_devices` `dev` left join `harix_db`.`pci_subsystems` `sub` on((`sub`.`deviceID_FK` = `dev`.`deviceID`))) on((`dev`.`vendorCode_FK` = `vdr`.`vendorCode`)));
+
 
 
 -- Initialize an entry in `bus_type` table with PCI value busTypeID 1.

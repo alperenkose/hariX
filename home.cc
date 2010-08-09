@@ -91,6 +91,15 @@ HomeWidget::HomeWidget( WContainerWidget* parent ) : WContainerWidget(parent)
    * @}
    */
 
+  WAnchor *aManual;
+  page->addWidget( new WText("Wellcome to the Linux Hardware Information Management Application, <br />"
+							 "For usage instructions and what hariX is please see the ") );
+  page->addWidget( aManual = new WAnchor("harixManual.pdf","User Manual.") );
+  aManual->setTarget(TargetNewWindow);
+  
+  page->addWidget( new WText("<br/><br/>"
+							 "Don't forget to update the PCI and Class Codes occasionally at here:"
+							 "<br/>"));
 
   page->addWidget( bPciIds_ = new WPushButton("Update PCI IDs") );
   // Trigger bPciIds_Click function on 'Update PCI IDs' click.
@@ -119,9 +128,11 @@ HomeWidget::HomeWidget( WContainerWidget* parent ) : WContainerWidget(parent)
   WPushButton *bSaveProxy;
   layoutSettings->elementAt(0,1)->addWidget( bSaveProxy = new WPushButton("Save") );
 
+  layoutSettings->rowAt(1)->setHeight( WLength(30) );
+  layoutSettings->elementAt(1,1)->setContentAlignment(AlignMiddle);
   WAnchor *aDoc;
   layoutSettings->elementAt(1,1)->addWidget( aDoc = new WAnchor("doc/html/index.html",
-																"<p>--- Documentation of Source Code ---</p>") );
+																"--- Documentation of Source Code ---") );
   aDoc->setTarget(TargetNewWindow);
   /*
    * @}
