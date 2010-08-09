@@ -4,6 +4,7 @@ CONTENTS OF THIS FILE
  * Requirements
  * Requirement Configurations
  * Installation of hariX
+ * Upgrading release of hariX
  * Troubleshooting
 
 
@@ -235,6 +236,46 @@ INSTALLATION OF HARIX
 	- Click "Update PCI IDs".
 	- Add OSes in "Analyze OS" page..
 	- And enjoy :)
+
+
+
+
+UPGRADING RELEASE OF HARIX
+--------------------------
+
+1. Database Configuration if any database change has occured!
+
+	- Get the database alter script:
+		You can find the alter script for harix database in tarball source directory
+		with a name like "database_for_harix-8.04_vs_8.02.sql", if it doesn't exist there you can
+		also download it at "http://download.gna.org/harix/". This file changes the database to
+		version 8.04 from 8.02 while keeping it's contents.
+
+	- Run the script on MySQL server.
+
+2. Install hariX
+
+	- Clean everything and build hariX:
+		shell:/path/to/harix-source> make clean
+		shell:/path/to/harix-source> make
+
+	- Edit "deploy.sh" script:
+		Change DEPLOY_HARIX variable to your Apache deployment directory
+		where your web application will reside.
+		Default directory is "/srv/http/harix". Change to "/var/www/harix" for Debian.
+
+	- Run "deploy.sh":
+		shell:/path/to/harix-source> sudo ./deploy.sh
+
+	- Enable the site & reload apache:
+		shell> a2ensite harix
+		shell> /etc/init.d/apache2 reload
+
+3. Ready to go
+
+	- Point your browser to:
+		http://localhost/harix/harix.wt
+
 
 
 
