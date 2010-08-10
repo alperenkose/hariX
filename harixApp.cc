@@ -30,6 +30,7 @@
 */
 #include <Wt/WStackedWidget>
 #include <Wt/WLogger>
+#include <Wt/WEnvironment>		// To retrieve the initial URL on app start
 
 #include "harixApp.hpp"
 #include "lspci_query/pcimapQuery.hpp"
@@ -37,6 +38,8 @@
 #include "analyze_os/analyzeOS.hpp"
 #include "mainboards/mainboards.hpp"
 #include "home.hpp"
+#include "pci_device.hpp"
+
 
 using namespace Wt;
 
@@ -56,7 +59,16 @@ HarixApp::HarixApp( const WEnvironment& env ) : WApplication(env)
 
   // Create an HomeWidget(representing the home page) instance
   HomeWidget* home_page = HomeWidget::Instance(stackedContent_);
-  WApplication::instance()->setInternalPath("/home",true); // set URL to /application_path.wt#/home
+  
+  std::string internal_path =  env.internalPath(); // get the initial URL at App start.
+
+  if( internal_path.compare(0,15,"/query_results~") == 0 ){ // if this is a query link, open Query Results page.
+	internalPathChanged(internal_path);
+  }
+  else{
+	WApplication::instance()->setInternalPath("/home",true); // set URL to /application_path.wt#/home
+  }
+
 
   /*
 	WApplication::internalPathChanged signal connected to the HarixApp::internalPathChanged.
@@ -100,6 +112,9 @@ void removeWidget( WContainerWidget* widget )
 {
   (dynamic_cast<HarixApp*>(WApplication::instance()))->removeWidget(widget);
 }
+
+
+static std::vector<PciDevice> getBoardDeviceList( std::string board_name );
 
 
 
@@ -167,8 +182,98 @@ void HarixApp::internalPathChanged(const std::string& path)
 	else
 	  selectWidget( mainboards_page );
   }
+  else if( path.compare(0,15,"/query_results~") == 0 ){ // if mainboard and os is provided at URL
+
+	if ( path.compare(15,6,"board=") == 0 ) {
+	  std::string board_name, ukernel_id;
+	  std::string::size_type beg_pos, end_pos;
+
+	  beg_pos = path.find_first_of("=");
+	  end_pos = path.find_first_of("&");
+	  board_name = path.substr( beg_pos+1, end_pos-beg_pos-1 );
+
+	  beg_pos = path.find_first_of("=",end_pos);
+	  ukernel_id = path.substr(beg_pos+1);
+	  
+	  // Retrieve PCI devices of the mainboard.
+	  std::vector<PciDevice> device_list = getBoardDeviceList( board_name );
+
+	  PcimapResultWidget* pcilist;
+	  if ( (pcilist = PcimapResultWidget::Instance()) == NULL ){
+
+		// Switch to PcimapResultWidget providing mainboard name and OS ID too..
+		selectWidget( PcimapResultWidget::Instance( device_list, stackedContent_,
+													board_name,
+													ukernel_id) );
+	  }
+	  else
+		wApp->log("debug") << "PcimapResultWidget already exists! this should NOT happen!";
+	  
+	}
+  }
   /*
    * @}
    */
 
+}
+
+
+/*
+  Retrieves ID of the mainboard, returns an empty string if it does not exist in database.
+*/
+//! \relates database.cc
+std::string queryBoardModelId( std::string board_name );
+
+/*
+  Retrieve unique device ID list of devices belonging to given mainboard.
+*/
+//! \relates database.cc
+std::vector<std::string> queryBoardDeviceList( std::string board_id );
+
+/*
+  Retrieve hardware codes of a device depending on it's bus type.
+*/
+//! \relates database.cc
+std::vector<std::string> queryDeviceCodes( std::string udev_id, int bus_type = 1 );
+
+
+static std::vector<PciDevice> getBoardDeviceList( std::string board_name  )
+{
+  std::vector<PciDevice> device_list; 			// Hold list of PCI Devices to be returned.
+
+  std::string board_id;
+  board_id = queryBoardModelId( board_name );
+  
+  std::vector<std::string> udev_id_list;		   // Hold list of Unique device IDs.
+  udev_id_list = queryBoardDeviceList( board_id ); // Get list of Unique device IDs belonging to the mainboard.
+
+  
+  // Hold the PCI Device codes as in given index below:
+  // 0-vendor; 1-device; 2-subvendor; 3-subdevice; 4-class; 5-subclass; 6-progif
+  std::vector<std::string> device_codes;
+
+
+  PciDevice *pci_device;
+
+  // Iterate through the list of retrieved Unique device IDs.
+  std::vector<std::string>::iterator udev_iter;
+  for( udev_iter = udev_id_list.begin(); udev_iter != udev_id_list.end(); ++udev_iter ){
+	
+	device_codes = queryDeviceCodes( *udev_iter ); // Retrieve Device codes of current PCI device.
+
+	pci_device = new PciDevice();
+
+	pci_device->setVendor( device_codes.at(0) );
+	pci_device->setDevice( device_codes.at(1) );
+	pci_device->setSubvendor( device_codes.at(2) );
+	pci_device->setSubdevice( device_codes.at(3) );
+	pci_device->setClass( device_codes.at(4) );
+	pci_device->setSubclass( device_codes.at(5) );
+	pci_device->setProgif( device_codes.at(6) );
+
+	device_list.push_back(*pci_device);
+	delete pci_device;
+  }
+
+  return device_list;
 }

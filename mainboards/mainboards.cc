@@ -594,14 +594,14 @@ void MainboardsWidget::bCheckOs_Click()
   if ( (pcilist = PcimapResultWidget::Instance()) == NULL ){
 
 	// Switch to PcimapResultWidget providing mainboard name and OS ID too..
-	selectWidget( PcimapResultWidget::Instance( device_list, parent_,
-												boardsSelection_->currentText().narrow(),
-												getOsIdentifier()) );
-	
-	// Remove and delete the current instance of MainboardsWidget.
-	resetAll();
-	
-	WApplication::instance()->setInternalPath("/query_results"); // Set URL to point the new page.
+	std::string generate_link = "/query_results~board="+ boardsSelection_->currentText().narrow()
+	  +"&os=" + getOsIdentifier();
+	WApplication::instance()->setInternalPath(generate_link,true); // Set URL to point the new page.
+
+	if ( MainboardsWidget::Instance() != NULL ){
+	  // Remove and delete the current instance of MainboardsWidget.
+	  resetAll();
+	}
   }
   else
 	wApp->log("debug") << "PcimapResultWidget already exists! this should NOT happen!";
