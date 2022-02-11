@@ -1,0 +1,8 @@
+CREATE VIEW `bugware0`.`vw_pci_devices` AS
+SELECT pci_all.pciSpcID, pci_vendors.vendorCode, pci_devices.deviceCode, pci_subsystems.subvendor, pci_subsystems.subdevice, pci_classes.classCode, pci_subclasses.subClassCode, pci_prog_ifs.progifCode 
+FROM pci_all INNER JOIN pci_prog_ifs ON ( pci_all.uProgifID_FK = pci_prog_ifs.uProgifID )
+INNER JOIN pci_subclasses ON ( pci_prog_ifs.subClassID_FK = pci_subclasses.subClassID )
+INNER JOIN pci_classes ON ( pci_subclasses.classCode_FK = pci_classes.classCode )
+INNER JOIN pci_subsystems ON ( pci_all.uPcisubID_FK = pci_subsystems.uPcisubID )
+INNER JOIN pci_devices ON ( pci_subsystems.deviceID_FK = pci_devices.deviceID )
+INNER JOIN pci_vendors ON ( pci_devices.vendorCode_FK = pci_vendors.vendorCode ); 

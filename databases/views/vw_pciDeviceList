@@ -1,0 +1,4 @@
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vw_pciDeviceList` AS 
+select vdr.vendorCode, dev.deviceCode, sub.subvendor, sub.subdevice, vdr.vendorName, dev.deviceName, sub.subSysName, dev.deviceID, sub.uPcisubID 
+from pci_vendors vdr left join pci_devices dev left join pci_subsystems sub
+on sub.deviceID_FK = dev.deviceID on dev.vendorCode_FK = vdr.vendorCode;

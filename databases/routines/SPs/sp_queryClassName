@@ -1,0 +1,39 @@
+ 
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_queryClassName`(
+IN class_code CHAR(2), IN subclass_code CHAR(2), IN progif_code CHAR(2) )
+BEGIN
+DECLARE findings TINYINT;
+-- DECLARE class_code CHAR(6);
+
+IF progif_code='' THEN
+	SET progif_code = '00';
+END IF;
+
+CREATE TEMPORARY TABLE class_names (
+	className VARCHAR(100),
+	subclassName VARCHAR(100),
+	progifName VARCHAR(100)
+) ENGINE=MEMORY;
+
+INSERT INTO class_names
+SELECT className, subClassName, progifName FROM vw_pciClassList 
+	WHERE classCode=class_code AND subClasscode=subclass_code AND progifCode=progif_code;
+
+SELECT COUNT(*) INTO findings FROM class_names;
+
+IF findings=0 THEN 
+	INSERT INTO class_names
+	SELECT className, subClassName, progifName FROM vw_pciClassList 
+	WHERE classCode=class_code AND subClasscode=subclass_code;
+END  IF;
+
+SELECT * FROM class_names;
+
+DROP TABLE class_names; 
+
+END 

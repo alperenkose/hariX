@@ -1,5 +1,20 @@
 
-SEE THE INSTALL FILE FOR INSTRUCTIONS ON HOW TO SETUP AND INSTALL.
+Project HARIX, "HARdware Information management" intended to be used in a hardware testing laboratory to see supported Devices with various Linux Distributions.
+
+
+Project *HARIX*, an abbreviation of _"HARdware Information management"_. 
+----
+It is intended to be used in a hardware testing laboratory. The system is made up of an intranet web server, serving users and storing information in a MySQL database. And the users of client computers access the web server to probe for the specific hardwares their computer has; currently the user provides a list of PCI IDs of devices through the web application interface, and the system responds back with appropriate information like device and class names, on which linux distributions and kernels the given device has modules. User can also save Mainboard configurations with the provided list of devices for later review, or see which devices of the Mainboard is supported with a specific Linux Distribution. This way when we want to know whether a machine is supported with a Linux distro, we can just query it's PCI device list, so the installation of the OS on Machine could be avoided.
+
+----
+
+Latest beta release can be found in Download Area!
+
+Project is being written in C++ using Wt Library, and is designed to run with Apache and MySQL.
+
+
+
+*SEE THE INSTALL FILE FOR INSTRUCTIONS ON HOW TO SETUP AND INSTALL.*
 
 Known Issues:
 -------------

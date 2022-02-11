@@ -1,0 +1,6 @@
+CREATE VIEW `bugware0`.`vw_pciClassList` AS
+  SELECT cl.classCode, sub.subClassCode, progifCode, progifName, sub.subClassName, cl.className, sub.subClassID, uProgifID 
+	FROM pci_prog_ifs ifs RIGHT JOIN pci_subclasses sub 
+		ON ifs.subClassID_FK = sub.subClassID 
+	RIGHT JOIN pci_classes cl 
+		ON sub.classCode_FK = cl.classCode;

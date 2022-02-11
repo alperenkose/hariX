@@ -1,0 +1,6 @@
+CREATE VIEW `bugware0`.`vw_osList` AS
+  SELECT ker.uKernelID, rel.releaseID, os.osID, os.osName, rel.releaseName, ker.kernelVersion, ker.machineHardware
+	FROM kernels ker RIGHT JOIN os_releases rel 
+		ON ker.releaseID_FK = rel.releaseID
+	RIGHT JOIN OSes os
+		ON rel.osID_FK = os.osID; 

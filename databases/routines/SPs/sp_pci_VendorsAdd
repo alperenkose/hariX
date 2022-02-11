@@ -1,0 +1,27 @@
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `bugware0`.`sp_pci_VendorsAdd`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pci_VendorsAdd`(IN vendor_code CHAR(4), IN vendor_name VARCHAR(100))
+BEGIN
+
+declare turn_back TINYINT(1) default 0;
+declare CONTINUE handler for sqlexception, sqlwarning, not found BEGIN 
+SET turn_back=1;
+END;
+
+START TRANSACTION;
+-- some statement
+INSERT INTO pci_vendors VALUES (vendor_code, vendor_name);
+
+
+IF turn_back=0 THEN
+	COMMIT;
+	select 'well done';
+ELSE
+	rollback;
+	select 'error occured';
+END IF;
+
+END$$
+
+DELIMITER ;

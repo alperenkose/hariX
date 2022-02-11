@@ -1,0 +1,69 @@
+
+db-8.04 =================================================================
+	`dev_board` PRIMARY KEY REMOVED, SO A BOARD MIGHT HAVE MULTIPLE SAME DEVICES!!!
+
+
+db-7.20 = NEW DATABASE ==================================================
+	DATABASE NAME CHANGED TO harix_db !!!
+	Fix for sp_queryPcimap CONCAT function usage for lower mysql versions,
+	which doesn't accept a space between function name and paranthesis like this: CONCAT ().
+	`vw_os_pcimap` classMask cloumn fix.
+	
+
+db-7.01 =================================================================
+	sp_queryClassName modified to include uProgifID on return..
+	sp_queryDeviceName modified to include uPcisubID on return..
+	`vw_pci_devices` added, returns codes of all the pci devices stored in pci_all!
+	`all_devices` table modified, busTypeID_FK to be 1 as default..
+
+db-6.28 =================================================================
+	`board_models` and `dev_board` tables are added to store which Mainboards have which devices
+	on them..
+
+db-6.17 =================================================================
+	`sp_queryClassName(class,subclass,progif)` and `sp_queryDeviceName(vendor,device,subvendor,subdevice)` are added..
+
+db-6.16 =================================================================
+	A stupid bug in `sp_pciProgifsAdd` which was causing just 2 prog-ifs of subclasses to be recorded,
+	is fixed by the LIMIT 1 select option..
+
+db-6.09 =================================================================
+	`pcimap` table is updated to include the `class_mask` field.. 
+	`vw_os_pcimap` is also changed to include 
+	`sp_queryPcimap` procedure is added which finds the matching modules and
+	their kernels using `modules` and `pcimap` tables..
+
+db-6.04 =================================================================
+	`vw_osList` view which combines OSes-os_releases-kernels is added..
+	`vw_os_pcimap` view, which combines modules-pcimap to get which `uKernelID`s
+	support which devices, is added..
+
+db-5.17 =================================================================
+	`pcimap` table is added.. Stores the modules.pcimap information of
+	specific kernels.. Relationship between `pcimap` and `modules`
+	tables describes the supported pci devices..
+
+db-4.21 =================================================================
+	`os_revisions` table renamed to `os_releases` along with 
+	`revisionID` to `releaseID` and `revisionName` to `releaseName`..
+	`machineHardware` coloum is added to `kernels` table to represent
+	the architecture the kernel is compiled for (like i686, x86_64)..
+
+db-4.01 =================================================================
+	`pci_all` table to `pci_subsystems` foreign key index named to `pci_all_ibfk_1`.
+	`device_id` declaration in `sp_pci_SubsystemsAdd` procedure changed from TINYINT to INT UNSIGNED to match `deviceID` in `pci_devices` table..
+	`subclass_id` declaration in `sp_pciprogifsAdd` procedure changed from TINYINT to TINYINT UNSIGNED to match `subClassID` in `pci_subclasses` table..
+
+db-3.25 =================================================================
+	`sp_pci_SubsystemsAdd` stored procedure added..
+	`vw_pciDeviceList` is added..
+
+db-3.12 =================================================================
+	`sp_pci_VendorsAdd` and `sp_pci_DevicesAdd` stored procedures added..
+	`ON DELETE NO ACTION` foreign key constraints added to
+	`pci_devices` and `pci_subsystems`..
+
+db-3.11 =================================================================
+	`pci_subsystems` structure changed;
+	`pci_all` table added and took place of `pci_subsystems` with
+	connections to `all_devices`, `pci_prog_ifs` and `pci_subsystems`..

@@ -1,0 +1,28 @@
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `bugware0`.`sp_pci_DevicesAdd`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pci_DevicesAdd`(
+IN vendor_code CHAR(4), IN device_code CHAR(4), IN device_name VARCHAR(150))
+BEGIN
+
+DECLARE turn_back TINYINT(1) DEFAULT 0;
+DECLARE CONTINUE HANDLER FOR SQLEXCEPTION, SQLWARNING, NOT FOUND BEGIN 
+SET turn_back=1;
+END;
+
+START TRANSACTION;
+-- some statement
+INSERT INTO pci_devices (deviceCode, deviceName, vendorCode_FK) VALUES (device_code, device_name, vendor_code);
+
+
+IF turn_back=0 THEN
+	COMMIT;
+	select LAST_INSERT_ID();
+ELSE
+	rollback;
+	select 'error occured';
+END IF;
+
+END$$
+
+DELIMITER ;

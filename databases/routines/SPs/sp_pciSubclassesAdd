@@ -1,0 +1,28 @@
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `bugware0`.`sp_pciSubclassesAdd`$$
+CREATE PROCEDURE `bugware0`.`sp_pciSubclassesAdd` (
+IN class_code CHAR(2), IN subclass_code CHAR(2), IN subclass_name VARCHAR(100))
+BEGIN
+
+DECLARE turn_back TINYINT(1) DEFAULT 0;
+DECLARE CONTINUE HANDLER FOR SQLEXCEPTION, SQLWARNING, NOT FOUND BEGIN 
+SET turn_back=1;
+END;
+
+START TRANSACTION;
+-- some statement
+INSERT INTO pci_subclasses (subClassCode, subClassName, classCode_FK) VALUES (subclass_code, subclass_name, class_code);
+
+
+IF turn_back=0 THEN
+	COMMIT;
+	select LAST_INSERT_ID();
+ELSE
+	rollback;
+	select 'error occured';
+END IF;
+
+END$$
+
+DELIMITER ;

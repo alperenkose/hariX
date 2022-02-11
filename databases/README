@@ -1,0 +1,8 @@
+
+-- `pci_vendors` entry with `vendorCode` = ffff illegal vendor ID
+
+-- `pci_vendors` entry without any device has an entry in `pci_devices`
+	with `deviceCode` = XXXX and a subsequent entry in `pci_subsystems`
+	with `sub*` values being null..
+
+-- busTypeID_FK in `all_devices` has a default value of 1 which means PCI..

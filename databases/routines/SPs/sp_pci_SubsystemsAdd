@@ -1,0 +1,29 @@
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `bugware0`.`sp_pci_SubsystemsAdd`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pci_SubsystemsAdd`(
+IN vendor_code CHAR(4), IN device_code CHAR(4), IN subvendor_code CHAR(4), IN subdevice_code CHAR(4), IN subsys_name VARCHAR(150))
+BEGIN
+
+DECLARE device_id TINYINT;
+DECLARE turn_back TINYINT(1) DEFAULT 0;
+DECLARE CONTINUE HANDLER FOR SQLEXCEPTION, SQLWARNING, NOT FOUND BEGIN 
+SET turn_back=1;
+END;
+
+START TRANSACTION;
+
+SELECT deviceID INTO device_id FROM vw_pciDeviceList WHERE vendorCode=vendor_code AND deviceCode=device_code;
+
+INSERT INTO pci_subsystems (subvendor, subdevice, subSysName, deviceID_FK) VALUES ( subvendor_code, subdevice_code, subsys_name, device_id );
+
+IF turn_back=0 THEN
+	COMMIT;
+	select LAST_INSERT_ID();
+ELSE
+	rollback;
+	select 'error occured';
+END IF;
+END$$
+
+DELIMITER ;
